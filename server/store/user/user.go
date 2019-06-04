@@ -1,8 +1,6 @@
 package user
 
 import (
-	"context"
-
 	"../../core"
 	"../base/db"
 )
@@ -17,7 +15,7 @@ type userStore struct {
 }
 
 // Create persists a new user to the datastore.
-func (s *userStore) Create(ctx context.Context, user *core.User) error {
+func (s *userStore) Create(user *core.User) error {
 	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
 		params := toParams(user)
 		stmt, args, err := binder.BindNamed(stmtInsert, params)
@@ -33,9 +31,24 @@ func (s *userStore) Create(ctx context.Context, user *core.User) error {
 	})
 }
 
+// Count returns a count of active users.
+func (s *userStore) Count() (int64, error) {
+	var out int64
+	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
+		return queryer.QueryRow(queryCount).Scan(&out)
+	})
+	return out, err
+}
+
+const queryCount = `
+SELECT COUNT(*)
+FROM users
+`
+
 const stmtInsert = `
 INSERT INTO users (
  user_login
+,user_password
 ,user_email
 ,user_admin
 ,user_active
@@ -45,6 +58,7 @@ INSERT INTO users (
 ,user_last_login
 ) VALUES (
  :user_login
+,:user_password
 ,:user_email
 ,:user_admin
 ,:user_active

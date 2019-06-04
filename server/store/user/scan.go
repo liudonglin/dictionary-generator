@@ -8,6 +8,7 @@ func toParams(u *core.User) map[string]interface{} {
 	return map[string]interface{}{
 		"user_id":         u.ID,
 		"user_login":      u.Login,
+		"user_password":   u.Password,
 		"user_email":      u.Email,
 		"user_admin":      u.Admin,
 		"user_active":     u.Active,

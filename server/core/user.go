@@ -1,11 +1,10 @@
 package core
 
-import "context"
-
 // User ...
 type User struct {
 	ID        int64  `json:"id"`
 	Login     string `json:"login"`
+	Password  string `json:"password"`
 	Email     string `json:"email"`
 	Admin     bool   `json:"admin"`
 	Active    bool   `json:"active"`
@@ -17,6 +16,9 @@ type User struct {
 
 // UserStore ...
 type UserStore interface {
+	// Count returns a count of active users.
+	Count() (int64, error)
+
 	// Create persists a new user to the datastore.
-	Create(context.Context, *User) error
+	Create(*User) error
 }

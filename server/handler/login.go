@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"../core"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
@@ -17,11 +16,7 @@ type jwtUserClaims struct {
 	jwt.StandardClaims
 }
 
-type loginHandler struct {
-	core.UserStore
-}
-
-func (h loginHandler) login(c echo.Context) error {
+func login(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 

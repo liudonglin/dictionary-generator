@@ -95,6 +95,7 @@ var createTableUsers = `
 CREATE TABLE IF NOT EXISTS users (
  user_id            INTEGER PRIMARY KEY AUTOINCREMENT
 ,user_login         TEXT COLLATE NOCASE
+,user_password      TEXT
 ,user_email         TEXT
 ,user_admin         BOOLEAN
 ,user_active        BOOLEAN
