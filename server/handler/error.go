@@ -22,6 +22,11 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 	if _, ok := err.(*BusinessError); ok {
 		result.Code = 300
 		result.Message = err.Error()
+	} else if err1, ok := err.(*echo.HTTPError); ok {
+		// 400 未带token
+		// 401 无效token
+		result.Code = err1.Code
+		result.Message = err1.Message.(string)
 	} else {
 		result.Code = 500
 		result.Message = "服务端发生错误,请稍后再试!"
@@ -31,7 +36,7 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 
 // StandardResult 统一结果返回
 type StandardResult struct {
-	Code    int64       `json:"code"`
+	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }

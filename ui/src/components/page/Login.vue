@@ -24,7 +24,7 @@
 
 <script>
     import request from '../../request';
-import { debuglog } from 'util';
+    import { debuglog } from 'util';
     export default {
         data: function(){
             return {
@@ -51,9 +51,11 @@ import { debuglog } from 'util';
                             login: this.ruleForm.username,
                             password: this.ruleForm.password
                         }).then(result=>{
-                            let token = result.data
-                            localStorage.setItem('login_token',token);
-                            this.$router.push('/');
+                            if (result.success) {
+                                let token = result.data
+                                localStorage.setItem('login_token',token);
+                                this.$router.push('/');
+                            }
                         })
                     } else {
                         console.log('error submit!!');
