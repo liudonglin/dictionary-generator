@@ -44,7 +44,7 @@
                         title: '系统首页'
                     },
                     {
-                        icon: 'el-icon-lx-home',
+                        icon: 'el-icon-lx-cascades',
                         index: 'projects',
                         title: '项目列表'
                     }

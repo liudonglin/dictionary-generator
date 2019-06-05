@@ -45,7 +45,7 @@ axios.interceptors.response.use((response) => {
   switch (response.data.code) {
     case 0:
     case 200:
-      if (response.data.message!=null&&response.data.message!=''){
+      if (response.data.message){
         Message({type:'success',message:response.data.message})
       }
       return {
