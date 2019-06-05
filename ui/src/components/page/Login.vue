@@ -23,6 +23,8 @@
 </template>
 
 <script>
+    import request from '../../request';
+import { debuglog } from 'util';
     export default {
         data: function(){
             return {
@@ -45,11 +47,13 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.$axios.post(this.loginUrl, {
+                        request().post(this.loginUrl, {
                             login: this.ruleForm.username,
                             password: this.ruleForm.password
-                        }).then((res) => {
-                            debugger
+                        }).then(result=>{
+                            let token = result.data
+                            localStorage.setItem('login_token',token);
+                            this.$router.push('/');
                         })
                     } else {
                         console.log('error submit!!');
