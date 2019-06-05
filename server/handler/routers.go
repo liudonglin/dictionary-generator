@@ -10,6 +10,7 @@ import (
 // New ...
 func New() *echo.Echo {
 	e := echo.New()
+	e.HTTPErrorHandler = customHTTPErrorHandler
 
 	// 配置静态文件
 	e.Static("/ui", "ui-dist")

@@ -16,7 +16,7 @@
                 <div class="login-btn">
                     <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
                 </div>
-                <p class="login-tips">Tips : 用户名和密码随便填。</p>
+                <p class="login-tips">请输入用户名和密码。</p>
             </el-form>
         </div>
     </div>
@@ -26,9 +26,10 @@
     export default {
         data: function(){
             return {
+                loginUrl: "/api/login",
                 ruleForm: {
                     username: 'admin',
-                    password: '123123'
+                    password: '123456'
                 },
                 rules: {
                     username: [
@@ -44,8 +45,12 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        localStorage.setItem('ms_username',this.ruleForm.username);
-                        this.$router.push('/');
+                        this.$axios.post(this.loginUrl, {
+                            login: this.ruleForm.username,
+                            password: this.ruleForm.password
+                        }).then((res) => {
+                            debugger
+                        })
                     } else {
                         console.log('error submit!!');
                         return false;

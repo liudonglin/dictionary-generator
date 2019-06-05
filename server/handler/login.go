@@ -1,8 +1,15 @@
 package handler
 
 import (
+	"crypto/md5"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
+
+	"../core"
+	"../store"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
@@ -17,14 +24,31 @@ type jwtUserClaims struct {
 }
 
 func login(c echo.Context) error {
-	username := c.FormValue("username")
-	password := c.FormValue("password")
+	uiUser := &core.User{}
+	body, _ := ioutil.ReadAll(c.Request().Body)
+	json.Unmarshal(body, &uiUser)
 
-	if username == "gavin" && password == "123456" {
+	if uiUser.Login == "" {
+		return &BusinessError{Message: "用户登录名不能为空！"}
+	}
+	if uiUser.Password == "" {
+		return &BusinessError{Message: "用户登录密码不能为空！"}
+	}
+
+	dbInstance := store.GetInstance(nil)
+	dbUser, _ := dbInstance.UserStore.QueryLogin(uiUser.Login)
+
+	uiUser.Password = EncryptionPassword(uiUser.Password)
+	if uiUser.Login == dbUser.Login && uiUser.Password == dbUser.Password {
+
+		if dbUser.Active == false {
+			return &BusinessError{Message: "该用户已被禁用！"}
+		}
+
 		// Set custom claims
 		claims := &jwtUserClaims{
-			"Gavin liu",
-			true,
+			dbUser.Login,
+			dbUser.Admin,
 			jwt.StandardClaims{
 				ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 			},
@@ -38,10 +62,17 @@ func login(c echo.Context) error {
 		if err != nil {
 			return err
 		}
-		return c.JSON(http.StatusOK, echo.Map{
-			"token": t,
-		})
-	}
 
-	return echo.ErrUnauthorized
+		result := StandardResult{}
+		result.Message = "登录成功!"
+		result.Data = t
+		return c.JSON(http.StatusOK, result)
+	}
+	return &BusinessError{Message: "用户登录名或密码错误！"}
+}
+
+// EncryptionPassword md5加密用户密码
+func EncryptionPassword(password string) string {
+	hash := md5.Sum([]byte(password))
+	return fmt.Sprintf("%x", hash)
 }

@@ -100,9 +100,9 @@ CREATE TABLE IF NOT EXISTS users (
 ,user_admin         BOOLEAN
 ,user_active        BOOLEAN
 ,user_avatar        TEXT
-,user_created       INTEGER
-,user_updated       INTEGER
-,user_last_login    INTEGER
+,user_created       TEXT
+,user_updated       TEXT
+,user_last_login    TEXT
 ,UNIQUE(user_login COLLATE NOCASE)
 );
 `

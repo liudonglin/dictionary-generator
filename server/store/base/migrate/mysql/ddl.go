@@ -100,9 +100,9 @@ CREATE TABLE IF NOT EXISTS users (
 ,user_admin         BOOLEAN
 ,user_active        BOOLEAN
 ,user_avatar        VARCHAR(500)
-,user_created       INTEGER
-,user_updated       INTEGER
-,user_last_login    INTEGER
+,user_created       VARCHAR(20)
+,user_updated       VARCHAR(20)
+,user_last_login    VARCHAR(20)
 ,UNIQUE(user_login)
 );
 `

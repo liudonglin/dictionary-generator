@@ -40,9 +40,43 @@ func (s *userStore) Count() (int64, error) {
 	return out, err
 }
 
+// FindLogin returns a user from the datastore by username.
+func (s *userStore) QueryLogin(login string) (*core.User, error) {
+	out := &core.User{Login: login}
+	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
+		params := toParams(out)
+		query, args, err := binder.BindNamed(queryLogin, params)
+		if err != nil {
+			return err
+		}
+		row := queryer.QueryRow(query, args...)
+		return scanRow(row, out)
+	})
+	return out, err
+}
+
+const queryBase = `
+SELECT
+ user_id
+,user_login
+,user_password
+,user_email
+,user_admin
+,user_active
+,user_avatar
+,user_created
+,user_updated
+,user_last_login
+`
+
 const queryCount = `
 SELECT COUNT(*)
 FROM users
+`
+
+const queryLogin = queryBase + `
+FROM users
+WHERE user_login = :user_login
 `
 
 const stmtInsert = `

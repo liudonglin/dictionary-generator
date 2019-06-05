@@ -9,9 +9,9 @@ type User struct {
 	Admin     bool   `json:"admin"`
 	Active    bool   `json:"active"`
 	Avatar    string `json:"avatar"`
-	Created   int64  `json:"created"`
-	Updated   int64  `json:"updated"`
-	LastLogin int64  `json:"last_login"`
+	Created   string `json:"created"`
+	Updated   string `json:"updated"`
+	LastLogin string `json:"last_login"`
 }
 
 // UserStore ...
@@ -21,4 +21,6 @@ type UserStore interface {
 
 	// Create persists a new user to the datastore.
 	Create(*User) error
+
+	QueryLogin(login string) (*User, error)
 }
