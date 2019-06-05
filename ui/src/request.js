@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
+import router from '@/router'
 
 //请求队列，防止重复发送
 let xhrQueue = []
@@ -17,6 +18,12 @@ axios.interceptors.request.use((req) => {
     }
     xhrQueue.push(req.url)
   }
+
+  let token = localStorage.getItem('login_token');
+  if ( token!=null && token!='' ) {
+    req.headers.Authorization = `Bearer ${token}`
+  }
+
   return req
 })
 
@@ -38,7 +45,9 @@ axios.interceptors.response.use((response) => {
   switch (response.data.code) {
     case 0:
     case 200:
-      !ignoreMsg && !ignoreSuccessMsg && Message({type:'success',message:response.data.message || '操作成功'})
+      if (response.data.message!=null&&response.data.message!=''){
+        Message({type:'success',message:response.data.message})
+      }
       return {
         ...response.data,
         success: true
@@ -49,6 +58,7 @@ axios.interceptors.response.use((response) => {
     case 400:
     case 401:
       Message({type:'error',message:response.data.message || '登录状态无效,请重新登录'})
+      router.push("/login")
       break
     case 500:
       Message({type:'error',message:response.data.message || '服务器端异常'})
@@ -61,39 +71,3 @@ axios.interceptors.response.use((response) => {
 }, (error) => {
   return Promise.reject(error)
 })
-
-export default function request () {
-
-  function handleCatch(err) {
-    console.log('请求抛出的异常信息', err)
-    // message.error('请求异常')
-    return { message: '请求异常' }
-  }
-
-  function handleResponse(response) {
-    return response
-  }
-
-  function get(url,obj) {
-    return axios.get(url, {
-      ...obj
-    })
-    .then(handleResponse)
-    .catch(handleCatch)
-  }
-
-  function post(url,obj) {
-    return axios.post(url, {
-      ...obj
-    })
-    .then(handleResponse)
-    .catch(handleCatch)
-  }
-
-  return {
-    get:get,
-    post:post
-  }
-
-}
-

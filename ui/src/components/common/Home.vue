@@ -43,6 +43,8 @@
                 }
                 this.tagsList = arr;
             })
+
+            this.$axios.get("/api/needtoken")
         }
     }
 </script>

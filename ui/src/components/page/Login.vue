@@ -23,7 +23,6 @@
 </template>
 
 <script>
-    import request from '../../request';
     import { debuglog } from 'util';
     export default {
         data: function(){
@@ -47,7 +46,7 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        request().post(this.loginUrl, {
+                        this.$axios.post(this.loginUrl, {
                             login: this.ruleForm.username,
                             password: this.ruleForm.password
                         }).then(result=>{

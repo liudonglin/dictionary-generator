@@ -26,8 +26,9 @@ func New() *echo.Echo {
 	}
 	r := e.Group("/api")
 	r.Use(middleware.JWTWithConfig(config))
-	r.GET("/test", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+	r.GET("/needtoken", func(c echo.Context) error {
+		result := StandardResult{}
+		return c.JSON(http.StatusOK, result)
 	})
 
 	return e
