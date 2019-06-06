@@ -26,7 +26,7 @@ type jwtUserClaims struct {
 func login(c echo.Context) error {
 	uiUser := &core.User{}
 	body, _ := ioutil.ReadAll(c.Request().Body)
-	json.Unmarshal(body, &uiUser)
+	json.Unmarshal(body, uiUser)
 
 	if uiUser.Login == "" {
 		return &BusinessError{Message: "用户登录名不能为空！"}
@@ -66,7 +66,7 @@ func login(c echo.Context) error {
 		result := StandardResult{}
 		result.Message = "登录成功!"
 		result.Data = t
-		return c.JSON(http.StatusOK, result)
+		return c.JSON(http.StatusOK, &result)
 	}
 	return &BusinessError{Message: "用户登录名或密码错误！"}
 }

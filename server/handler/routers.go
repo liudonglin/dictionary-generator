@@ -31,5 +31,8 @@ func New() *echo.Echo {
 		return c.JSON(http.StatusOK, result)
 	})
 
+	r.POST("/project/save", saveProject)
+	r.POST("/project/list", listProject)
+
 	return e
 }

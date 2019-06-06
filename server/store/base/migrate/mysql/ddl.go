@@ -12,6 +12,10 @@ var migrations = []struct {
 		name: "create-table-users",
 		stmt: createTableUsers,
 	},
+	{
+		name: "create-table-projects",
+		stmt: createTableProjects,
+	},
 }
 
 // Migrate performs the database migration. If the migration fails
@@ -105,4 +109,18 @@ CREATE TABLE IF NOT EXISTS users (
 ,user_last_login    VARCHAR(20)
 ,UNIQUE(user_login)
 );
+`
+
+var createTableProjects = `
+CREATE TABLE IF NOT EXISTS projects (
+	project_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
+   ,project_name         	VARCHAR(20)
+   ,project_language      	VARCHAR(10)
+   ,project_data_base       VARCHAR(10)
+   ,project_orm         	VARCHAR(10)
+   ,project_description     VARCHAR(200)
+   ,project_created       	VARCHAR(20)
+   ,project_updated       	VARCHAR(20)
+   ,UNIQUE(project_name)
+   );
 `
