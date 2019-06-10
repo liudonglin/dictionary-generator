@@ -41,7 +41,7 @@ func (s *userStore) Count() (int64, error) {
 }
 
 // FindLogin returns a user from the datastore by username.
-func (s *userStore) QueryLogin(login string) (*core.User, error) {
+func (s *userStore) FindLogin(login string) (*core.User, error) {
 	out := &core.User{Login: login}
 	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
 		params := toParams(out)

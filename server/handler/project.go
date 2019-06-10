@@ -19,7 +19,7 @@ func saveProject(c echo.Context) error {
 
 	project.Created = time.Now().Format("2006-01-02 15:04:05")
 	project.Updated = project.Created
-	projectStore := store.GetInstance(nil).ProjectStore
+	projectStore := store.Stores().ProjectStore
 
 	//检查项目名称是否重复
 	dbProject, err := projectStore.FindName(project.Name)
@@ -56,7 +56,7 @@ func listProject(c echo.Context) error {
 	body, _ := ioutil.ReadAll(c.Request().Body)
 	json.Unmarshal(body, project)
 
-	projectStore := store.GetInstance(nil).ProjectStore
+	projectStore := store.Stores().ProjectStore
 	list, err := projectStore.List(project.Name)
 	if err != nil {
 		return err

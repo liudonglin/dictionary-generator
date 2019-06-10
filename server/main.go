@@ -26,10 +26,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	// 初始化数据库操作类
+	store.InitStores(_db)
 
 	// 检查是否有初试账户,没有则创建
-	instance := store.GetInstance(_db)
-	if userCount, _ := instance.UserStore.Count(); userCount == 0 {
+	if userCount, _ := store.Stores().UserStore.Count(); userCount == 0 {
 		admin := &core.User{
 			Login:    cfg.Admin.Username,
 			Password: handler.EncryptionPassword(cfg.Admin.Password),
@@ -37,7 +38,7 @@ func main() {
 			Active:   true,
 			Created:  time.Now().Format("2006-01-02 15:04:05"),
 		}
-		instance.UserStore.Create(admin)
+		store.Stores().UserStore.Create(admin)
 	}
 
 	port := 8080

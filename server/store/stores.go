@@ -18,14 +18,17 @@ type Singleton struct {
 var singleton *Singleton
 var once sync.Once
 
-// GetInstance ...
-func GetInstance(db *db.DB) *Singleton {
+// Stores ...
+func Stores() *Singleton {
+	return singleton
+}
+
+// InitStores ...
+func InitStores(db *db.DB) {
 	once.Do(func() {
 		singleton = &Singleton{
 			UserStore:    user.New(db),
 			ProjectStore: project.New(db),
 		}
 	})
-
-	return singleton
 }

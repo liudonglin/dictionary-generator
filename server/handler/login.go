@@ -35,8 +35,8 @@ func login(c echo.Context) error {
 		return &BusinessError{Message: "用户登录密码不能为空！"}
 	}
 
-	dbInstance := store.GetInstance(nil)
-	dbUser, _ := dbInstance.UserStore.QueryLogin(uiUser.Login)
+	dbInstance := store.Stores()
+	dbUser, _ := dbInstance.UserStore.FindLogin(uiUser.Login)
 
 	uiUser.Password = EncryptionPassword(uiUser.Password)
 	if uiUser.Login == dbUser.Login && uiUser.Password == dbUser.Password {

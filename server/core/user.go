@@ -22,5 +22,5 @@ type UserStore interface {
 	// Create persists a new user to the datastore.
 	Create(*User) error
 
-	QueryLogin(login string) (*User, error)
+	FindLogin(login string) (*User, error)
 }
