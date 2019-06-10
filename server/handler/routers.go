@@ -27,12 +27,12 @@ func New() *echo.Echo {
 	r := e.Group("/api")
 	r.Use(middleware.JWTWithConfig(config))
 	r.GET("/needtoken", func(c echo.Context) error {
-		result := StandardResult{}
-		return c.JSON(http.StatusOK, result)
+		return c.JSON(http.StatusOK, &StandardResult{})
 	})
 
 	r.POST("/project/save", saveProject)
 	r.POST("/project/list", listProject)
+	r.POST("/project/delete", deleteProject)
 
 	return e
 }

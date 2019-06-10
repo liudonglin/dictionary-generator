@@ -23,4 +23,6 @@ type ProjectStore interface {
 	FindName(string) (*Project, error)
 
 	List(name string) ([]*Project, error)
+
+	Delete(int64) error
 }

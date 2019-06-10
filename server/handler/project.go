@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 
 	"../core"
@@ -63,5 +64,21 @@ func listProject(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, &StandardResult{
 		Data: list,
+	})
+}
+
+func deleteProject(c echo.Context) error {
+	body, _ := ioutil.ReadAll(c.Request().Body)
+	id, err := strconv.ParseInt(string(body), 10, 64)
+	if err != nil {
+		return err
+	}
+	projectStore := store.Stores().ProjectStore
+	err = projectStore.Delete(id)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, &StandardResult{
+		Message: "删除成功",
 	})
 }

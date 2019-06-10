@@ -1,6 +1,8 @@
 package project
 
 import (
+	"database/sql"
+
 	"../../core"
 	"../base/db"
 )
@@ -44,15 +46,21 @@ func (s *projectStore) Update(project *core.Project) error {
 
 // FindName 根据name返回Project
 func (s *projectStore) FindName(name string) (*core.Project, error) {
-	out := &core.Project{Name: name}
+	out := &core.Project{}
 	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
-		params := toParams(out)
+		params := map[string]interface{}{
+			"project_name": "%" + name + "%",
+		}
 		query, args, err := binder.BindNamed(queryName, params)
 		if err != nil {
 			return err
 		}
 		row := queryer.QueryRow(query, args...)
-		return scanRow(row, out)
+		err = scanRow(row, out)
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		return err
 	})
 	return out, err
 }
@@ -78,12 +86,26 @@ func (s *projectStore) List(name string) ([]*core.Project, error) {
 	return out, err
 }
 
+func (s *projectStore) Delete(id int64) error {
+	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"project_id": id,
+		}
+		stmt, args, err := binder.BindNamed(stmtDelete, params)
+		if err != nil {
+			return err
+		}
+		_, err = execer.Exec(stmt, args...)
+		return err
+	})
+}
+
 func getQueryAllSQL(name string) (queryAll string) {
 	queryAll = queryBase + " FROM projects "
 	if name != "" {
 		queryAll += " Where project_name like :project_name"
 	}
-	queryAll += " ORDER BY project_name "
+	queryAll += " ORDER BY project_created DESC "
 	return queryAll
 }
 
@@ -134,4 +156,8 @@ project_name         	= :project_name
 ,project_description    = :project_description
 ,project_updated        = :project_updated
 WHERE project_id = :project_id
+`
+
+const stmtDelete = `
+DELETE FROM projects WHERE project_id = :project_id
 `

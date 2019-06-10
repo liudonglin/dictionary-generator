@@ -1,6 +1,8 @@
 package user
 
 import (
+	"database/sql"
+
 	"../../core"
 	"../base/db"
 )
@@ -50,7 +52,11 @@ func (s *userStore) FindLogin(login string) (*core.User, error) {
 			return err
 		}
 		row := queryer.QueryRow(query, args...)
-		return scanRow(row, out)
+		err = scanRow(row, out)
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		return err
 	})
 	return out, err
 }

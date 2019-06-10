@@ -34,7 +34,7 @@
                 <el-table-column label="操作" width="200" align="center">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="edit(scope.$index, scope.row)">编辑</el-button>
-                        <el-button type="text" icon="el-icon-delete" class="red" >删除</el-button>
+                        <el-button type="text" icon="el-icon-delete" class="red" @click="del(scope.$index, scope.row)" >删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -87,6 +87,7 @@ import { debuglog } from 'util';
             return {
                 saveUrl: '/api/project/save',
                 listUrl: '/api/project/list',
+                deleteUrl: '/api/project/delete',
                 search_word: '',
                 editVisible: false,
                 loading: false,
@@ -153,6 +154,7 @@ import { debuglog } from 'util';
                     data_base: '',
                     orm:''
                 }
+                this.search()
             },
             edit(index, row) {
                 this.idx = index;
@@ -166,6 +168,15 @@ import { debuglog } from 'util';
                     orm:item.orm
                 }
                 this.editVisible = true;
+            },
+            del(index, row) {
+                this.idx = index;
+                const item = this.data[index];
+                this.$axios.post(this.deleteUrl, item.id).then(result=>{
+                    if (result.success) {
+                        this.search()
+                    }
+                })
             },
             save(formName) {
                 this.$refs[formName].validate((valid) => {
