@@ -60,6 +60,10 @@ axios.interceptors.response.use((response) => {
       Message({type:'error',message:response.data.message || '登录状态无效,请重新登录'})
       router.push("/login")
       break
+    case 403:
+      Message({type:'error',message:response.data.message || '无权访问'})
+      router.push("/403")
+      break
     case 500:
       Message({type:'error',message:response.data.message || '服务器端异常'})
       break
