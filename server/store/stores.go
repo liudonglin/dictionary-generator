@@ -3,10 +3,10 @@ package store
 import (
 	"sync"
 
-	"../core"
-	"../store/base/db"
-	"./project"
-	"./user"
+	"code-server/core"
+	"code-server/store/base/db"
+	"code-server/store/project"
+	"code-server/store/user"
 )
 
 // Singleton ...

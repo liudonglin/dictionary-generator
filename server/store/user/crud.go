@@ -3,8 +3,8 @@ package user
 import (
 	"database/sql"
 
-	"../../core"
-	"../base/db"
+	"code-server/core"
+	"code-server/store/base/db"
 )
 
 // New returns a new UserStore.

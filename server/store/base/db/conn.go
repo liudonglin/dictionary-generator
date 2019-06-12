@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"../migrate/mysql"
-	"../migrate/sqlite"
+	"code-server/store/base/migrate/mysql"
+	"code-server/store/base/migrate/sqlite"
 	"github.com/jmoiron/sqlx"
 )
 

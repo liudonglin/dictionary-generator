@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"../core"
-	"../store"
+	"code-server/core"
+	"code-server/store"
 	"github.com/labstack/echo"
 )
 
