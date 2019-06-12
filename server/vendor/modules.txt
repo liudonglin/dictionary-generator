@@ -1,3 +1,5 @@
+# github.com/360EntSecGroup-Skylar/excelize/v2 v2.0.0
+github.com/360EntSecGroup-Skylar/excelize/v2
 # github.com/dgrijalva/jwt-go v3.2.0+incompatible
 github.com/dgrijalva/jwt-go
 # github.com/go-playground/locales v0.12.1
@@ -32,6 +34,8 @@ github.com/mattn/go-colorable
 github.com/mattn/go-isatty
 # github.com/mattn/go-sqlite3 v1.10.0
 github.com/mattn/go-sqlite3
+# github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
+github.com/mohae/deepcopy
 # github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
 # github.com/valyala/bytebufferpool v1.0.0
