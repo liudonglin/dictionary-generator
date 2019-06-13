@@ -10,6 +10,8 @@ import (
 
 	"code-server/core"
 	"code-server/store"
+	"code-server/validator"
+
 	"github.com/labstack/echo"
 )
 
@@ -17,6 +19,12 @@ func saveProject(c echo.Context) error {
 	project := &core.Project{}
 	body, _ := ioutil.ReadAll(c.Request().Body)
 	json.Unmarshal(body, project)
+
+	//验证字段
+	errs := validator.ValidateStruct(project)
+	if errs != nil {
+		return &BusinessError{Message: errs.Error()}
+	}
 
 	project.Created = time.Now().Format("2006-01-02 15:04:05")
 	project.Updated = project.Created

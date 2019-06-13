@@ -3,10 +3,10 @@ package core
 // Project 项目
 type Project struct {
 	ID          int64  `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Language    string `json:"language"`
-	DataBase    string `json:"data_base"`
+	Name        string `json:"name" validate:"required,max=20"`
+	Description string `json:"description" validate:"max=200"`
+	Language    string `json:"language" validate:"oneof=java csharp"`
+	DataBase    string `json:"data_base" validate:"oneof=mysql sqlserver"`
 	Orm         string `json:"orm"`
 	Created     string `json:"created"`
 	Updated     string `json:"updated"`
