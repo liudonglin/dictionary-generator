@@ -38,10 +38,6 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <div class="pagination">
-                <el-pagination layout="prev, pager, next" :total="1000">
-                </el-pagination>
-            </div>
         </div>
 
         <!-- 编辑弹出框 -->
