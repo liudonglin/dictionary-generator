@@ -1,4 +1,4 @@
-package database
+package dbase
 
 import (
 	"code-server/core"

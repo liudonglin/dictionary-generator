@@ -20,6 +20,10 @@ var migrations = []struct {
 		name: "create-table-database",
 		stmt: createTableDatabBses,
 	},
+	{
+		name: "create-table-tables",
+		stmt: createTableTables,
+	},
 }
 
 // Migrate performs the database migration. If the migration fails
@@ -138,5 +142,17 @@ CREATE TABLE IF NOT EXISTS database (
    ,database_created       	VARCHAR(20)
    ,database_updated       	VARCHAR(20)
    ,UNIQUE(database_name)
+   );
+`
+
+var createTableTables = `
+CREATE TABLE IF NOT EXISTS tables (
+	table_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
+   ,table_name         		VARCHAR(20)
+   ,table_did      			INTEGER
+   ,table_description    	VARCHAR(200)
+   ,table_created       	VARCHAR(20)
+   ,table_updated       	VARCHAR(20)
+   ,UNIQUE(table_name)
    );
 `

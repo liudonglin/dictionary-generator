@@ -5,14 +5,18 @@ import (
 
 	"code-server/core"
 	"code-server/store/base/db"
+	"code-server/store/dbase"
 	"code-server/store/project"
+	"code-server/store/table"
 	"code-server/store/user"
 )
 
 // Singleton ...
 type Singleton struct {
-	UserStore    core.UserStore
-	ProjectStore core.ProjectStore
+	UserStore     core.UserStore
+	ProjectStore  core.ProjectStore
+	DataBaseStore core.DataBaseStore
+	TableStore    core.TableStore
 }
 
 var singleton *Singleton
@@ -27,8 +31,10 @@ func Stores() *Singleton {
 func InitStores(db *db.DB) {
 	once.Do(func() {
 		singleton = &Singleton{
-			UserStore:    user.New(db),
-			ProjectStore: project.New(db),
+			UserStore:     user.New(db),
+			ProjectStore:  project.New(db),
+			DataBaseStore: dbase.New(db),
+			TableStore:    table.New(db),
 		}
 	})
 }

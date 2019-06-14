@@ -4,8 +4,8 @@ package core
 type DataBase struct {
 	ID          int64  `json:"id"`
 	PID         int64  `json:"pid"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Name        string `json:"name" validate:"required,max=20"`
+	Description string `json:"description"  validate:"max=200"`
 	Created     string `json:"created"`
 	Updated     string `json:"updated"`
 }
