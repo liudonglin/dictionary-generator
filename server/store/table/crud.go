@@ -6,7 +6,7 @@ import (
 	"database/sql"
 )
 
-// New returns a new UserStore.
+// New returns a new TableStore.
 func New(db *db.DB) core.TableStore {
 	return &tableStore{db}
 }

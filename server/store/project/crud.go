@@ -7,7 +7,7 @@ import (
 	"code-server/store/base/db"
 )
 
-// New returns a new UserStore.
+// New returns a new ProjectStore.
 func New(db *db.DB) core.ProjectStore {
 	return &projectStore{db}
 }
