@@ -24,6 +24,10 @@ var migrations = []struct {
 		name: "create-table-tables",
 		stmt: createTableTables,
 	},
+	{
+		name: "create-table-columns",
+		stmt: createTableColumns,
+	},
 }
 
 // Migrate performs the database migration. If the migration fails
@@ -155,4 +159,23 @@ CREATE TABLE IF NOT EXISTS tables (
    ,table_updated       	VARCHAR(20)
    ,UNIQUE(table_name)
    );
+`
+
+var createTableColumns = `
+CREATE TABLE IF NOT EXISTS columns (
+	column_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
+   ,column_name         	VARCHAR(20)
+   ,column_tid      		INTEGER
+   ,column_title			VARCHAR(20)
+   ,column_data_type		VARCHAR(10)
+   ,column_pk				INTEGER
+   ,column_null				INTEGER
+   ,column_length			VARCHAR(10)
+   ,column_index			INTEGER
+   ,column_enum    			VARCHAR(100)
+   ,column_description    	VARCHAR(200)
+   ,column_created       	VARCHAR(20)
+   ,column_updated       	VARCHAR(20)
+   ,UNIQUE(column_name)
+);
 `

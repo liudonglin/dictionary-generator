@@ -24,6 +24,10 @@ var migrations = []struct {
 		name: "create-table-tables",
 		stmt: createTableTables,
 	},
+	{
+		name: "create-table-columns",
+		stmt: createTableColumns,
+	},
 }
 
 // Migrate performs the database migration. If the migration fails
@@ -148,11 +152,30 @@ CREATE TABLE IF NOT EXISTS database (
 var createTableTables = `
 CREATE TABLE IF NOT EXISTS tables (
 	table_id            	INTEGER PRIMARY KEY AUTOINCREMENT
-   ,table_name         	TEXT COLLATE NOCASE
-   ,table_did      		INTEGER
-   ,table_description    TEXT
+   ,table_name         		TEXT COLLATE NOCASE
+   ,table_did      			INTEGER
+   ,table_description    	TEXT
    ,table_created       	TEXT
    ,table_updated       	TEXT
    ,UNIQUE(table_name COLLATE NOCASE)
    );
+`
+
+var createTableColumns = `
+CREATE TABLE IF NOT EXISTS columns (
+	column_id            	INTEGER PRIMARY KEY AUTOINCREMENT
+   ,column_name         	TEXT COLLATE NOCASE
+   ,column_tid      		INTEGER
+   ,column_title			TEXT
+   ,column_data_type		TEXT
+   ,column_pk				INTEGER
+   ,column_null				INTEGER
+   ,column_length			TEXT
+   ,column_index			INTEGER
+   ,column_enum    			TEXT
+   ,column_description    	TEXT
+   ,column_created       	TEXT
+   ,column_updated       	TEXT
+   ,UNIQUE(column_name COLLATE NOCASE)
+);
 `

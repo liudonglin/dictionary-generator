@@ -5,6 +5,7 @@ import (
 
 	"code-server/core"
 	"code-server/store/base/db"
+	"code-server/store/column"
 	"code-server/store/dbase"
 	"code-server/store/project"
 	"code-server/store/table"
@@ -17,6 +18,7 @@ type Singleton struct {
 	ProjectStore  core.ProjectStore
 	DataBaseStore core.DataBaseStore
 	TableStore    core.TableStore
+	ColumnStore   core.ColumnStore
 }
 
 var singleton *Singleton
@@ -35,6 +37,7 @@ func InitStores(db *db.DB) {
 			ProjectStore:  project.New(db),
 			DataBaseStore: dbase.New(db),
 			TableStore:    table.New(db),
+			ColumnStore:   column.New(db),
 		}
 	})
 }
