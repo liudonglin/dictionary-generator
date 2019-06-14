@@ -26,6 +26,9 @@
                         <el-form-item label="描述信息">
                             <span>{{ props.row.description }}</span>
                         </el-form-item>
+                        <el-form-item label="数据库">
+                            <el-button type="text" icon="el-icon-edit" @click="addDB(props.row.id)">添加</el-button>
+                        </el-form-item>
                         </el-form>
                     </template>
                 </el-table-column>
@@ -153,8 +156,8 @@ import { debuglog } from 'util';
                 this.search()
             },
             edit(index, row) {
-                this.idx = index;
-                const item = this.data[index];
+                 this.idx = index;
+                 const item = this.data[index];
                 this.form = {
                     id: item.id,
                     name: item.name,
@@ -164,6 +167,10 @@ import { debuglog } from 'util';
                     orm:item.orm
                 }
                 this.editVisible = true;
+                
+            },
+            addDB(pid){
+                this.$router.push('/dbs/'+pid);
             },
             del(index, row) {
                 this.idx = index;

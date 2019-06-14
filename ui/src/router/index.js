@@ -25,6 +25,12 @@ export default new Router({
                     meta: { title: '项目列表' }
                 },
                 {
+                    path: '/dbs/:pid',
+                    component: resolve => require(['../components/page/DBList.vue'], resolve),
+                    meta: { title: '数据库列表' },
+                    props: true
+                },
+                {
                     path: '/404',
                     component: resolve => require(['../components/page/404.vue'], resolve),
                     meta: { title: '404' }
