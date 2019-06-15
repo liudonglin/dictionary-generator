@@ -40,3 +40,9 @@ type StandardResult struct {
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
+
+// PageResult ...
+type PageResult struct {
+	Total int         `json:"total"`
+	List  interface{} `json:"list"`
+}

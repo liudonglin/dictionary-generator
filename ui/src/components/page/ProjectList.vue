@@ -41,6 +41,11 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <div class="pagination">
+                <el-pagination background @current-change="handlePageChange" layout="prev, pager, next" 
+                :total="pageTotal" :page-size="pageSize" :current-page.sync="pageCurrent" :hide-on-single-page="true" >
+                </el-pagination>
+            </div>
         </div>
 
         <!-- 编辑弹出框 -->
@@ -91,6 +96,9 @@ import { debuglog } from 'util';
                 editVisible: false,
                 loading: false,
                 data:[],
+                pageTotal:0,
+                pageSize:10,
+                pageCurrent:1,
                 form: {
                     id: 0,
                     name: '',
@@ -132,9 +140,10 @@ import { debuglog } from 'util';
         methods: {
             search() {
                 this.loading=true
-                this.$axios.post(this.listUrl, {name:this.search_word}).then(result=>{
+                this.$axios.post(this.listUrl, { name:this.search_word, index:this.pageCurrent-1, size:this.pageSize, order_by:"project_created DESC" }).then(result=>{
                     if (result.success) {
-                        this.data=result.data
+                        this.data = result.data.list
+                        this.pageTotal = result.data.total
                     }
                     this.loading=false
                 })
@@ -201,6 +210,9 @@ import { debuglog } from 'util';
                     default:
                         return ''
                 }
+            },
+            handlePageChange(){
+                this.search();
             }
         }
     }

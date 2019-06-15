@@ -61,17 +61,17 @@ func saveProject(c echo.Context) error {
 }
 
 func listProject(c echo.Context) error {
-	project := &core.Project{}
+	q := &core.ProjectQuery{}
 	body, _ := ioutil.ReadAll(c.Request().Body)
-	json.Unmarshal(body, project)
+	json.Unmarshal(body, q)
 
 	projectStore := store.Stores().ProjectStore
-	list, err := projectStore.List(project.Name)
+	list, total, err := projectStore.List(q)
 	if err != nil {
 		return err
 	}
 	return c.JSON(http.StatusOK, &StandardResult{
-		Data: list,
+		Data: &PageResult{Total: total, List: list},
 	})
 }
 

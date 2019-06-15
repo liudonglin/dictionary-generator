@@ -12,6 +12,12 @@ type Project struct {
 	Updated     string `json:"updated"`
 }
 
+// ProjectQuery 分页查询参数
+type ProjectQuery struct {
+	Pager
+	Name string `json:"name"`
+}
+
 // ProjectStore 项目相关操作接口
 type ProjectStore interface {
 
@@ -22,7 +28,7 @@ type ProjectStore interface {
 
 	FindName(string) (*Project, error)
 
-	List(name string) ([]*Project, error)
+	List(q *ProjectQuery) ([]*Project, int, error)
 
 	Delete(int64) error
 }

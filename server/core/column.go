@@ -9,7 +9,7 @@ type Column struct {
 	DataType    string `json:"data_type"`
 	PK          bool   `json:"pk"`
 	Null        bool   `json:"null"`
-	Length      string   `json:"length"`
+	Length      string `json:"length"`
 	Index       bool   `json:"index"`
 	Enum        string `json:"enum"`
 	Description string `json:"description" validate:"max=200"`

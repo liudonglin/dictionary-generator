@@ -10,6 +10,13 @@ type DataBase struct {
 	Updated     string `json:"updated"`
 }
 
+// DBQuery 分页查询参数
+type DBQuery struct {
+	Pager
+	PID  int64  `json:"pid"`
+	Name string `json:"name"`
+}
+
 // DataBaseStore ...
 type DataBaseStore interface {
 	Create(*DataBase) error

@@ -2,6 +2,7 @@ package project
 
 import (
 	"database/sql"
+	"fmt"
 
 	"code-server/core"
 	"code-server/store/base/db"
@@ -65,13 +66,14 @@ func (s *projectStore) FindName(name string) (*core.Project, error) {
 	return out, err
 }
 
-func (s *projectStore) List(name string) ([]*core.Project, error) {
+func (s *projectStore) List(q *core.ProjectQuery) ([]*core.Project, int, error) {
 	var out []*core.Project
+	var total int
 	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
 		params := map[string]interface{}{
-			"project_name": "%" + name + "%",
+			"project_name": "%" + q.Name + "%",
 		}
-		queryAll := getQueryAllSQL(name)
+		queryAll := getQueryListSqlite(q)
 		query, args, err := binder.BindNamed(queryAll, params)
 		if err != nil {
 			return err
@@ -81,9 +83,19 @@ func (s *projectStore) List(name string) ([]*core.Project, error) {
 			return err
 		}
 		out, err = scanRows(rows)
+
+		//查询count
+		queryCount := getQueryCountSqlite(q)
+		query, args, err = binder.BindNamed(queryCount, params)
+		if err != nil {
+			return err
+		}
+		row := queryer.QueryRow(query, args...)
+		scanSingle(row, &total)
+
 		return err
 	})
-	return out, err
+	return out, total, err
 }
 
 func (s *projectStore) Delete(id int64) error {
@@ -100,12 +112,26 @@ func (s *projectStore) Delete(id int64) error {
 	})
 }
 
-func getQueryAllSQL(name string) (queryAll string) {
-	queryAll = queryBase + " FROM projects "
-	if name != "" {
-		queryAll += " Where project_name like :project_name"
+func getQueryCountSqlite(q *core.ProjectQuery) (queryAll string) {
+	queryAll = " Select Count(1) FROM projects Where 1=1 "
+	if q.Name != "" {
+		queryAll += " And project_name like :project_name "
 	}
-	queryAll += " ORDER BY project_created DESC "
+	return queryAll
+}
+
+func getQueryListSqlite(q *core.ProjectQuery) (queryAll string) {
+	queryAll = queryBase + " FROM projects Where 1=1 "
+	if q.Name != "" {
+		queryAll += " And project_name like :project_name "
+	}
+	if q.OrderBy != "" {
+		queryAll += fmt.Sprintf(" ORDER BY %s ", q.OrderBy)
+	} else {
+		queryAll += " ORDER BY project_created DESC "
+	}
+
+	queryAll += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
 	return queryAll
 }
 
