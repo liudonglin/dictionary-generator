@@ -2,7 +2,7 @@
     <div>
         <div class="container">
             <div class="handle-box">
-                <span class="span-text" v-text="project.name"></span>
+                <span class="mr30" v-text="project.name"></span>
                 <el-input v-model="search_word" placeholder="数据库名称" class="handle-input mr10"></el-input>
                 <el-button icon="el-icon-search" circle @click="search" title="查询"></el-button>
                 <el-button type="primary" icon="el-icon-edit" circle @click="editDBVisible=true" title="新增"></el-button>
@@ -59,16 +59,12 @@
                 </el-form-item>
             </el-form>
 
-            <!-- <el-table :data="tables" class="table" ref="tables" v-loading="loading" max-height="350">
-                <el-table-column type="selection" width="55">
-                </el-table-column>
-                <el-table-column prop="name" label="数据表名称" >
-                </el-table-column>
-                <el-table-column prop="comments" label="注解" >
-                </el-table-column>
-            </el-table> -->
-
-            <el-tree :data="connInfo" show-checkbox :props="dbTreeProps"></el-tree>
+            <el-tree :data="connInfo" show-checkbox :props="dbTreeProps" @check-change="handleTreeCheckChange">
+                <span class="custom-tree-node" slot-scope="{ node,data }">
+                    <span>{{ node.label }}</span>
+                    <span class="ml30">{{ data.comments }}</span>
+                </span>
+            </el-tree>
             
             <span slot="footer" class="dialog-footer">
                 <el-button @click="loadConn('connForm')" type="primary" :class="connInfo.length>0?'hide':''">连 接</el-button>
@@ -204,6 +200,9 @@
                     }
                 });
             },
+            handleTreeCheckChange(data, checked, indeterminate) {
+                console.log(data, checked, indeterminate);
+            },
             uploadDB(){
 
             }
@@ -221,8 +220,12 @@
         display: none;
     }
 
-    .span-text{
+    .mr30{
         margin-right: 30px;
+    }
+
+    .ml30{
+        margin-left: 30px;
     }
 
     .handle-box {

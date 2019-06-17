@@ -19,8 +19,17 @@ type dbInfo struct {
 }
 
 type tableInfo struct {
-	TableName string `json:"name"`
-	Comments  string `json:"comments"`
+	TableName string        `json:"name"`
+	DBName    string        `json:"db_name"`
+	Comment   string        `json:"comment"`
+	Columns   []*columnInfo `json:"columns"`
+}
+
+type columnInfo struct {
+	ColumnName string `json:"name"`
+	TableName  string `json:"table_name"`
+	DBName     string `json:"db_name"`
+	Comment    string `json:"comment"`
 }
 
 func scanDB(scanner db.Scanner, dest *dbInfo) error {
@@ -47,23 +56,48 @@ func scanDBs(rows *sql.Rows) ([]*dbInfo, error) {
 func scanTable(scanner db.Scanner, dest *tableInfo) error {
 	return scanner.Scan(
 		&dest.TableName,
-		&dest.Comments,
+		&dest.DBName,
+		&dest.Comment,
 	)
 }
 
 func scanTables(rows *sql.Rows) ([]*tableInfo, error) {
 	defer rows.Close()
 
-	dbs := []*tableInfo{}
+	tabs := []*tableInfo{}
 	for rows.Next() {
-		db := new(tableInfo)
-		err := scanTable(rows, db)
+		tab := new(tableInfo)
+		err := scanTable(rows, tab)
 		if err != nil {
 			return nil, err
 		}
-		dbs = append(dbs, db)
+		tabs = append(tabs, tab)
 	}
-	return dbs, nil
+	return tabs, nil
+}
+
+func scanColumn(scanner db.Scanner, dest *columnInfo) error {
+	return scanner.Scan(
+		&dest.ColumnName,
+		&dest.TableName,
+		&dest.DBName,
+		&dest.Comment,
+	)
+}
+
+func scanColumns(rows *sql.Rows) ([]*columnInfo, error) {
+	defer rows.Close()
+
+	cols := []*columnInfo{}
+	for rows.Next() {
+		col := new(columnInfo)
+		err := scanColumn(rows, col)
+		if err != nil {
+			return nil, err
+		}
+		cols = append(cols, col)
+	}
+	return cols, nil
 }
 
 func loadConnInfo(c echo.Context) error {
@@ -130,6 +164,7 @@ func loadDBInfos(conn *sqlx.DB) ([]*dbInfo, error) {
 func loadTableInfos(conn *sqlx.DB, dbName string) ([]*tableInfo, error) {
 	var tableSelectSQL = fmt.Sprintf(`SELECT 
 	TABLE_NAME as tableName,
+	TABLE_SCHEMA as dbName,
 	TABLE_COMMENT as comments
 	FROM information_schema.TABLES WHERE table_schema='%s'`, dbName)
 
@@ -138,5 +173,25 @@ func loadTableInfos(conn *sqlx.DB, dbName string) ([]*tableInfo, error) {
 		return nil, err
 	}
 	tables, err := scanTables(rows)
+	for _, tab := range tables {
+		columns, _ := loadColumnInfos(conn, tab.DBName, tab.TableName)
+		tab.Columns = columns
+	}
 	return tables, err
+}
+
+func loadColumnInfos(conn *sqlx.DB, dbName, tableName string) ([]*columnInfo, error) {
+	var columnSelectSQL = fmt.Sprintf(`SELECT 
+	COLUMN_NAME as columnName,
+	TABLE_NAME as tableName,
+	TABLE_SCHEMA as dbName,
+	COLUMN_COMMENT as comment
+	FROM information_schema.COLUMNS WHERE table_schema='%s' And TABLE_NAME='%s'`, dbName, tableName)
+
+	rows, err := conn.Query(columnSelectSQL)
+	if err != nil {
+		return nil, err
+	}
+	cols, err := scanColumns(rows)
+	return cols, err
 }
