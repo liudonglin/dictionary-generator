@@ -66,6 +66,27 @@ func (s *projectStore) FindName(name string) (*core.Project, error) {
 	return out, err
 }
 
+// FindID 根据id返回Project
+func (s *projectStore) FindID(id int64) (*core.Project, error) {
+	out := &core.Project{}
+	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"project_id": id,
+		}
+		query, args, err := binder.BindNamed(queryID, params)
+		if err != nil {
+			return err
+		}
+		row := queryer.QueryRow(query, args...)
+		err = scanRow(row, out)
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		return err
+	})
+	return out, err
+}
+
 func (s *projectStore) List(q *core.ProjectQuery) ([]*core.Project, int, error) {
 	var out []*core.Project
 	var total int
@@ -73,7 +94,12 @@ func (s *projectStore) List(q *core.ProjectQuery) ([]*core.Project, int, error) 
 		params := map[string]interface{}{
 			"project_name": "%" + q.Name + "%",
 		}
-		queryAll := getQueryListSqlite(q)
+		queryAll := ""
+		if s.db.Driver() == db.Sqlite {
+			queryAll = getQueryListSqlite(q)
+		} else {
+			panic("mysql query not implement")
+		}
 		query, args, err := binder.BindNamed(queryAll, params)
 		if err != nil {
 			return err
@@ -85,7 +111,12 @@ func (s *projectStore) List(q *core.ProjectQuery) ([]*core.Project, int, error) 
 		out, err = scanRows(rows)
 
 		//查询count
-		queryCount := getQueryCountSqlite(q)
+		queryCount := ""
+		if s.db.Driver() == db.Sqlite {
+			queryCount = getQueryCountSqlite(q)
+		} else {
+			panic("mysql query not implement")
+		}
 		query, args, err = binder.BindNamed(queryCount, params)
 		if err != nil {
 			return err
@@ -150,6 +181,11 @@ project_id
 const queryName = queryBase + `
 FROM projects
 WHERE project_name = :project_name
+`
+
+const queryID = queryBase + `
+FROM projects
+WHERE project_id = :project_id
 `
 
 const stmtInsert = `

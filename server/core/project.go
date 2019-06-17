@@ -28,6 +28,8 @@ type ProjectStore interface {
 
 	FindName(string) (*Project, error)
 
+	FindID(int64) (*Project, error)
+
 	List(q *ProjectQuery) ([]*Project, int, error)
 
 	Delete(int64) error

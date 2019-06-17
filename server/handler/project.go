@@ -60,6 +60,23 @@ func saveProject(c echo.Context) error {
 	})
 }
 
+func loadProject(c echo.Context) error {
+	project := &core.Project{}
+	body, _ := ioutil.ReadAll(c.Request().Body)
+	json.Unmarshal(body, project)
+
+	projectStore := store.Stores().ProjectStore
+
+	dbProject, err := projectStore.FindID(project.ID)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, &StandardResult{
+		Data:    dbProject,
+	})
+}
+
 func listProject(c echo.Context) error {
 	q := &core.ProjectQuery{}
 	body, _ := ioutil.ReadAll(c.Request().Body)

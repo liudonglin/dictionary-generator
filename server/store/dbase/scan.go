@@ -32,6 +32,12 @@ func scanRow(scanner db.Scanner, dest *core.DataBase) error {
 	)
 }
 
+func scanSingle(scanner db.Scanner, dest interface{}) error {
+	return scanner.Scan(
+		dest,
+	)
+}
+
 // helper function scans the sql.Row and copies the column
 // values to the destination object.
 func scanRows(rows *sql.Rows) ([]*core.DataBase, error) {

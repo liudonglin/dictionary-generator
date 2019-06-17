@@ -4,6 +4,7 @@ import (
 	"code-server/core"
 	"code-server/store/base/db"
 	"database/sql"
+	"fmt"
 )
 
 // New returns a new DataBaseStore.
@@ -64,8 +65,76 @@ func (s *dataBaseStore) FindNameAndPID(pid int64, name string) (*core.DataBase, 
 	return out, err
 }
 
-func (s *dataBaseStore) List(name string) ([]*core.DataBase, error) {
-	panic("not implement")
+func (s *dataBaseStore) List(q *core.DBQuery) ([]*core.DataBase, int, error) {
+	var out []*core.DataBase
+	var total int
+	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"database_name": "%" + q.Name + "%",
+			"database_pid":  q.PID,
+		}
+		queryAll := ""
+		if s.db.Driver() == db.Sqlite {
+			queryAll = getQueryListSqlite(q)
+		} else {
+			panic("mysql query not implement")
+		}
+		query, args, err := binder.BindNamed(queryAll, params)
+		if err != nil {
+			return err
+		}
+		rows, err := queryer.Query(query, args...)
+		if err != nil {
+			return err
+		}
+		out, err = scanRows(rows)
+
+		//查询count
+		queryCount := ""
+		if s.db.Driver() == db.Sqlite {
+			queryCount = getQueryCountSqlite(q)
+		} else {
+			panic("mysql query not implement")
+		}
+		query, args, err = binder.BindNamed(queryCount, params)
+		if err != nil {
+			return err
+		}
+		row := queryer.QueryRow(query, args...)
+		scanSingle(row, &total)
+
+		return err
+	})
+	return out, total, err
+}
+
+func getQueryCountSqlite(q *core.DBQuery) (queryAll string) {
+	queryAll = " Select Count(1) FROM database Where 1=1 "
+	if q.Name != "" {
+		queryAll += " And database_name like :database_name "
+	}
+	if q.PID > 0 {
+		queryAll += " And database_pid = :database_pid "
+	}
+	return queryAll
+}
+
+func getQueryListSqlite(q *core.DBQuery) (queryAll string) {
+	queryAll = queryBase + " FROM database Where 1=1 "
+	if q.Name != "" {
+		queryAll += " And database_name like :database_name "
+	}
+	if q.PID > 0 {
+		queryAll += " And database_pid = :database_pid "
+	}
+	if q.OrderBy != "" {
+		queryAll += fmt.Sprintf(" ORDER BY %s ", q.OrderBy)
+	} else {
+		queryAll += " ORDER BY database_created DESC "
+	}
+
+	queryAll += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
+	return queryAll
 }
 
 func (s *dataBaseStore) Delete(id int64) error {
