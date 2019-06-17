@@ -165,8 +165,8 @@ import { debuglog } from 'util';
                 this.search()
             },
             edit(index, row) {
-                 this.idx = index;
-                 const item = this.data[index];
+                this.idx = index;
+                const item = this.data[index];
                 this.form = {
                     id: item.id,
                     name: item.name,
