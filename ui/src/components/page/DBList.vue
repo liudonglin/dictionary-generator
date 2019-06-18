@@ -28,7 +28,7 @@
                             <span>数据库 : {{db.name}}</span>
                         </el-col>
                         <el-col :span="2" :offset="14">
-                            <el-button type="primary" icon="el-icon-edit" circle title="新增"></el-button>
+                            <el-button type="primary" icon="el-icon-edit" circle title="编辑"></el-button>
                             <el-button type="danger" icon="el-icon-delete" circle></el-button>
                         </el-col>
                     </template>
@@ -42,11 +42,12 @@
                                 <el-input v-model="table.description"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button type="primary" >保存</el-button>
+                                <el-button type="primary" icon="el-icon-check" circle title="保存"></el-button>
+                                <el-button type="danger" icon="el-icon-delete" circle></el-button>
                             </el-form-item>
                         </el-form>
 
-                        <el-table :data="table.columns">
+                        <el-table :data="table.columns" border>
                             <el-table-column prop="name" label="列名" sortable >
                             </el-table-column>
                             <el-table-column prop="title" label="描述" sortable >
@@ -63,6 +64,13 @@
                             </el-table-column>
                         </el-table>
                     </div>
+
+                <div class="button-center">
+                    <el-button class="mb20 mt20" type="primary" size="medium" icon="el-icon-plus" circle title="新增数据表">
+                    </el-button>
+                </div>
+                
+
                 </el-collapse-item>
             </el-collapse>
             <div class="pagination">
@@ -358,6 +366,14 @@
 
     .mb20{
         margin-bottom: 20px;
+    }
+
+    .mt20{
+        margin-top: 20px;
+    }
+
+    .button-center{
+        text-align:center
     }
 
     .handle-box {
