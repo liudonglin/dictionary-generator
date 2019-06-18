@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo"
 )
@@ -24,8 +23,6 @@ func saveDataBase(c echo.Context) error {
 		return &BusinessError{Message: errs.Error()}
 	}
 
-	postEntity.Created = time.Now().Format("2006-01-02 15:04:05")
-	postEntity.Updated = postEntity.Created
 	dbStore := store.Stores().DataBaseStore
 
 	//检查名称是否重复
@@ -72,5 +69,46 @@ func listDataBase(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, &StandardResult{
 		Data: &PageResult{Total: total, List: list},
+	})
+}
+
+func loadDataBase(c echo.Context) error {
+	postEntity := &core.DataBase{}
+	body, _ := ioutil.ReadAll(c.Request().Body)
+	json.Unmarshal(body, postEntity)
+
+	dbStore := store.Stores().DataBaseStore
+	dbEntity, _ := dbStore.FindID(postEntity.ID)
+
+	if dbEntity.ID == 0 {
+		return &BusinessError{Message: fmt.Sprintf("编号为%d的数据库不存在!", postEntity.ID)}
+	}
+
+	tableStore := store.Stores().TableStore
+
+	tables, _, _ := tableStore.List(&core.TableQuery{
+		DID: dbEntity.ID,
+		Pager: core.Pager{
+			Index: 0,
+			Size:  9999999,
+		},
+	})
+
+	dbEntity.Tables = tables
+
+	columnStore := store.Stores().ColumnStore
+	for _, table := range tables {
+		columns, _, _ := columnStore.List(&core.ColumnQuery{
+			TID: table.ID,
+			Pager: core.Pager{
+				Index: 0,
+				Size:  9999999,
+			},
+		})
+		table.Columns = columns
+	}
+
+	return c.JSON(http.StatusOK, &StandardResult{
+		Data: dbEntity,
 	})
 }

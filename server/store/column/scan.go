@@ -27,6 +27,12 @@ func toParams(u *core.Column) map[string]interface{} {
 	}
 }
 
+func scanSingle(scanner db.Scanner, dest interface{}) error {
+	return scanner.Scan(
+		dest,
+	)
+}
+
 // helper function scans the sql.Row and copies the column
 // values to the destination object.
 func scanRow(scanner db.Scanner, dest *core.Column) error {

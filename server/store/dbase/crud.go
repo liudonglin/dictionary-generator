@@ -5,6 +5,7 @@ import (
 	"code-server/store/base/db"
 	"database/sql"
 	"fmt"
+	"time"
 )
 
 // New returns a new DataBaseStore.
@@ -17,6 +18,8 @@ type dataBaseStore struct {
 }
 
 func (s *dataBaseStore) Create(_db *core.DataBase) error {
+	_db.Created = time.Now().Format("2006-01-02 15:04:05")
+	_db.Updated = _db.Created
 	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
 		params := toParams(_db)
 		stmt, args, err := binder.BindNamed(stmtInsert, params)
@@ -33,6 +36,7 @@ func (s *dataBaseStore) Create(_db *core.DataBase) error {
 }
 
 func (s *dataBaseStore) Update(_db *core.DataBase) error {
+	_db.Updated = time.Now().Format("2006-01-02 15:04:05")
 	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
 		params := toParams(_db)
 		stmt, args, err := binder.BindNamed(stmtUpdate, params)
@@ -48,10 +52,30 @@ func (s *dataBaseStore) FindNameAndPID(pid int64, name string) (*core.DataBase, 
 	out := &core.DataBase{}
 	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
 		params := map[string]interface{}{
-			"database_name": "%" + name + "%",
+			"database_name": name,
 			"database_pid":  pid,
 		}
 		query, args, err := binder.BindNamed(queryNameAndPID, params)
+		if err != nil {
+			return err
+		}
+		row := queryer.QueryRow(query, args...)
+		err = scanRow(row, out)
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		return err
+	})
+	return out, err
+}
+
+func (s *dataBaseStore) FindID(id int64) (*core.DataBase, error) {
+	out := &core.DataBase{}
+	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"database_id": id,
+		}
+		query, args, err := binder.BindNamed(queryID, params)
 		if err != nil {
 			return err
 		}
@@ -164,6 +188,11 @@ database_id
 const queryNameAndPID = queryBase + `
 FROM database
 WHERE database_name = :database_name and database_pid = :database_pid 
+`
+
+const queryID = queryBase + `
+FROM database
+WHERE database_id = :database_id 
 `
 
 const stmtInsert = `

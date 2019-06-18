@@ -5,7 +5,7 @@
             <div class="handle-box">
                 <el-input v-model="search_word" placeholder="项目名称" class="handle-input mr10"></el-input>
                 <el-button icon="el-icon-search" circle @click="search" title="查询"></el-button>
-                <el-button type="primary" icon="el-icon-edit" circle @click="add" title="新增"></el-button>
+                <el-button type="primary" icon="el-icon-plus" circle @click="add" title="新增"></el-button>
             </div>
             <el-table :data="data" class="table" ref="multipleTable" v-loading="loading">
                 <el-table-column type="expand">

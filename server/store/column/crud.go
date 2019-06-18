@@ -4,6 +4,8 @@ import (
 	"code-server/core"
 	"code-server/store/base/db"
 	"database/sql"
+	"fmt"
+	"time"
 )
 
 // New returns a new ColumnStore.
@@ -16,6 +18,8 @@ type columnStore struct {
 }
 
 func (s *columnStore) Create(column *core.Column) error {
+	column.Created = time.Now().Format("2006-01-02 15:04:05")
+	column.Updated = column.Created
 	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
 		params := toParams(column)
 		stmt, args, err := binder.BindNamed(stmtInsert, params)
@@ -32,6 +36,7 @@ func (s *columnStore) Create(column *core.Column) error {
 }
 
 func (s *columnStore) Update(column *core.Column) error {
+	column.Updated = time.Now().Format("2006-01-02 15:04:05")
 	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
 		params := toParams(column)
 		stmt, args, err := binder.BindNamed(stmtUpdate, params)
@@ -47,7 +52,7 @@ func (s *columnStore) FindNameAndTID(tid int64, name string) (*core.Column, erro
 	out := &core.Column{}
 	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
 		params := map[string]interface{}{
-			"column_name": "%" + name + "%",
+			"column_name": name,
 			"column_tid":  tid,
 		}
 		query, args, err := binder.BindNamed(queryNameAndTID, params)
@@ -64,8 +69,76 @@ func (s *columnStore) FindNameAndTID(tid int64, name string) (*core.Column, erro
 	return out, err
 }
 
-func (s *columnStore) List(name string) ([]*core.Column, error) {
-	panic("not implement")
+func (s *columnStore) List(q *core.ColumnQuery) ([]*core.Column, int, error) {
+	var out []*core.Column
+	var total int
+	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"column_name": "%" + q.Name + "%",
+			"column_tid":  q.TID,
+		}
+		queryAll := ""
+		if s.db.Driver() == db.Sqlite {
+			queryAll = getQueryListSqlite(q)
+		} else {
+			panic("mysql query not implement")
+		}
+		query, args, err := binder.BindNamed(queryAll, params)
+		if err != nil {
+			return err
+		}
+		rows, err := queryer.Query(query, args...)
+		if err != nil {
+			return err
+		}
+		out, err = scanRows(rows)
+
+		//查询count
+		queryCount := ""
+		if s.db.Driver() == db.Sqlite {
+			queryCount = getQueryCountSqlite(q)
+		} else {
+			panic("mysql query not implement")
+		}
+		query, args, err = binder.BindNamed(queryCount, params)
+		if err != nil {
+			return err
+		}
+		row := queryer.QueryRow(query, args...)
+		scanSingle(row, &total)
+
+		return err
+	})
+	return out, total, err
+}
+
+func getQueryCountSqlite(q *core.ColumnQuery) (querySQL string) {
+	querySQL = " Select Count(1) FROM columns Where 1=1 "
+	if q.Name != "" {
+		querySQL += " And column_name like :column_name "
+	}
+	if q.TID > 0 {
+		querySQL += " And column_tid = :column_tid "
+	}
+	return querySQL
+}
+
+func getQueryListSqlite(q *core.ColumnQuery) (querySQL string) {
+	querySQL = queryBase + " FROM columns Where 1=1 "
+	if q.Name != "" {
+		querySQL += " And column_name like :column_name "
+	}
+	if q.TID > 0 {
+		querySQL += " And column_tid = :column_tid "
+	}
+	if q.OrderBy != "" {
+		querySQL += fmt.Sprintf(" ORDER BY %s ", q.OrderBy)
+	} else {
+		querySQL += " ORDER BY column_created DESC "
+	}
+
+	querySQL += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
+	return querySQL
 }
 
 func (s *columnStore) Delete(id int64) error {
@@ -105,7 +178,7 @@ WHERE column_name = :column_name and column_tid = :column_tid
 `
 
 const stmtInsert = `
-INSERT INTO tables (
+INSERT INTO columns (
  column_name
 ,column_tid
 ,column_title

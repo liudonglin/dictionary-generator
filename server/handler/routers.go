@@ -37,8 +37,10 @@ func New() *echo.Echo {
 
 	r.POST("/database/save", saveDataBase)
 	r.POST("/database/list", listDataBase)
+	r.POST("/database/load", loadDataBase)
 
 	r.POST("/conn/loaddb", loadConnInfo)
+	r.POST("/conn/savedbs", saveConnInfo)
 
 	return e
 }

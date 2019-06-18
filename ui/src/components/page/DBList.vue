@@ -2,23 +2,75 @@
     <div>
         <div class="container">
             <div class="handle-box">
-                <span class="mr30" v-text="project.name"></span>
+                <el-row class="mb20">
+                    <el-form :inline="true" >
+                        <el-col :span="12">
+                        <el-form-item label="项目名称:">
+                            <el-input v-model="project.name" :disabled="true"></el-input>
+                        </el-form-item>
+                        </el-col>
+                        <el-form-item label="数据库:">
+                            <el-input v-model="project.data_base" :disabled="true"></el-input>
+                        </el-form-item>
+                    </el-form>
+                </el-row>
                 <el-input v-model="search_word" placeholder="数据库名称" class="handle-input mr10"></el-input>
                 <el-button icon="el-icon-search" circle @click="search" title="查询"></el-button>
-                <el-button type="primary" icon="el-icon-edit" circle @click="editDBVisible=true" title="新增"></el-button>
-                <el-button type="primary" icon="el-icon-connection" circle @click="editConnVisible=true" title="连接"></el-button>
-                <el-button type="primary" icon="el-icon-upload" circle @click="uploadDB" title="上传"></el-button>
+                <el-button type="primary" icon="el-icon-plus" circle @click="editDBVisible=true" title="新增"></el-button>
+                <el-button type="primary" icon="el-icon-connection" circle @click="editConnVisible=true" title="数据库倒入"></el-button>
+                <el-button type="primary" icon="el-icon-upload" circle @click="uploadDB" title="excel导入"></el-button>
             </div>
-            <el-table :data="dbData" class="table" ref="DBTable" v-loading="loading">
-                <el-table-column prop="name" label="数据库名称" sortable >
 
-                </el-table-column>
-            </el-table>
+            <el-collapse @change="handleDBCollapseChange" accordion v-loading="collapseLoading">
+                <el-collapse-item v-for="db in dbData" :key="db.id" :name="db.id">
+                    <template slot="title">
+                        <el-col :span="8">
+                            <span>数据库 : {{db.name}}</span>
+                        </el-col>
+                        <el-col :span="2" :offset="14">
+                            <el-button type="primary" icon="el-icon-edit" circle title="新增"></el-button>
+                            <el-button type="danger" icon="el-icon-delete" circle></el-button>
+                        </el-col>
+                    </template>
+
+                    <div v-for="table in db.tables" :key="table.id" class="mb20">
+                        <el-form :inline="true">
+                            <el-form-item label="表 名:">
+                                <el-input v-model="table.name" ></el-input>
+                            </el-form-item>
+                            <el-form-item label="描 述:">
+                                <el-input v-model="table.description"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" >保存</el-button>
+                            </el-form-item>
+                        </el-form>
+
+                        <el-table :data="table.columns">
+                            <el-table-column prop="name" label="列名" sortable >
+                            </el-table-column>
+                            <el-table-column prop="title" label="描述" sortable >
+                            </el-table-column>
+                            <el-table-column prop="data_type" label="数据类型" sortable >
+                            </el-table-column>
+                            <el-table-column prop="name" label="项目名称" sortable >
+                            </el-table-column>
+                            <el-table-column label="操作" width="200" align="center">
+                                <template>
+                                    <el-button type="text" icon="el-icon-edit" >编辑</el-button>
+                                    <el-button type="text" icon="el-icon-delete" class="red" >删除</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                </el-collapse-item>
+            </el-collapse>
             <div class="pagination">
                 <el-pagination background @current-change="search" layout="prev, pager, next" 
                 :total="pageTotal" :page-size="pageSize" :current-page.sync="pageCurrent" :hide-on-single-page="true" >
                 </el-pagination>
             </div>
+
         </div>
 
         <!-- 编辑弹出框 -->
@@ -59,17 +111,17 @@
                 </el-form-item>
             </el-form>
 
-            <el-tree :data="connInfo" show-checkbox :props="dbTreeProps" @check-change="handleTreeCheckChange">
+            <el-tree :data="connInfo" show-checkbox :props="dbTreeProps" v-loading="treeLoading" @check-change="handleTreeCheckChange">
                 <span class="custom-tree-node" slot-scope="{ node,data }">
                     <span>{{ node.label }}</span>
-                    <span class="ml30">{{ data.comments }}</span>
+                    <span>{{ data.comment }}</span>
                 </span>
             </el-tree>
             
             <span slot="footer" class="dialog-footer">
                 <el-button @click="loadConn('connForm')" type="primary" :class="connInfo.length>0?'hide':''">连 接</el-button>
                 <el-button @click="closeConnForm('connForm')" :class="connInfo.length==0?'hide':''">取 消</el-button>
-                <el-button type="primary" :class="connInfo.length==0?'hide':''">确 定</el-button>
+                <el-button @click="saveConn" type="primary" :class="connInfo.length==0?'hide':''">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -88,10 +140,14 @@
         data() {
             return {
                 loadConnUrl:'/api/conn/loaddb',
+                saveConnUrl:'/api/conn/savedbs',
                 loadProjectUrl: '/api//project/load',
                 saveDBUrl: '/api/database/save',
                 listDBUrl:'/api/database/list',
+                loadDBUrl:'/api/database/load',
                 loading: false,
+                treeLoading:false,
+                collapseLoading:false,
                 pageTotal:0,
                 pageSize:10,
                 pageCurrent:1,
@@ -101,7 +157,8 @@
                 project:{},
                 name: '',
                 dbData:[],
-                connInfo:[],
+                connInfo:[], 
+                connSelectInfo:new Map(),
                 dbTreeProps:{
                     children: 'tables',
                     label: 'name'
@@ -186,22 +243,93 @@
                 this.connForm.user="";
                 this.connForm.password="";
                 this.connInfo=[];
+                this.connSelectInfo.clear();
                 this.$refs[formName].resetFields();
             },
             loadConn(formName){
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        this.treeLoading = true
                         this.connForm.data_base = this.project.data_base
                         this.$axios.post(this.loadConnUrl, this.connForm).then(result=>{
                             if (result.success) {
                                 this.connInfo = result.data
                             }
+                            this.treeLoading = false
                         })
                     }
                 });
             },
+            handleDBCollapseChange(val){
+                if (val!='') {
+                    let _db ={}
+                    this.dbData.forEach(function(value,index){
+                        if (value.id==val){
+                            _db = value;
+                        }
+                    })
+
+                    if (_db.tables==null) {
+                        this.collapseLoading = true
+                        this.$axios.post(this.loadDBUrl, {id:_db.id}).then(result=>{
+                            if (result.success) {
+                                _db.tables = result.data.tables
+                            }
+                            this.collapseLoading = false
+                        })
+                    }
+                }
+            },
             handleTreeCheckChange(data, checked, indeterminate) {
-                console.log(data, checked, indeterminate);
+                let key = ''
+                let _checked = false
+
+                if (data.tables!=null) {
+                    key = data.name
+                    _checked = indeterminate
+                } else {
+                    key = data.db_name+'_'+data.name
+                    _checked = checked
+                }
+                
+                if (_checked) {
+                    this.connSelectInfo.set(key,data)
+                } else {
+                    this.connSelectInfo.delete(key)
+                }
+            },
+            saveConn(){
+                if (this.connSelectInfo.size==0){
+                    return
+                }
+
+                this.treeLoading = true
+
+                let topDBs = new Map()
+                let _pid = this.form.pid
+                this.connSelectInfo.forEach(function(value,key){
+                    if (value.tables!=null) {
+                        topDBs.set(key,{ name: value.name, pid: _pid, tables: [] })
+                    }
+                })
+                this.connSelectInfo.forEach(function(value,key){
+                    if (value.tables==null) {
+                        let topDB = topDBs.get(value.db_name)
+                        topDB.tables.push(value)
+                    }
+                })
+
+                let postDB = []
+                topDBs.forEach(function(value,key){
+                    postDB.push(value)
+                })
+
+                this.$axios.post(this.saveConnUrl, postDB).then(result=>{
+                    if (result.success) {
+                        this.search()
+                    }
+                    this.treeLoading = false
+                })
             },
             uploadDB(){
 
@@ -226,6 +354,10 @@
 
     .ml30{
         margin-left: 30px;
+    }
+
+    .mb20{
+        margin-bottom: 20px;
     }
 
     .handle-box {

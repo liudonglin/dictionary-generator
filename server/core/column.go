@@ -17,6 +17,13 @@ type Column struct {
 	Updated     string `json:"updated"`
 }
 
+// ColumnQuery 分页查询参数
+type ColumnQuery struct {
+	Pager
+	TID  int64  `json:"tid"`
+	Name string `json:"name"`
+}
+
 // ColumnStore ...
 type ColumnStore interface {
 	Create(*Column) error
@@ -25,7 +32,7 @@ type ColumnStore interface {
 
 	FindNameAndTID(int64, string) (*Column, error)
 
-	List(name string) ([]*Column, error)
+	List(*ColumnQuery) ([]*Column, int, error)
 
 	Delete(int64) error
 }
