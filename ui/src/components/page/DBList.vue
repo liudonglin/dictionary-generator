@@ -49,9 +49,9 @@
 
                         <el-table :data="table.columns" border>
                             <el-table-column prop="pk" label="主键" width="80">
-                            <template slot-scope="scope">
-                                <i class="el-icon-success" v-if="scope.row.pk"></i>
-                            </template>
+                                <template slot-scope="scope">
+                                    <i class="el-icon-success" v-if="scope.row.pk"></i>
+                                </template>
                             </el-table-column>
                             <el-table-column prop="ai" label="自增" width="80" :formatter="aiFormatter">
                             </el-table-column>
@@ -64,6 +64,26 @@
                             <el-table-column prop="null" label="可空" width="80" :formatter="nullFormatter">
                             </el-table-column>
                             <el-table-column prop="index" label="索引列" width="80" :formatter="indexFormatter">
+                            </el-table-column>
+                            <el-table-column label="枚举" width="120">
+                                <template slot-scope="scope">
+                                    <div>
+                                        <el-popover
+                                        placement="top-start"
+                                        width="240"
+                                        trigger="manual"
+                                        v-model="scope.row.enum_visible">
+                                        <p>交易状态</p>
+                                        <el-table :data="scope.row.enum_list">
+                                            <el-table-column width="80" property="key" label="字段"></el-table-column>
+                                            <el-table-column width="80" property="value" label="值"></el-table-column>
+                                            <el-table-column width="80" property="des" label="描述"></el-table-column>
+                                        </el-table>
+                                        <el-button type="text" icon="el-icon-message"
+                                            slot="reference" @click="handleEnumVisibleChange(scope.row)">展示</el-button>
+                                        </el-popover>
+                                    </div>
+                                </template>
                             </el-table-column>
                             <el-table-column prop="title" label="描述" >
                             </el-table-column>
@@ -152,6 +172,7 @@
 
 <script>
     import bus from '../common/bus';
+import { debuglog } from 'util';
     export default {
         props: {
             pid: {
@@ -300,7 +321,20 @@
                         this.collapseLoading = true
                         this.$axios.post(this.loadDBUrl, {id:_db.id}).then(result=>{
                             if (result.success) {
-                                _db.tables = result.data.tables
+                                _db.tables = result.data.tables.map(table => {
+                                    table.columns = table.columns.map(col => 
+                                    {
+                                        return{
+                                            ...col,
+                                            enum_list:[
+                                                {key:"Fail", value:"0" ,des:"失败" },
+                                                {key:"Hading", value:"1" ,des:"处理中" },
+                                                {key:"Success", value:"2" ,des:"成功" }
+                                            ]
+                                        }
+                                    })
+                                    return table
+                                })
                             }
                             this.collapseLoading = false
                         })
@@ -348,6 +382,13 @@
                     }
                     this.treeLoading = false
                 })
+            },
+            handleEnumVisibleChange(row) {
+                if (row.enum_visible){
+                    row.enum_visible = false
+                } else {
+                    row.enum_visible = true
+                }
             },
             nullFormatter(row, column) {
                 if (row.null==true){
