@@ -48,15 +48,26 @@
                         </el-form>
 
                         <el-table :data="table.columns" border>
-                            <el-table-column prop="name" label="列名" sortable >
+                            <el-table-column prop="pk" label="主键" width="80">
+                            <template slot-scope="scope">
+                                <i class="el-icon-success" v-if="scope.row.pk"></i>
+                            </template>
                             </el-table-column>
-                            <el-table-column prop="title" label="描述" sortable >
+                            <el-table-column prop="ai" label="自增" width="80" :formatter="aiFormatter">
                             </el-table-column>
-                            <el-table-column prop="data_type" label="数据类型" sortable >
+                            <el-table-column prop="name" label="列名" width="120">
                             </el-table-column>
-                            <el-table-column prop="name" label="项目名称" sortable >
+                            <el-table-column prop="data_type" label="数据类型" width="100" >
                             </el-table-column>
-                            <el-table-column label="操作" width="200" align="center">
+                            <el-table-column prop="length" label="数据长度" width="120" >
+                            </el-table-column>
+                            <el-table-column prop="null" label="可空" width="80" :formatter="nullFormatter">
+                            </el-table-column>
+                            <el-table-column prop="index" label="索引列" width="80" :formatter="indexFormatter">
+                            </el-table-column>
+                            <el-table-column prop="title" label="描述" >
+                            </el-table-column>
+                            <el-table-column label="操作" width="160" align="center">
                                 <template>
                                     <el-button type="text" icon="el-icon-edit" >编辑</el-button>
                                     <el-button type="text" icon="el-icon-delete" class="red" >删除</el-button>
@@ -108,8 +119,11 @@
                 <el-form-item label="数据库类型:">
                     <el-input v-model="project.data_base" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="HostPort:" prop="host_port">
-                    <el-input v-model="connForm.host_port"></el-input>
+                <el-form-item label="Host:" prop="host">
+                    <el-input v-model="connForm.host"></el-input>
+                </el-form-item>
+                <el-form-item label="Port:" prop="port">
+                    <el-input v-model="connForm.port"></el-input>
                 </el-form-item>
                 <el-form-item label="登录账户:" prop="user">
                     <el-input v-model="connForm.user"></el-input>
@@ -147,8 +161,8 @@
         },
         data() {
             return {
-                loadConnUrl:'/api/conn/loaddb',
-                saveConnUrl:'/api/conn/savedbs',
+                loadConnUrl:'/api/dbimport/loaddb',
+                saveConnUrl:'/api/dbimport/savedbs',
                 loadProjectUrl: '/api//project/load',
                 saveDBUrl: '/api/database/save',
                 listDBUrl:'/api/database/list',
@@ -178,7 +192,8 @@
                     description: ''
                 },
                 connForm: {
-                    host_port:'',
+                    host:'',
+                    port:'',
                     user:'',
                     password:''
                 },
@@ -189,8 +204,11 @@
                     db_name: [
                         { required: true, message: '请输入数据库名称', trigger: 'blur' }
                     ],
-                    host_port: [
-                        { required: true, message: '请输入host:port', trigger: 'blur' }
+                    host: [
+                        { required: true, message: '请输入host', trigger: 'blur' }
+                    ],
+                    port: [
+                        { required: true, message: '请输入port', trigger: 'blur' }
                     ],
                     user: [
                         { required: true, message: '请输入登录账户', trigger: 'blur' }
@@ -247,7 +265,8 @@
             },
             closeConnForm(formName){
                 this.editConnVisible = false
-                this.connForm.host_port="";
+                this.connForm.host="";
+                this.connForm.port="";
                 this.connForm.user="";
                 this.connForm.password="";
                 this.connInfo=[];
@@ -290,17 +309,12 @@
             },
             handleTreeCheckChange(data, checked, indeterminate) {
                 let key = ''
-                let _checked = false
-
-                if (data.tables!=null) {
-                    key = data.name
-                    _checked = indeterminate
-                } else {
+                if (data.tables==null) {
                     key = data.db_name+'_'+data.name
-                    _checked = checked
+                } else {
+                    return
                 }
-                
-                if (_checked) {
+                if (checked) {
                     this.connSelectInfo.set(key,data)
                 } else {
                     this.connSelectInfo.delete(key)
@@ -315,16 +329,12 @@
 
                 let topDBs = new Map()
                 let _pid = this.form.pid
-                this.connSelectInfo.forEach(function(value,key){
-                    if (value.tables!=null) {
-                        topDBs.set(key,{ name: value.name, pid: _pid, tables: [] })
-                    }
+                this.connSelectInfo.forEach(function(value,key) {
+                    topDBs.set(value.db_name,{ name: value.db_name, pid: _pid, tables: [] })
                 })
                 this.connSelectInfo.forEach(function(value,key){
-                    if (value.tables==null) {
-                        let topDB = topDBs.get(value.db_name)
-                        topDB.tables.push(value)
-                    }
+                    let topDB = topDBs.get(value.db_name)
+                    topDB.tables.push(value)
                 })
 
                 let postDB = []
@@ -338,6 +348,24 @@
                     }
                     this.treeLoading = false
                 })
+            },
+            nullFormatter(row, column) {
+                if (row.null==true){
+                    return "YES"
+                }
+                return "NO"
+            },
+            aiFormatter(row, column) {
+                if (row.ai==true){
+                    return "YES"
+                }
+                return "NO"
+            },
+            indexFormatter(row, column) {
+                if (row.index==true){
+                    return "YES"
+                }
+                return "NO"
             },
             uploadDB(){
 

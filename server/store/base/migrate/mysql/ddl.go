@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS database (
    ,database_description    VARCHAR(200)
    ,database_created       	VARCHAR(20)
    ,database_updated       	VARCHAR(20)
-   ,UNIQUE(database_name)
+   ,UNIQUE(database_pid, database_name)
    );
 `
 
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS tables (
    ,table_description    	VARCHAR(200)
    ,table_created       	VARCHAR(20)
    ,table_updated       	VARCHAR(20)
-   ,UNIQUE(table_name)
+   ,UNIQUE(table_did, table_name)
    );
 `
 
@@ -169,6 +169,7 @@ CREATE TABLE IF NOT EXISTS columns (
    ,column_title			VARCHAR(20)
    ,column_data_type		VARCHAR(10)
    ,column_pk				INTEGER
+   ,column_ai				INTEGER
    ,column_null				INTEGER
    ,column_length			VARCHAR(10)
    ,column_index			INTEGER
@@ -176,6 +177,6 @@ CREATE TABLE IF NOT EXISTS columns (
    ,column_description    	VARCHAR(200)
    ,column_created       	VARCHAR(20)
    ,column_updated       	VARCHAR(20)
-   ,UNIQUE(column_name)
+   ,UNIQUE(column_tid, column_name)
 );
 `

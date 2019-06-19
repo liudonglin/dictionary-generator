@@ -8,6 +8,7 @@ type Column struct {
 	Title       string `json:"title" validate:"required,max=20"`
 	DataType    string `json:"data_type"`
 	PK          bool   `json:"pk"`
+	AI          bool   `json:"ai"`
 	Null        bool   `json:"null"`
 	Length      string `json:"length"`
 	Index       bool   `json:"index"`

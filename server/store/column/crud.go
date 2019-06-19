@@ -134,7 +134,7 @@ func getQueryListSqlite(q *core.ColumnQuery) (querySQL string) {
 	if q.OrderBy != "" {
 		querySQL += fmt.Sprintf(" ORDER BY %s ", q.OrderBy)
 	} else {
-		querySQL += " ORDER BY column_created DESC "
+		querySQL += " ORDER BY column_id ASC "
 	}
 
 	querySQL += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
@@ -163,6 +163,7 @@ column_id
 ,column_title
 ,column_data_type
 ,column_pk
+,column_ai
 ,column_null
 ,column_length
 ,column_index
@@ -184,6 +185,7 @@ INSERT INTO columns (
 ,column_title
 ,column_data_type
 ,column_pk
+,column_ai
 ,column_null
 ,column_length
 ,column_index
@@ -197,6 +199,7 @@ INSERT INTO columns (
 ,:column_title
 ,:column_data_type
 ,:column_pk
+,:column_ai
 ,:column_null
 ,:column_length
 ,:column_index
@@ -214,6 +217,7 @@ column_name         = :column_name
 ,column_title   	= :column_title
 ,column_data_type   = :column_data_type
 ,column_pk   		= :column_pk
+,column_ai   		= :column_ai
 ,column_null   		= :column_null
 ,column_length   	= :column_length
 ,column_index   	= :column_index

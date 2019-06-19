@@ -110,7 +110,7 @@ SELECT name FROM migrations
 var createTableUsers = `
 CREATE TABLE IF NOT EXISTS users (
  user_id            INTEGER PRIMARY KEY AUTOINCREMENT
-,user_login         TEXT COLLATE NOCASE
+,user_login         TEXT
 ,user_password      TEXT
 ,user_email         TEXT
 ,user_admin         BOOLEAN
@@ -119,56 +119,57 @@ CREATE TABLE IF NOT EXISTS users (
 ,user_created       TEXT
 ,user_updated       TEXT
 ,user_last_login    TEXT
-,UNIQUE(user_login COLLATE NOCASE)
+,UNIQUE(user_login)
 );
 `
 
 var createTableProjects = `
 CREATE TABLE IF NOT EXISTS projects (
 	project_id            	INTEGER PRIMARY KEY AUTOINCREMENT
-   ,project_name         	TEXT COLLATE NOCASE
+   ,project_name         	TEXT
    ,project_language      	TEXT
    ,project_data_base       TEXT
    ,project_orm         	TEXT
    ,project_description     TEXT
    ,project_created       	TEXT
    ,project_updated       	TEXT
-   ,UNIQUE(project_name COLLATE NOCASE)
+   ,UNIQUE(project_name)
    );
 `
 
 var createTableDatabBses = `
 CREATE TABLE IF NOT EXISTS database (
 	database_id            	INTEGER PRIMARY KEY AUTOINCREMENT
-   ,database_name         	TEXT COLLATE NOCASE
+   ,database_name         	TEXT
    ,database_pid      		INTEGER
    ,database_description    TEXT
    ,database_created       	TEXT
    ,database_updated       	TEXT
-   ,UNIQUE(database_name COLLATE NOCASE)
+   ,UNIQUE(database_pid, database_name)
    );
 `
 
 var createTableTables = `
 CREATE TABLE IF NOT EXISTS tables (
 	table_id            	INTEGER PRIMARY KEY AUTOINCREMENT
-   ,table_name         		TEXT COLLATE NOCASE
+   ,table_name         		TEXT
    ,table_did      			INTEGER
    ,table_description    	TEXT
    ,table_created       	TEXT
    ,table_updated       	TEXT
-   ,UNIQUE(table_name COLLATE NOCASE)
+   ,UNIQUE(table_did, table_name)
    );
 `
 
 var createTableColumns = `
 CREATE TABLE IF NOT EXISTS columns (
 	column_id            	INTEGER PRIMARY KEY AUTOINCREMENT
-   ,column_name         	TEXT COLLATE NOCASE
+   ,column_name         	TEXT
    ,column_tid      		INTEGER
    ,column_title			TEXT
    ,column_data_type		TEXT
    ,column_pk				INTEGER
+   ,column_ai				INTEGER
    ,column_null				INTEGER
    ,column_length			TEXT
    ,column_index			INTEGER
@@ -176,6 +177,6 @@ CREATE TABLE IF NOT EXISTS columns (
    ,column_description    	TEXT
    ,column_created       	TEXT
    ,column_updated       	TEXT
-   ,UNIQUE(column_name COLLATE NOCASE)
+   ,UNIQUE(column_tid, column_name)
 );
 `

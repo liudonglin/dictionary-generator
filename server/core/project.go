@@ -6,7 +6,7 @@ type Project struct {
 	Name        string `json:"name" validate:"required,max=20"`
 	Description string `json:"description" validate:"max=200"`
 	Language    string `json:"language" validate:"oneof=java csharp"`
-	DataBase    string `json:"data_base" validate:"oneof=mysql sqlserver"`
+	DataBase    string `json:"data_base" validate:"oneof=mysql mssql"`
 	Orm         string `json:"orm" validate:"oneof=mybatis smartSql"`
 	Created     string `json:"created"`
 	Updated     string `json:"updated"`

@@ -60,7 +60,7 @@
                 </el-form-item>
                 <el-form-item label="数据库:" prop="data_base">
                     <el-radio v-model="form.data_base" label="mysql" >Mysql</el-radio>
-                    <el-radio v-model="form.data_base" label="sqlserver" >Sqlserver</el-radio>
+                    <el-radio v-model="form.data_base" label="mssql" >Sqlserver</el-radio>
                 </el-form-item>
                 <el-form-item label="ORM:" prop="orm">
                     <el-select v-model="form.orm" placeholder="请选择">
