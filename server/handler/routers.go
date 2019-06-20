@@ -38,6 +38,13 @@ func New() *echo.Echo {
 	r.POST("/database/save", saveDataBase)
 	r.POST("/database/list", listDataBase)
 	r.POST("/database/load", loadDataBase)
+	r.POST("/database/delete", deleteDataBase)
+
+	r.POST("/column/save", saveColumn)
+	r.POST("/column/delete", deleteColumn)
+
+	r.POST("/table/save", saveTable)
+	r.POST("/table/delete", deleteTable)
 
 	r.POST("/dbimport/loaddb", loadDBsByConnInfo)
 	r.POST("/dbimport/savedbs", saveConnInfo)

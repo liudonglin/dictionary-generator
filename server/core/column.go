@@ -33,7 +33,11 @@ type ColumnStore interface {
 
 	FindNameAndTID(int64, string) (*Column, error)
 
+	FindPK(int64) (*Column, error)
+
 	List(*ColumnQuery) ([]*Column, int, error)
 
 	Delete(int64) error
+
+	DeleteByTID(int64) error
 }

@@ -69,6 +69,26 @@ func (s *columnStore) FindNameAndTID(tid int64, name string) (*core.Column, erro
 	return out, err
 }
 
+func (s *columnStore) FindPK(tid int64) (*core.Column, error) {
+	out := &core.Column{}
+	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"column_tid": tid,
+		}
+		query, args, err := binder.BindNamed(queryPK, params)
+		if err != nil {
+			return err
+		}
+		row := queryer.QueryRow(query, args...)
+		err = scanRow(row, out)
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		return err
+	})
+	return out, err
+}
+
 func (s *columnStore) List(q *core.ColumnQuery) ([]*core.Column, int, error) {
 	var out []*core.Column
 	var total int
@@ -155,6 +175,20 @@ func (s *columnStore) Delete(id int64) error {
 	})
 }
 
+func (s *columnStore) DeleteByTID(tid int64) error {
+	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"column_tid": tid,
+		}
+		stmt, args, err := binder.BindNamed(stmtDeleteTID, params)
+		if err != nil {
+			return err
+		}
+		_, err = execer.Exec(stmt, args...)
+		return err
+	})
+}
+
 const queryBase = `
 SELECT
 column_id
@@ -176,6 +210,11 @@ column_id
 const queryNameAndTID = queryBase + `
 FROM columns
 WHERE column_name = :column_name and column_tid = :column_tid 
+`
+
+const queryPK = queryBase + `
+FROM columns
+WHERE column_pk = 1 and column_tid = :column_tid 
 `
 
 const stmtInsert = `
@@ -229,4 +268,8 @@ WHERE column_id = :column_id
 
 const stmtDelete = `
 DELETE FROM columns WHERE column_id = :column_id
+`
+
+const stmtDeleteTID = `
+DELETE FROM columns WHERE column_tid = :column_tid
 `

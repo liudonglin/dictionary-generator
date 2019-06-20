@@ -57,7 +57,7 @@ func saveConnInfo(c echo.Context) error {
 			}
 			err := dbStore.Create(dbInsert)
 			if err != nil {
-				panic(err)
+				return err
 			}
 			dbID = dbInsert.ID
 		}
@@ -77,7 +77,7 @@ func saveConnInfo(c echo.Context) error {
 				}
 				err := tableStore.Create(tableInsert)
 				if err != nil {
-					panic(err)
+					return err
 				}
 				tableID = tableInsert.ID
 			}
@@ -141,7 +141,7 @@ func saveConnInfo(c echo.Context) error {
 					}
 					err := columnStore.Create(columnInsert)
 					if err != nil {
-						panic(err)
+						return err
 					}
 				}
 			}
