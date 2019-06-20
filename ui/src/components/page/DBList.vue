@@ -69,14 +69,14 @@
                             <el-table-column label="枚举" width="120">
                                 <template slot-scope="scope">
                                     <div>
-                                        <el-popover placement="top-start" width="240"
+                                        <el-popover placement="top-start" width="360"
                                         trigger="manual" v-if="scope.row.enum_list!=null&&scope.row.enum_list.length>0"
                                         v-model="scope.row.enum_visible">
                                         <p>{{scope.row.title}}</p>
                                         <el-table :data="scope.row.enum_list">
-                                            <el-table-column width="80" property="key" label="字段"></el-table-column>
+                                            <el-table-column property="key" label="字段"></el-table-column>
                                             <el-table-column width="80" property="value" label="值"></el-table-column>
-                                            <el-table-column width="80" property="des" label="描述"></el-table-column>
+                                            <el-table-column property="des" label="描述"></el-table-column>
                                         </el-table>
                                         <el-button type="text" icon="el-icon-message"
                                             slot="reference" @click="handleEnumVisibleChange(scope.row)">展示</el-button>
