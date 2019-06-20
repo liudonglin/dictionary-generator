@@ -42,8 +42,9 @@
                                 <el-input v-model="table.description" maxlength="20" show-word-limit></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button type="primary" icon="el-icon-check" @click="saveTable(table)" circle title="保存"></el-button>
-                                <el-button type="danger" icon="el-icon-delete" @click="deleteTable(table)" circle title="删除"></el-button>
+                                <el-button type="primary" icon="el-icon-check" @click="saveTable(table)" circle title="保存表"></el-button>
+                                <el-button type="danger" icon="el-icon-delete" @click="deleteTable(table)" circle title="删除表"></el-button>
+                                <el-button type="primary" icon="el-icon-plus" @click="openColumnForm({ id:0, tid:table.id })" circle title="添加列"></el-button>
                             </el-form-item>
                         </el-form>
 
@@ -147,15 +148,15 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="主键:">
-                    <el-switch v-model="columnForm.pk" active-text="YES" inactive-text="NO">
+                    <el-switch v-model="columnForm.pk" @change="handlePKChange" active-text="YES" inactive-text="NO">
                     </el-switch>
                 </el-form-item>
                 <el-form-item label="自增:">
-                    <el-switch v-model="columnForm.ai" active-text="YES" inactive-text="NO">
+                    <el-switch v-model="columnForm.ai" active-text="YES" inactive-text="NO" :disabled="!columnForm.pk">
                     </el-switch>
                 </el-form-item>
                 <el-form-item label="可空:">
-                    <el-switch v-model="columnForm.null" active-text="YES" inactive-text="NO">
+                    <el-switch v-model="columnForm.null" active-text="YES" inactive-text="NO" :disabled="columnForm.pk">
                     </el-switch>
                 </el-form-item>
                 <el-form-item label="索引列:">
@@ -168,7 +169,7 @@
                 <el-form-item label="描述:" prop="title">
                     <el-input v-model="columnForm.title" maxlength="20" show-word-limit></el-input>
                 </el-form-item>
-                <el-form-item label="枚举:">
+                <el-form-item label="枚举:" v-if="columnForm.data_type=='int'||columnForm.data_type=='bit'||columnForm.data_type=='tinyint'">
                     <el-table :data="columnForm.enum_list">
                         <el-table-column property="key" label="字段">
                             <template slot-scope="scope">
@@ -528,6 +529,12 @@
                     row.enum_visible = true
                 }
             },
+            handlePKChange(val){
+                this.columnForm.ai=val
+                if (val){
+                    this.columnForm.null=false
+                }
+            },
             nullFormatter(row, column) {
                 if (row.null==true){
                     return "YES"
@@ -581,8 +588,21 @@
                 })
             },
             openColumnForm(col) {
+                if (col.id==0){
+                    col.name = ''
+                    col.data_type = ''
+                    col.pk = false
+                    col.index = false
+                    col.ai = false
+                    col.length = ''
+                    col.null = false
+                    col.enum = ''
+                    col.enum_list = []
+                    col.title = ''
+                    col.description = ''
+                }
+
                 this.columnForm = JSON.parse(JSON.stringify(col))
-                this.old_data = col
                 this.editColumnVisible = true
             },
             closeColumnForm(formName) {
@@ -597,6 +617,13 @@
                     if (!valid) {
                         return
                     }
+
+                    // 非枚举字段去除枚举
+                    let dtype =this.columnForm.data_type
+                    if(dtype!="int"&&dtype!="bit"&&dtype!="tinyint"){
+                        this.columnForm.enum_list=[];
+                    }
+
                     let enumStr = ''
                     this.columnForm.enum_list.forEach(function(item) {
                         //{key:'', value:'' ,des:'' }
@@ -606,30 +633,36 @@
                     let columnForm = this.columnForm
                     this.$axios.post(this.saveColumnUrl, this.columnForm).then(result=>{
                         if (result.success) {
-                            // 遍历修改页面上对应列的数据
+                            // 遍历修改页面上对应列的数据 start
                             this.dbData.forEach(function(db){
                                 if (db.tables!=null){
                                     db.tables.forEach(function(table){
-                                        if (table.id==columnForm.tid){
-                                            table.columns.forEach(function(column){
-                                                if (column.id==columnForm.id){
-                                                    column.name = columnForm.name
-                                                    column.data_type = columnForm.data_type
-                                                    column.pk = columnForm.pk
-                                                    column.index = columnForm.index
-                                                    column.ai = columnForm.ai
-                                                    column.length = columnForm.length
-                                                    column.null = columnForm.null
-                                                    column.enum = columnForm.enum
-                                                    column.enum_list = columnForm.enum_list
-                                                    column.title = columnForm.title
-                                                    column.description = columnForm.description
-                                                }
-                                            })
+                                        if (table.id==columnForm.tid) {
+                                            if (columnForm.id>0) {
+                                                table.columns.forEach(function(column){
+                                                    if (column.id==columnForm.id){
+                                                        column.name = columnForm.name
+                                                        column.data_type = columnForm.data_type
+                                                        column.pk = columnForm.pk
+                                                        column.index = columnForm.index
+                                                        column.ai = columnForm.ai
+                                                        column.length = columnForm.length
+                                                        column.null = columnForm.null
+                                                        column.enum = columnForm.enum
+                                                        column.enum_list = columnForm.enum_list
+                                                        column.title = columnForm.title
+                                                        column.description = columnForm.description
+                                                    }
+                                                })
+                                            } else {
+                                                columnForm.id=result.data
+                                                table.columns.push(JSON.parse(JSON.stringify(columnForm)))
+                                            }
                                         }
                                     })
                                 }
                             })
+                            // 遍历修改页面上对应列的数据 end
                         }
                     })
                 })
