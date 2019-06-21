@@ -28,6 +28,10 @@ var migrations = []struct {
 		name: "create-table-columns",
 		stmt: createTableColumns,
 	},
+	{
+		name: "create-table-connections",
+		stmt: createTableConnections,
+	},
 }
 
 // Migrate performs the database migration. If the migration fails
@@ -178,5 +182,22 @@ CREATE TABLE IF NOT EXISTS columns (
    ,column_created       	TEXT
    ,column_updated       	TEXT
    ,UNIQUE(column_tid, column_name)
+);
+`
+
+var createTableConnections = `
+CREATE TABLE IF NOT EXISTS connections (
+	connection_id            	INTEGER PRIMARY KEY AUTOINCREMENT
+   ,connection_name         	TEXT
+   ,connection_pid      		INTEGER
+   ,connection_data_base		TEXT
+   ,connection_host				TEXT
+   ,connection_port				INTEGER
+   ,connection_user				INTEGER
+   ,connection_password			INTEGER
+   ,connection_description    	TEXT
+   ,connection_created       	TEXT
+   ,connection_updated       	TEXT
+   ,UNIQUE(connection_pid, connection_name)
 );
 `

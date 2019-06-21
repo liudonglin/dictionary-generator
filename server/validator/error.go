@@ -21,7 +21,7 @@ type FieldError struct {
 func (e *ValidateError) Error() string {
 	str := ""
 	for _, f := range e.FieldErrors {
-		str += fmt.Sprintln(f.Error)
+		str += fmt.Sprintln(f.Error) + ";"
 	}
 	return str
 }
