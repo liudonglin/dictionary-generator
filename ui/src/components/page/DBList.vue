@@ -260,7 +260,7 @@
             return {
                 loadConnUrl:'/api/dbimport/loaddb',
                 saveConnUrl:'/api/dbimport/savedbs',
-                loadProjectUrl: '/api//project/load',
+                loadProjectUrl: '/api/project/load',
                 saveDBUrl: '/api/database/save',
                 listDBUrl:'/api/database/list',
                 loadDBUrl:'/api/database/load',

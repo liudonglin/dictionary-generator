@@ -3,6 +3,7 @@ github.com/360EntSecGroup-Skylar/excelize/v2
 # github.com/dgrijalva/jwt-go v3.2.0+incompatible
 github.com/dgrijalva/jwt-go
 # github.com/go-playground/locales v0.12.1
+github.com/go-playground/locales/zh
 github.com/go-playground/locales
 github.com/go-playground/locales/currency
 # github.com/go-playground/universal-translator v0.16.0
@@ -58,3 +59,4 @@ golang.org/x/text/transform
 google.golang.org/appengine/cloudsql
 # gopkg.in/go-playground/validator.v9 v9.29.0
 gopkg.in/go-playground/validator.v9
+gopkg.in/go-playground/validator.v9/translations/zh
