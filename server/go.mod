@@ -14,8 +14,5 @@ require (
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/mattn/go-sqlite3 v1.9.0
 	github.com/sirupsen/logrus v1.4.2
-	golang.org/x/crypto v0.0.0-20190621222207-cc06ce4a13d4 // indirect
-	google.golang.org/appengine v1.6.1 // indirect
-	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.0
 )
