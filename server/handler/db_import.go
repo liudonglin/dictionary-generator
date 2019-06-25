@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"code-server/core"
-	"code-server/imports"
-	"code-server/store"
-	"code-server/validator"
+	"dg-server/core"
+	"dg-server/imports"
+	"dg-server/store"
+	"dg-server/validator"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"

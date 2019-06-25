@@ -3,14 +3,14 @@ package store
 import (
 	"sync"
 
-	"code-server/core"
-	"code-server/store/base/db"
-	"code-server/store/column"
-	"code-server/store/connection"
-	"code-server/store/dbase"
-	"code-server/store/project"
-	"code-server/store/table"
-	"code-server/store/user"
+	"dg-server/core"
+	"dg-server/store/base/db"
+	"dg-server/store/column"
+	"dg-server/store/connection"
+	"dg-server/store/dbase"
+	"dg-server/store/project"
+	"dg-server/store/table"
+	"dg-server/store/user"
 )
 
 // Singleton ...

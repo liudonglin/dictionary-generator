@@ -1,8 +1,8 @@
 package column
 
 import (
-	"code-server/core"
-	"code-server/store/base/db"
+	"dg-server/core"
+	"dg-server/store/base/db"
 	"database/sql"
 	"fmt"
 	"time"

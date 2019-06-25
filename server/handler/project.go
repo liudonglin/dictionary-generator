@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"time"
 
-	"code-server/core"
-	"code-server/store"
-	"code-server/validator"
+	"dg-server/core"
+	"dg-server/store"
+	"dg-server/validator"
 
 	"github.com/labstack/echo"
 )

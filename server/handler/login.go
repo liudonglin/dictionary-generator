@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	"code-server/core"
-	"code-server/store"
+	"dg-server/core"
+	"dg-server/store"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"

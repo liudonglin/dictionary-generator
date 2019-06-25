@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"code-server/core"
-	"code-server/store/base/db"
+	"dg-server/core"
+	"dg-server/store/base/db"
 )
 
 // New returns a new ProjectStore.

@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"code-server/core"
-	"code-server/store"
-	"code-server/validator"
+	"dg-server/core"
+	"dg-server/store"
+	"dg-server/validator"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
