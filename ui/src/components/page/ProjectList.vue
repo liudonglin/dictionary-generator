@@ -1,10 +1,9 @@
 <template>
-    <div class="table">
-        
+    <div>
         <el-row :gutter="20">
             <el-col :span="6" v-for="pro in data" :key="pro.id">
                 <div class="project-box">
-                    <div class="body" :class="{mysql:pro.data_base=='mysql',mssql:pro.data_base=='mssql'}" @click="addDB(pro.id)">
+                    <div class="body" :class="{mysql:pro.data_base=='mysql',mssql:pro.data_base=='mssql'}">
                         <el-button type="danger" icon="el-icon-delete" circle class="cbtn" @click="del(pro)"></el-button>
                         <el-button icon="el-icon-edit" circle class="cbtn" @click="edit(pro)"></el-button>
                     </div>
@@ -26,18 +25,18 @@
         </div> -->
 
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="40%" @close="close('form')">
+        <el-dialog title="编辑" :visible.sync="editVisible" width="70%" @close="close('form')">
             <el-form ref="form" :model="form" :rules="rules" label-width="100px">
                 <el-form-item label="项目名称:" prop="name">
                     <el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
                 </el-form-item>
                 <el-form-item label="编程语言:" prop="language">
-                    <el-radio v-model="form.language" label="java" >Java</el-radio>
-                    <el-radio v-model="form.language" label="csharp" >C#</el-radio>
+                    <el-radio v-model="form.language" label="java" @change="handleLanguageChange">Java</el-radio>
+                    <el-radio v-model="form.language" label="csharp" @change="handleLanguageChange">C#</el-radio>
                 </el-form-item>
                 <el-form-item label="数据库:" prop="data_base">
-                    <el-radio v-model="form.data_base" label="mysql" >Mysql</el-radio>
-                    <el-radio v-model="form.data_base" label="mssql" >Sqlserver</el-radio>
+                    <el-radio v-model="form.data_base" label="mysql" :disabled="form.id>0">Mysql</el-radio>
+                    <el-radio v-model="form.data_base" label="mssql" :disabled="form.id>0">Sqlserver</el-radio>
                 </el-form-item>
                 <el-form-item label="ORM:" prop="orm">
                     <el-select v-model="form.orm" placeholder="请选择">
@@ -50,6 +49,43 @@
                     <el-input type="textarea" placeholder="请输入内容" v-model="form.description"
                         maxlength="200" show-word-limit :autosize="{ minRows: 4, maxRows: 8}">
                     </el-input>
+                </el-form-item>
+                <el-form-item label="连接:">
+                    <el-table :data="form.connection_list">
+                        <el-table-column property="name" label="名称">
+                            <template slot-scope="scope">
+                                <el-input v-model="scope.row.name" ></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column property="value" label="Host" width="160">
+                            <template slot-scope="scope">
+                                <el-input v-model="scope.row.host" ></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column property="des" label="Port" width="80">
+                            <template slot-scope="scope">
+                                <el-input v-model="scope.row.port" ></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column property="des" label="User" width="120">
+                            <template slot-scope="scope">
+                                <el-input v-model="scope.row.user" ></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column property="des" label="Password" width="120">
+                            <template slot-scope="scope">
+                                <el-input v-model="scope.row.password" show-password></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column align="right" width="80">
+                            <template slot="header">
+                                <el-button @click="form.connection_list.push({name:'', host:'' ,port:'', user:'', password:'' })" size="mini" type="primary">添加</el-button>
+                            </template>
+                            <template slot-scope="scope">
+                                <el-button @click="form.connection_list.splice(scope.$index, 1);" size="mini" type="text" icon="el-icon-delete" class="red">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -82,7 +118,8 @@ import { debuglog } from 'util';
                     language: '',
                     description: '',
                     data_base: '',
-                    orm:''
+                    orm:'',
+                    connection_list:[]
                 },
                 rules: {
                     name: [
@@ -137,7 +174,8 @@ import { debuglog } from 'util';
                     language: '',
                     description: '',
                     data_base: '',
-                    orm:''
+                    orm:'',
+                    connection_list:[]
                 }
                 this.search()
             },
@@ -148,10 +186,10 @@ import { debuglog } from 'util';
                     language: item.language,
                     description: item.description,
                     data_base: item.data_base,
-                    orm:item.orm
+                    orm:item.orm,
+                    connection_list:[]
                 }
                 this.editVisible = true;
-                
             },
             editDB(pid){
                 this.$router.push('/dbs/'+pid);
@@ -180,6 +218,14 @@ import { debuglog } from 'util';
                         })
                     }
                 });
+            },
+            handleLanguageChange(lab) {
+                if(lab=='java') {
+                    this.form.orm = "mybatis"
+                }
+                if(lab=='csharp') {
+                    this.form.orm = "smartSql"
+                }
             },
             handlePageChange(){
                 this.search();

@@ -20,15 +20,15 @@ export default new Router({
                     meta: { title: '项目列表' }
                 },
                 {
-                    path: '/dashboard',
-                    component: resolve => require(['../components/page/Dashboard.vue'], resolve),
-                    meta: { title: '系统首页' }
-                },
-                {
                     path: '/dbs/:pid',
                     component: resolve => require(['../components/page/DBList.vue'], resolve),
                     meta: { title: '数据库列表' },
                     props: true
+                },
+                {
+                    path: '/dashboard',
+                    component: resolve => require(['../components/page/Dashboard.vue'], resolve),
+                    meta: { title: '系统首页' }
                 },
                 {
                     path: '/404',
