@@ -1,52 +1,29 @@
 <template>
     <div class="table">
         
-        <div class="container">
-            <div class="handle-box">
-                <el-input v-model="search_word" placeholder="项目名称" class="handle-input mr10"></el-input>
-                <el-button icon="el-icon-search" circle @click="search" title="查询"></el-button>
-                <el-button type="primary" icon="el-icon-plus" circle @click="add" title="新增"></el-button>
-            </div>
-            <el-table :data="data" class="table" ref="multipleTable" v-loading="loading">
-                <el-table-column type="expand">
-                    <template slot-scope="props">
-                        <el-form label-position="left" inline class="table-expand">
-                        <el-form-item label="项目名称">
-                            <span>{{ props.row.name }}</span>
-                        </el-form-item>
-                        <el-form-item label="编程语言">
-                            <span>{{ props.row.language }}</span>
-                        </el-form-item>
-                        <el-form-item label="数据库">
-                            <span>{{ props.row.data_base }}</span>
-                        </el-form-item>
-                        <el-form-item label="ORM">
-                            <span>{{ props.row.orm }}</span>
-                        </el-form-item>
-                        <el-form-item label="描述信息">
-                            <span>{{ props.row.description }}</span>
-                        </el-form-item>
-                        <el-form-item label="数据库">
-                            <el-button type="text" icon="el-icon-edit" @click="addDB(props.row.id)">添加</el-button>
-                        </el-form-item>
-                        </el-form>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="name" label="项目名称" sortable >
-                </el-table-column>
-                <el-table-column label="操作" width="200" align="center">
-                    <template slot-scope="scope">
-                        <el-button type="text" icon="el-icon-edit" @click="edit(scope.$index, scope.row)">编辑</el-button>
-                        <el-button type="text" icon="el-icon-delete" class="red" @click="del(scope.$index, scope.row)" >删除</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div class="pagination">
-                <el-pagination background @current-change="handlePageChange" layout="prev, pager, next" 
-                :total="pageTotal" :page-size="pageSize" :current-page.sync="pageCurrent" :hide-on-single-page="true" >
-                </el-pagination>
-            </div>
-        </div>
+        <el-row :gutter="20">
+            <el-col :span="6" v-for="pro in data" :key="pro.id">
+                <div class="project-box">
+                    <div class="body" :class="{mysql:pro.data_base=='mysql',mssql:pro.data_base=='mssql'}" @click="addDB(pro.id)">
+                        <el-button type="danger" icon="el-icon-delete" circle class="cbtn" @click="del(pro)"></el-button>
+                        <el-button icon="el-icon-edit" circle class="cbtn" @click="edit(pro)"></el-button>
+                    </div>
+                    <div class="title">
+                        <el-button type="text" @click="editDB(pro.id)" >{{pro.name}}</el-button>
+                    </div>
+                </div>
+            </el-col>
+
+            <el-col :span="6">
+                <div class="project-box add" @click="add"></div>
+            </el-col>
+        </el-row>
+
+        <!-- <div class="pagination">
+            <el-pagination background @current-change="handlePageChange" layout="prev, pager, next" 
+            :total="pageTotal" :page-size="pageSize" :current-page.sync="pageCurrent" :hide-on-single-page="false" >
+            </el-pagination>
+        </div> -->
 
         <!-- 编辑弹出框 -->
         <el-dialog title="编辑" :visible.sync="editVisible" width="40%" @close="close('form')">
@@ -97,7 +74,7 @@ import { debuglog } from 'util';
                 loading: false,
                 data:[],
                 pageTotal:0,
-                pageSize:10,
+                pageSize:999999, //暂时不做分页，默认加载所有项目
                 pageCurrent:1,
                 form: {
                     id: 0,
@@ -164,9 +141,7 @@ import { debuglog } from 'util';
                 }
                 this.search()
             },
-            edit(index, row) {
-                this.idx = index;
-                const item = this.data[index];
+            edit(item) {
                 this.form = {
                     id: item.id,
                     name: item.name,
@@ -178,16 +153,20 @@ import { debuglog } from 'util';
                 this.editVisible = true;
                 
             },
-            addDB(pid){
+            editDB(pid){
                 this.$router.push('/dbs/'+pid);
             },
-            del(index, row) {
-                this.idx = index;
-                const item = this.data[index];
-                this.$axios.post(this.deleteUrl, item.id).then(result=>{
-                    if (result.success) {
-                        this.search()
-                    }
+            del(item) {
+                this.$confirm(`确定要删除项目 : ${item.name}`, '提示信息', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post(this.deleteUrl, item.id).then(result=>{
+                        if (result.success) {
+                            this.search()
+                        }
+                    })
                 })
             },
             save(formName) {
@@ -196,20 +175,11 @@ import { debuglog } from 'util';
                         this.$axios.post(this.saveUrl, this.form).then(result=>{
                             if (result.success) {
                                 this.form.id=result.data
+                                this.close(formName)
                             }
                         })
                     }
                 });
-            },
-            formatter(row, column) {
-                switch (row.language){
-                    case 'java':
-                        return "Java"
-                    case 'csharp':
-                        return "C#"
-                    default:
-                        return ''
-                }
             },
             handlePageChange(){
                 this.search();
@@ -219,36 +189,52 @@ import { debuglog } from 'util';
 </script>
 
 <style scoped>
-    .table{
-        width: 100%;
-        font-size: 14px;
-    }
-    .handle-box {
+    .project-box {
+        display:block;
+        width:220px;
+        height:240px;
+        border:solid 1px #e6e6e6;
         margin-bottom: 20px;
+        margin-top: 20px;
+        margin-left:20px;
     }
-    .handle-input {
-        width: 300px;
-        display: inline-block;
+
+    .project-box .mysql{
+        background-image: url(../../assets/img/mysql-logo.jpg);
+        background-repeat:no-repeat;
+        background-size:100% 100%;
+        -moz-background-size:100% 100%;
     }
-    .mr10{
+
+    .project-box .mssql{
+        background-image: url(../../assets/img/mssql-logo.jpg);
+        background-repeat:no-repeat;
+        background-size:100% 100%;
+        -moz-background-size:100% 100%;
+    }
+
+    .project-box.add{
+        background-image: url(../../assets/img/box-add.jpg);
+        background-repeat:no-repeat;
+        background-size:100% 100%;
+        -moz-background-size:100% 100%;
+        cursor: pointer;
+    }
+
+    .project-box .body .cbtn {
+        float: right;
         margin-right: 10px;
-    }
-    .red{
-        color: #ff0000;
+        margin-top: 10px;
     }
 
-    .table-expand {
-        font-size: 0;
+    .project-box .body {
+        height:200px;
+        border-bottom:solid 1px #e6e6e6;
     }
 
-    .table-expand label {
-        width: 90px;
-        color: #99a9bf;
-    }
-
-    .table-expand .el-form-item {
-        margin-right: 0;
-        margin-bottom: 0;
-        width: 50%;
+    .project-box .title {
+        height:40px;
+        text-align: center;
+        padding: 5px;
     }
 </style>

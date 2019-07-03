@@ -7,22 +7,22 @@ export default new Router({
     routes: [
         {
             path: '/',
-            redirect: '/dashboard'
+            redirect: '/projects'
         },
         {
             path: '/',
-            component: resolve => require(['../components/common/Home.vue'], resolve),
-            meta: { title: '自述文件' },
+            component: resolve => require(['../components/home/Index.vue'], resolve),
+            meta: { title: '首页' },
             children:[
-                {
-                    path: '/dashboard',
-                    component: resolve => require(['../components/page/Dashboard.vue'], resolve),
-                    meta: { title: '系统首页' }
-                },
                 {
                     path: '/projects',
                     component: resolve => require(['../components/page/ProjectList.vue'], resolve),
                     meta: { title: '项目列表' }
+                },
+                {
+                    path: '/dashboard',
+                    component: resolve => require(['../components/page/Dashboard.vue'], resolve),
+                    meta: { title: '系统首页' }
                 },
                 {
                     path: '/dbs/:pid',
