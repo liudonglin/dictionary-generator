@@ -1,22 +1,23 @@
 <template>
     <div>
-        <el-row :gutter="20">
-            <el-col :span="6" v-for="pro in data" :key="pro.id">
+
+        <ul style="margin-top:20px;margin-left:20px">
+            <li class="project-li">
+                <div class="project-box add" @click="add"></div>
+            </li>
+
+            <li class="project-li" v-for="pro in data" :key="pro.id">
                 <div class="project-box">
                     <div class="body" :class="{mysql:pro.data_base=='mysql',mssql:pro.data_base=='mssql'}">
                         <el-button type="danger" icon="el-icon-delete" circle class="cbtn" @click="del(pro)"></el-button>
                         <el-button icon="el-icon-edit" circle class="cbtn" @click="edit(pro)"></el-button>
                     </div>
                     <div class="title">
-                        <el-button type="text" @click="editDB(pro.id)" >{{pro.name}}</el-button>
+                        <el-link :underline="false" type="primary" @click="editDB(pro.id)" >{{pro.name}}</el-link>
                     </div>
                 </div>
-            </el-col>
-
-            <el-col :span="6">
-                <div class="project-box add" @click="add"></div>
-            </el-col>
-        </el-row>
+            </li>
+        </ul>
 
         <!-- <div class="pagination">
             <el-pagination background @current-change="handlePageChange" layout="prev, pager, next" 
@@ -57,22 +58,22 @@
                                 <el-input v-model="scope.row.name" ></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column property="value" label="Host" width="160">
+                        <el-table-column property="value" label="域名" width="160">
                             <template slot-scope="scope">
                                 <el-input v-model="scope.row.host" ></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column property="des" label="Port" width="80">
+                        <el-table-column property="des" label="端口" width="80">
                             <template slot-scope="scope">
                                 <el-input v-model="scope.row.port" ></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column property="des" label="User" width="120">
+                        <el-table-column property="des" label="账号" width="120">
                             <template slot-scope="scope">
                                 <el-input v-model="scope.row.user" ></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column property="des" label="Password" width="120">
+                        <el-table-column property="des" label="密码" width="120">
                             <template slot-scope="scope">
                                 <el-input v-model="scope.row.password" show-password></el-input>
                             </template>
@@ -98,7 +99,7 @@
 </template>
 
 <script>
-import { debuglog } from 'util';
+    import bus from '../common/bus';
     export default {
         data() {
             return {
@@ -150,6 +151,11 @@ import { debuglog } from 'util';
         },
         created() {
             this.search();
+
+            bus.$on('searchWordChange', val => {
+                this.search_word = val;
+                this.search();
+            })
         },
         methods: {
             search() {
@@ -235,14 +241,20 @@ import { debuglog } from 'util';
 </script>
 
 <style scoped>
+
+    .project-li {
+        list-style:none;
+        float:left;
+        margin-bottom: 40px;
+        margin-right: 40px;
+        padding: 20px;
+    }
+
     .project-box {
         display:block;
         width:220px;
         height:240px;
         border:solid 1px #e6e6e6;
-        margin-bottom: 20px;
-        margin-top: 20px;
-        margin-left:20px;
     }
 
     .project-box .mysql{
@@ -281,6 +293,6 @@ import { debuglog } from 'util';
     .project-box .title {
         height:40px;
         text-align: center;
-        padding: 5px;
+        padding: 10px;
     }
 </style>
