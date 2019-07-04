@@ -58,22 +58,22 @@
                                 <el-input v-model="scope.row.name" ></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column property="value" label="域名" width="160">
+                        <el-table-column property="host" label="域名" width="160">
                             <template slot-scope="scope">
                                 <el-input v-model="scope.row.host" ></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column property="des" label="端口" width="80">
+                        <el-table-column property="port" label="端口" width="100">
                             <template slot-scope="scope">
                                 <el-input v-model="scope.row.port" ></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column property="des" label="账号" width="120">
+                        <el-table-column property="user" label="账号" width="140">
                             <template slot-scope="scope">
                                 <el-input v-model="scope.row.user" ></el-input>
                             </template>
                         </el-table-column>
-                        <el-table-column property="des" label="密码" width="120">
+                        <el-table-column property="password" label="密码" width="140">
                             <template slot-scope="scope">
                                 <el-input v-model="scope.row.password" show-password></el-input>
                             </template>
@@ -99,13 +99,14 @@
 </template>
 
 <script>
-    import bus from '../common/bus';
+    import bus from '../../common/bus';
     export default {
         data() {
             return {
                 saveUrl: '/api/project/save',
                 listUrl: '/api/project/list',
                 deleteUrl: '/api/project/delete',
+                loadConnUrl: '/api/conn/loadpid',
                 search_word: '',
                 editVisible: false,
                 loading: false,
@@ -195,6 +196,12 @@
                     orm:item.orm,
                     connection_list:[]
                 }
+
+                this.$axios.post(this.loadConnUrl, item.id).then(result=>{
+                    if (result.success) {
+                        this.form.connection_list = result.data
+                    }
+                })
                 this.editVisible = true;
             },
             editDB(pid){
@@ -216,10 +223,12 @@
             save(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        let form = this.form
+                        let closeFn = this.close
                         this.$axios.post(this.saveUrl, this.form).then(result=>{
                             if (result.success) {
-                                this.form.id=result.data
-                                this.close(formName)
+                                form.id=result.data
+                                closeFn(formName)
                             }
                         })
                     }
@@ -245,34 +254,34 @@
     .project-li {
         list-style:none;
         float:left;
-        margin-bottom: 40px;
-        margin-right: 40px;
+        margin-bottom: 30px;
+        margin-right: 30px;
         padding: 20px;
     }
 
     .project-box {
         display:block;
         width:220px;
-        height:240px;
+        height:260px;
         border:solid 1px #e6e6e6;
     }
 
     .project-box .mysql{
-        background-image: url(../../assets/img/mysql-logo.jpg);
+        background-image: url(../../../assets/img/mysql-logo.jpg);
         background-repeat:no-repeat;
         background-size:100% 100%;
         -moz-background-size:100% 100%;
     }
 
     .project-box .mssql{
-        background-image: url(../../assets/img/mssql-logo.jpg);
+        background-image: url(../../../assets/img/mssql-logo.jpg);
         background-repeat:no-repeat;
         background-size:100% 100%;
         -moz-background-size:100% 100%;
     }
 
     .project-box.add{
-        background-image: url(../../assets/img/box-add.jpg);
+        background-image: url(../../../assets/img/box-add.jpg);
         background-repeat:no-repeat;
         background-size:100% 100%;
         -moz-background-size:100% 100%;
@@ -291,7 +300,7 @@
     }
 
     .project-box .title {
-        height:40px;
+        height:50px;
         text-align: center;
         padding: 10px;
     }

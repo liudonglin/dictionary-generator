@@ -1,9 +1,9 @@
 package connection
 
 import (
+	"database/sql"
 	"dg-server/core"
 	"dg-server/store/base/db"
-	"database/sql"
 	"fmt"
 	"time"
 )
@@ -179,9 +179,9 @@ connection_id
 ,connection_port
 ,connection_user
 ,connection_password
-,column_description
-,column_created
-,column_updated
+,connection_description
+,connection_created
+,connection_updated
 `
 
 const queryNameAndPID = `
@@ -198,9 +198,9 @@ INSERT INTO connections (
 ,connection_port
 ,connection_user
 ,connection_password
-,column_description
-,column_created
-,column_updated
+,connection_description
+,connection_created
+,connection_updated
 ) VALUES (
  :connection_name
 ,:connection_pid

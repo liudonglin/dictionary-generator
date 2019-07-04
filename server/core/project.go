@@ -10,6 +10,7 @@ type Project struct {
 	Orm         string `json:"orm" validate:"oneof=mybatis smartSql"`
 	Created     string `json:"created"`
 	Updated     string `json:"updated"`
+	Connections      []*Connection `json:"connection_list"`
 }
 
 // ProjectQuery 分页查询参数

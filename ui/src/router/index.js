@@ -11,17 +11,17 @@ export default new Router({
         },
         {
             path: '/',
-            component: resolve => require(['../components/home/Index.vue'], resolve),
+            component: resolve => require(['../components/page/home/Index.vue'], resolve),
             meta: { title: '首页' },
             children:[
                 {
                     path: '/projects',
-                    component: resolve => require(['../components/page/ProjectList.vue'], resolve),
+                    component: resolve => require(['../components/page/project/Index.vue'], resolve),
                     meta: { title: '项目列表' }
                 },
                 {
                     path: '/dbs/:pid',
-                    component: resolve => require(['../components/page/DBList.vue'], resolve),
+                    component: resolve => require(['../components/page/db/Index.vue'], resolve),
                     meta: { title: '数据库列表' },
                     props: true
                 },

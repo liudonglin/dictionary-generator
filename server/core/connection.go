@@ -4,7 +4,7 @@ package core
 type Connection struct {
 	ID          int64  `json:"id"`
 	PID         int64  `json:"pid"`
-	Name        int64  `json:"name" validate:"max=20"`
+	Name        string  `json:"name" validate:"max=20"`
 	DataBase    string `json:"data_base" validate:"required,max=20"`
 	Host        string `json:"host" validate:"required,max=20"`
 	Port        string `json:"port" validate:"required,max=20"`

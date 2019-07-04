@@ -1,5 +1,5 @@
 <template>
-    <el-container>
+    <el-container style="height: 100%;">
         <el-header style="border-bottom:solid 1px #e6e6e6;">
             <el-container style="display:block;">
                 <h1 style="line-height:60px;float:left;">LOGO</h1>
@@ -19,7 +19,7 @@
                 </el-menu>
             </el-container>
         </el-header>
-        <el-main style="min-height:600px;max-height:800px;">
+        <el-main style="">
             <transition name="move" mode="out-in">
                 <router-view></router-view>
             </transition>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-    import bus from '../common/bus';
+    import bus from '../../common/bus';
     export default {
         data() {
             return {
