@@ -81,7 +81,7 @@
     <el-dialog title="编辑" :visible.sync="editColumnVisible" width="45%" @close="closeColumnForm('columnform')">
         <el-form ref="columnform" :model="columnForm" :rules="rules" label-width="100px">
             <el-form-item label="列名:" prop="name">
-                <el-input v-model="columnForm.name" maxlength="20" show-word-limit></el-input>
+                <el-input v-model="columnForm.name" maxlength="40" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="数据类型:" prop="data_type">
                 <el-select v-model="columnForm.data_type" placeholder="请选择">
@@ -112,8 +112,8 @@
             <el-form-item label="长度:">
                 <el-input v-model="columnForm.length" maxlength="20" show-word-limit></el-input>
             </el-form-item>
-            <el-form-item label="描述:" prop="title">
-                <el-input v-model="columnForm.title" maxlength="20" show-word-limit></el-input>
+            <el-form-item label="标题:" prop="title">
+                <el-input v-model="columnForm.title" maxlength="40" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="枚举:" v-if="columnForm.data_type=='int'||columnForm.data_type=='bit'||columnForm.data_type=='tinyint'">
                 <el-table :data="columnForm.enum_list">
@@ -143,7 +143,7 @@
                 </el-table>
             </el-form-item>
             
-            <el-form-item label="备注信息:">
+            <el-form-item label="描述:">
                 <el-input type="textarea" placeholder="请输入内容" v-model="columnForm.description"
                     maxlength="200" show-word-limit :autosize="{ minRows: 4, maxRows: 8}">
                 </el-input>

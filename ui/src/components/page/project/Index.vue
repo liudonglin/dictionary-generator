@@ -55,22 +55,22 @@
                     <el-table :data="form.connection_list">
                         <el-table-column property="name" label="名称">
                             <template slot-scope="scope">
-                                <el-input v-model="scope.row.name" maxlength="40" show-word-limit></el-input>
+                                <el-input v-model="scope.row.name" maxlength="40"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column property="host" label="域名" width="160">
                             <template slot-scope="scope">
-                                <el-input v-model="scope.row.host" maxlength="40" show-word-limit></el-input>
+                                <el-input v-model="scope.row.host" maxlength="40"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column property="port" label="端口" width="100">
                             <template slot-scope="scope">
-                                <el-input v-model="scope.row.port" maxlength="10" show-word-limit></el-input>
+                                <el-input v-model="scope.row.port" maxlength="10"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column property="user" label="账号" width="140">
                             <template slot-scope="scope">
-                                <el-input v-model="scope.row.user" maxlength="20" show-word-limit></el-input>
+                                <el-input v-model="scope.row.user" maxlength="20"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column property="password" label="密码" width="140">
