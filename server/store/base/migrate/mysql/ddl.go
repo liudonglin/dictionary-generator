@@ -157,6 +157,7 @@ var createTableTables = `
 CREATE TABLE IF NOT EXISTS tables (
 	table_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
    ,table_name         		VARCHAR(40)
+   ,table_pid      			INTEGER
    ,table_did      			INTEGER
    ,table_description    	VARCHAR(200)
    ,table_created       	VARCHAR(20)
@@ -169,6 +170,8 @@ var createTableColumns = `
 CREATE TABLE IF NOT EXISTS columns (
 	column_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
    ,column_name         	VARCHAR(40)
+   ,column_pid      		INTEGER
+   ,column_did      		INTEGER
    ,column_tid      		INTEGER
    ,column_title			VARCHAR(40)
    ,column_data_type		VARCHAR(10)

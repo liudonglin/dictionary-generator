@@ -13,6 +13,7 @@ func toParams(u *core.Table) map[string]interface{} {
 	return map[string]interface{}{
 		"table_id":          u.ID,
 		"table_name":        u.Name,
+		"table_pid":         u.PID,
 		"table_did":         u.DID,
 		"table_description": u.Description,
 		"table_created":     u.Created,
@@ -32,6 +33,7 @@ func scanRow(scanner db.Scanner, dest *core.Table) error {
 	return scanner.Scan(
 		&dest.ID,
 		&dest.Name,
+		&dest.PID,
 		&dest.DID,
 		&dest.Description,
 		&dest.Created,

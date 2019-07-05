@@ -1,9 +1,9 @@
 package dbase
 
 import (
+	"database/sql"
 	"dg-server/core"
 	"dg-server/store/base/db"
-	"database/sql"
 	"fmt"
 	"time"
 )
@@ -175,6 +175,20 @@ func (s *dataBaseStore) Delete(id int64) error {
 	})
 }
 
+func (s *dataBaseStore) DeleteByPID(pid int64) error {
+	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"database_pid": pid,
+		}
+		stmt, args, err := binder.BindNamed(stmtDeleteByPID, params)
+		if err != nil {
+			return err
+		}
+		_, err = execer.Exec(stmt, args...)
+		return err
+	})
+}
+
 const queryBase = `
 SELECT
 database_id
@@ -222,4 +236,8 @@ WHERE database_id = :database_id
 
 const stmtDelete = `
 DELETE FROM database WHERE database_id = :database_id
+`
+
+const stmtDeleteByPID = `
+DELETE FROM database WHERE database_pid = :database_pid
 `

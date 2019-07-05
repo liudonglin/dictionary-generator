@@ -1,9 +1,9 @@
 package table
 
 import (
+	"database/sql"
 	"dg-server/core"
 	"dg-server/store/base/db"
-	"database/sql"
 	"fmt"
 	"time"
 )
@@ -117,6 +117,9 @@ func getQueryCountSqlite(q *core.TableQuery) (querySQL string) {
 	if q.Name != "" {
 		querySQL += " And table_name like :table_name "
 	}
+	if q.PID > 0 {
+		querySQL += " And table_pid = :table_pid "
+	}
 	if q.DID > 0 {
 		querySQL += " And table_did = :table_did "
 	}
@@ -127,6 +130,9 @@ func getQueryListSqlite(q *core.TableQuery) (querySQL string) {
 	querySQL = queryBase + " FROM tables Where 1=1 "
 	if q.Name != "" {
 		querySQL += " And table_name like :table_name "
+	}
+	if q.PID > 0 {
+		querySQL += " And table_pid = :table_pid "
 	}
 	if q.DID > 0 {
 		querySQL += " And table_did = :table_did "
@@ -155,10 +161,39 @@ func (s *tableStore) Delete(id int64) error {
 	})
 }
 
+func (s *tableStore) DeleteByDID(did int64) error {
+	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"table_did": did,
+		}
+		stmt, args, err := binder.BindNamed(stmtDeleteByDID, params)
+		if err != nil {
+			return err
+		}
+		_, err = execer.Exec(stmt, args...)
+		return err
+	})
+}
+
+func (s *tableStore) DeleteByPID(pid int64) error {
+	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"table_pid": pid,
+		}
+		stmt, args, err := binder.BindNamed(stmtDeleteByPID, params)
+		if err != nil {
+			return err
+		}
+		_, err = execer.Exec(stmt, args...)
+		return err
+	})
+}
+
 const queryBase = `
 SELECT
 table_id
 ,table_name
+,table_pid
 ,table_did
 ,table_description
 ,table_created
@@ -173,12 +208,14 @@ WHERE table_name = :table_name and table_did = :table_did
 const stmtInsert = `
 INSERT INTO tables (
  table_name
+,table_pid
 ,table_did
 ,table_description
 ,table_created
 ,table_updated
 ) VALUES (
  :table_name
+,:table_pid
 ,:table_did
 ,:table_description
 ,:table_created
@@ -197,4 +234,12 @@ WHERE table_id = :table_id
 
 const stmtDelete = `
 DELETE FROM tables WHERE table_id = :table_id
+`
+
+const stmtDeleteByDID = `
+DELETE FROM tables WHERE table_did = :table_did
+`
+
+const stmtDeleteByPID = `
+DELETE FROM tables WHERE table_pid = :table_pid
 `

@@ -74,6 +74,7 @@ func saveConnInfo(c echo.Context) error {
 					Name:        tablePost.TableName,
 					Description: tablePost.Comment,
 					DID:         dbID,
+					PID:         dbPost.PID,
 				}
 				err := tableStore.Create(tableInsert)
 				if err != nil {
@@ -130,6 +131,8 @@ func saveConnInfo(c echo.Context) error {
 
 					columnInsert := &core.Column{
 						Name:     columnPost.ColumnName,
+						PID:      dbPost.PID,
+						DID:      dbID,
 						TID:      tableID,
 						Title:    columnPost.Comment,
 						DataType: columnPost.DataType,

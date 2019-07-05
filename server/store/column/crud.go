@@ -1,9 +1,9 @@
 package column
 
 import (
+	"database/sql"
 	"dg-server/core"
 	"dg-server/store/base/db"
-	"database/sql"
 	"fmt"
 	"time"
 )
@@ -137,6 +137,12 @@ func getQueryCountSqlite(q *core.ColumnQuery) (querySQL string) {
 	if q.Name != "" {
 		querySQL += " And column_name like :column_name "
 	}
+	if q.PID > 0 {
+		querySQL += " And column_pid = :column_pid "
+	}
+	if q.DID > 0 {
+		querySQL += " And column_did = :column_did "
+	}
 	if q.TID > 0 {
 		querySQL += " And column_tid = :column_tid "
 	}
@@ -147,6 +153,12 @@ func getQueryListSqlite(q *core.ColumnQuery) (querySQL string) {
 	querySQL = queryBase + " FROM columns Where 1=1 "
 	if q.Name != "" {
 		querySQL += " And column_name like :column_name "
+	}
+	if q.PID > 0 {
+		querySQL += " And column_pid = :column_pid "
+	}
+	if q.DID > 0 {
+		querySQL += " And column_did = :column_did "
 	}
 	if q.TID > 0 {
 		querySQL += " And column_tid = :column_tid "
@@ -189,10 +201,40 @@ func (s *columnStore) DeleteByTID(tid int64) error {
 	})
 }
 
+func (s *columnStore) DeleteByDID(did int64) error {
+	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"column_did": did,
+		}
+		stmt, args, err := binder.BindNamed(stmtDeleteDID, params)
+		if err != nil {
+			return err
+		}
+		_, err = execer.Exec(stmt, args...)
+		return err
+	})
+}
+
+func (s *columnStore) DeleteByPID(pid int64) error {
+	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"column_pid": pid,
+		}
+		stmt, args, err := binder.BindNamed(stmtDeletePID, params)
+		if err != nil {
+			return err
+		}
+		_, err = execer.Exec(stmt, args...)
+		return err
+	})
+}
+
 const queryBase = `
 SELECT
 column_id
 ,column_name
+,column_pid
+,column_did
 ,column_tid
 ,column_title
 ,column_data_type
@@ -220,6 +262,8 @@ WHERE column_pk = 1 and column_tid = :column_tid
 const stmtInsert = `
 INSERT INTO columns (
  column_name
+,column_pid
+,column_did
 ,column_tid
 ,column_title
 ,column_data_type
@@ -234,6 +278,8 @@ INSERT INTO columns (
 ,column_updated
 ) VALUES (
  :column_name
+,:column_pid
+,:column_did
 ,:column_tid
 ,:column_title
 ,:column_data_type
@@ -272,4 +318,12 @@ DELETE FROM columns WHERE column_id = :column_id
 
 const stmtDeleteTID = `
 DELETE FROM columns WHERE column_tid = :column_tid
+`
+
+const stmtDeleteDID = `
+DELETE FROM columns WHERE column_did = :column_did
+`
+
+const stmtDeletePID = `
+DELETE FROM columns WHERE column_pid = :column_pid
 `

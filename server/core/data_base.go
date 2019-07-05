@@ -31,4 +31,6 @@ type DataBaseStore interface {
 	List(q *DBQuery) ([]*DataBase, int, error)
 
 	Delete(int64) error
+
+	DeleteByPID(int64) error
 }

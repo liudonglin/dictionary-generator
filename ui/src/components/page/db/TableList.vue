@@ -66,7 +66,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="title" label="描述" >
+            <el-table-column prop="title" label="标题" >
             </el-table-column>
             <el-table-column label="操作" width="160" align="center">
                 <template slot-scope="scope">
@@ -161,6 +161,12 @@
 <script>
     import bus from '../../common/bus';
     export default {
+        props: {
+            pid: {
+                type: String,
+                default: '0'
+            },
+        },
         data() {
             return {
                 listTableUrl:'/api/table/list',
@@ -259,6 +265,7 @@
                     return
                 }
                 table.did = this.dbid;
+                table.pid = parseInt(this.pid);
                 this.$axios.post(this.saveTableUrl, table).then(result=>{
                     if (result.success) {
                         this.tableForm = {
@@ -333,6 +340,8 @@
                         enumStr += `${item.key}:${item.value}:${item.des};`
                     })
                     this.columnForm.enum = enumStr
+                    this.columnForm.did = this.dbid;
+                    this.columnForm.pid = parseInt(this.pid);
                     let columnForm = this.columnForm
                     this.$axios.post(this.saveColumnUrl, this.columnForm).then(result=>{
                         if (result.success) {

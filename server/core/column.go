@@ -4,7 +4,9 @@ package core
 type Column struct {
 	ID          int64  `json:"id"`
 	Name        string `json:"name" validate:"required,max=40"`
-	TID         int64  `json:"tid"`
+	PID         int64  `json:"pid" validate:"gt=0"`
+	DID         int64  `json:"did" validate:"gt=0"`
+	TID         int64  `json:"tid" validate:"gt=0"`
 	Title       string `json:"title" validate:"required,max=40"`
 	DataType    string `json:"data_type"`
 	PK          bool   `json:"pk"`
@@ -21,6 +23,8 @@ type Column struct {
 // ColumnQuery 分页查询参数
 type ColumnQuery struct {
 	Pager
+	PID  int64  `json:"pid"`
+	DID  int64  `json:"did"`
 	TID  int64  `json:"tid"`
 	Name string `json:"name"`
 }
@@ -40,4 +44,8 @@ type ColumnStore interface {
 	Delete(int64) error
 
 	DeleteByTID(int64) error
+
+	DeleteByDID(int64) error
+
+	DeleteByPID(int64) error
 }

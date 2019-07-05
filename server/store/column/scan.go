@@ -13,6 +13,8 @@ func toParams(u *core.Column) map[string]interface{} {
 	return map[string]interface{}{
 		"column_id":          u.ID,
 		"column_name":        u.Name,
+		"column_pid":         u.PID,
+		"column_did":         u.DID,
 		"column_tid":         u.TID,
 		"column_title":       u.Title,
 		"column_data_type":   u.DataType,
@@ -40,6 +42,8 @@ func scanRow(scanner db.Scanner, dest *core.Column) error {
 	return scanner.Scan(
 		&dest.ID,
 		&dest.Name,
+		&dest.PID,
+		&dest.DID,
 		&dest.TID,
 		&dest.Title,
 		&dest.DataType,

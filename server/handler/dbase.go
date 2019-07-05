@@ -92,7 +92,7 @@ func loadDataBase(c echo.Context) error {
 	dbEntity, _ := dbStore.FindID(postEntity.ID)
 
 	if dbEntity.ID == 0 {
-		dbEntity.Tables = make([]*core.Table,0,0)
+		dbEntity.Tables = make([]*core.Table, 0, 0)
 		return c.JSON(http.StatusOK, &StandardResult{
 			Data: dbEntity,
 		})
@@ -134,26 +134,18 @@ func deleteDataBase(c echo.Context) error {
 		return err
 	}
 
-	//删除表和列
-	tableStore := store.Stores().TableStore
-	tables, _, _ := tableStore.List(&core.TableQuery{
-		DID: id,
-		Pager: core.Pager{
-			Index: 0,
-			Size:  9999999,
-		},
-	})
-	for _, table := range tables {
-		err = tableStore.Delete(table.ID)
-		if err != nil {
-			return err
-		}
+	//删除数据列
+	cStore := store.Stores().ColumnStore
+	err = cStore.DeleteByDID(id)
+	if err != nil {
+		return err
+	}
 
-		columnStore := store.Stores().ColumnStore
-		err = columnStore.DeleteByTID(table.ID)
-		if err != nil {
-			return err
-		}
+	//删除数据表
+	tableStore := store.Stores().TableStore
+	err = tableStore.DeleteByDID(id)
+	if err != nil {
+		return err
 	}
 
 	//删除数据库

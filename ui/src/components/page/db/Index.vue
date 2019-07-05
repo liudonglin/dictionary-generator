@@ -5,7 +5,7 @@
                 <v-db-sidebar :pid="pid" :pname="projectInfo.name" ></v-db-sidebar>
             </el-aside>
             <el-main>
-                <v-table-list></v-table-list>
+                <v-table-list :pid="pid"></v-table-list>
             </el-main>
         </el-container> 
     </div>
