@@ -192,9 +192,9 @@ CREATE TABLE IF NOT EXISTS connections (
    ,connection_pid      		INTEGER
    ,connection_data_base		TEXT
    ,connection_host				TEXT
-   ,connection_port				INTEGER
-   ,connection_user				INTEGER
-   ,connection_password			INTEGER
+   ,connection_port				TEXT
+   ,connection_user				TEXT
+   ,connection_password			TEXT
    ,connection_description    	TEXT
    ,connection_created       	TEXT
    ,connection_updated       	TEXT

@@ -29,7 +29,7 @@
         <el-dialog title="编辑" :visible.sync="editVisible" width="70%" @close="close('form')">
             <el-form ref="form" :model="form" :rules="rules" label-width="100px">
                 <el-form-item label="项目名称:" prop="name">
-                    <el-input v-model="form.name" maxlength="20" show-word-limit></el-input>
+                    <el-input v-model="form.name" maxlength="40" show-word-limit></el-input>
                 </el-form-item>
                 <el-form-item label="编程语言:" prop="language">
                     <el-radio v-model="form.language" label="java" @change="handleLanguageChange">Java</el-radio>
@@ -55,27 +55,27 @@
                     <el-table :data="form.connection_list">
                         <el-table-column property="name" label="名称">
                             <template slot-scope="scope">
-                                <el-input v-model="scope.row.name" ></el-input>
+                                <el-input v-model="scope.row.name" maxlength="40" show-word-limit></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column property="host" label="域名" width="160">
                             <template slot-scope="scope">
-                                <el-input v-model="scope.row.host" ></el-input>
+                                <el-input v-model="scope.row.host" maxlength="40" show-word-limit></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column property="port" label="端口" width="100">
                             <template slot-scope="scope">
-                                <el-input v-model="scope.row.port" ></el-input>
+                                <el-input v-model="scope.row.port" maxlength="10" show-word-limit></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column property="user" label="账号" width="140">
                             <template slot-scope="scope">
-                                <el-input v-model="scope.row.user" ></el-input>
+                                <el-input v-model="scope.row.user" maxlength="20" show-word-limit></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column property="password" label="密码" width="140">
                             <template slot-scope="scope">
-                                <el-input v-model="scope.row.password" show-password></el-input>
+                                <el-input v-model="scope.row.password" show-password maxlength="20"></el-input>
                             </template>
                         </el-table-column>
                         <el-table-column align="right" width="80">
@@ -153,7 +153,7 @@
         created() {
             this.search();
 
-            bus.$on('searchWordChange', val => {
+            bus.$on('headerSearchWordChange', val => {
                 this.search_word = val;
                 this.search();
             })

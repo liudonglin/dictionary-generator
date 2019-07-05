@@ -45,6 +45,7 @@ func New() *echo.Echo {
 	r.POST("/column/delete", deleteColumn)
 
 	r.POST("/table/save", saveTable)
+	r.POST("/table/list", listTable)
 	r.POST("/table/delete", deleteTable)
 
 	r.POST("/dbimport/loaddb", loadDBsByConnInfo)

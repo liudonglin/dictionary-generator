@@ -3,7 +3,7 @@ package core
 // Project 项目
 type Project struct {
 	ID          int64  `json:"id"`
-	Name        string `json:"name" validate:"required,max=20"`
+	Name        string `json:"name" validate:"required,max=40"`
 	Description string `json:"description" validate:"max=200"`
 	Language    string `json:"language" validate:"oneof=java csharp"`
 	DataBase    string `json:"data_base" validate:"oneof=mysql mssql"`

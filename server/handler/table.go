@@ -13,6 +13,34 @@ import (
 	"github.com/labstack/echo"
 )
 
+func listTable(c echo.Context) error {
+	q := &core.TableQuery{}
+	body, _ := ioutil.ReadAll(c.Request().Body)
+	json.Unmarshal(body, q)
+
+	tableStore := store.Stores().TableStore
+	tables, total, err := tableStore.List(q)
+	if err != nil {
+		return err
+	}
+
+	columnStore := store.Stores().ColumnStore
+	for _, table := range tables {
+		columns, _, _ := columnStore.List(&core.ColumnQuery{
+			TID: table.ID,
+			Pager: core.Pager{
+				Index: 0,
+				Size:  9999999,
+			},
+		})
+		table.Columns = columns
+	}
+
+	return c.JSON(http.StatusOK, &StandardResult{
+		Data: &PageResult{Total: total, List: tables},
+	})
+}
+
 func saveTable(c echo.Context) error {
 	table := &core.Table{}
 	body, _ := ioutil.ReadAll(c.Request().Body)

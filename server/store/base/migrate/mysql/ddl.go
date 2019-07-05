@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS users (
 var createTableProjects = `
 CREATE TABLE IF NOT EXISTS projects (
 	project_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
-   ,project_name         	VARCHAR(20)
+   ,project_name         	VARCHAR(40)
    ,project_language      	VARCHAR(10)
    ,project_data_base       VARCHAR(10)
    ,project_orm         	VARCHAR(10)
@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS projects (
 var createTableDatabBses = `
 CREATE TABLE IF NOT EXISTS database (
 	database_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
-   ,database_name         	VARCHAR(20)
+   ,database_name         	VARCHAR(40)
    ,database_pid      		INTEGER
    ,database_description    VARCHAR(200)
    ,database_created       	VARCHAR(20)
@@ -156,7 +156,7 @@ CREATE TABLE IF NOT EXISTS database (
 var createTableTables = `
 CREATE TABLE IF NOT EXISTS tables (
 	table_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
-   ,table_name         		VARCHAR(20)
+   ,table_name         		VARCHAR(40)
    ,table_did      			INTEGER
    ,table_description    	VARCHAR(200)
    ,table_created       	VARCHAR(20)
@@ -168,9 +168,9 @@ CREATE TABLE IF NOT EXISTS tables (
 var createTableColumns = `
 CREATE TABLE IF NOT EXISTS columns (
 	column_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
-   ,column_name         	VARCHAR(20)
+   ,column_name         	VARCHAR(40)
    ,column_tid      		INTEGER
-   ,column_title			VARCHAR(20)
+   ,column_title			VARCHAR(40)
    ,column_data_type		VARCHAR(10)
    ,column_pk				INTEGER
    ,column_ai				INTEGER
@@ -188,13 +188,13 @@ CREATE TABLE IF NOT EXISTS columns (
 var createTableConnections = `
 CREATE TABLE IF NOT EXISTS connections (
 	connection_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
-   ,connection_name         	VARCHAR(20)
+   ,connection_name         	VARCHAR(40)
    ,connection_pid      		INTEGER
    ,connection_data_base		VARCHAR(20)
-   ,connection_host				VARCHAR(20)
-   ,connection_port				INTEGER
-   ,connection_user				INTEGER
-   ,connection_password			INTEGER
+   ,connection_host				VARCHAR(40)
+   ,connection_port				VARCHAR(10)
+   ,connection_user				VARCHAR(20)
+   ,connection_password			VARCHAR(20)
    ,connection_description    	VARCHAR(200)
    ,connection_created       	VARCHAR(20)
    ,connection_updated       	VARCHAR(20)

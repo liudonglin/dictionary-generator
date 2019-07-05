@@ -3,9 +3,9 @@ package core
 // Column ...
 type Column struct {
 	ID          int64  `json:"id"`
-	Name        string `json:"name" validate:"required,max=20"`
+	Name        string `json:"name" validate:"required,max=40"`
 	TID         int64  `json:"tid"`
-	Title       string `json:"title" validate:"required,max=20"`
+	Title       string `json:"title" validate:"required,max=40"`
 	DataType    string `json:"data_type"`
 	PK          bool   `json:"pk"`
 	AI          bool   `json:"ai"`

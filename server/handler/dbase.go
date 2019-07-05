@@ -92,7 +92,10 @@ func loadDataBase(c echo.Context) error {
 	dbEntity, _ := dbStore.FindID(postEntity.ID)
 
 	if dbEntity.ID == 0 {
-		return &BusinessError{Message: fmt.Sprintf("编号为%d的数据库不存在!", postEntity.ID)}
+		dbEntity.Tables = make([]*core.Table,0,0)
+		return c.JSON(http.StatusOK, &StandardResult{
+			Data: dbEntity,
+		})
 	}
 
 	tableStore := store.Stores().TableStore

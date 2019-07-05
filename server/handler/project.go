@@ -115,6 +115,39 @@ func deleteProject(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	// 删除数据库
+	dbStore := store.Stores().DataBaseStore
+	dbs, _, _ := dbStore.List(&core.DBQuery{
+		PID: id,
+		Pager: core.Pager{
+			Index: 0,
+			Size:  9999999,
+		},
+	})
+
+	for _, db := range dbs {
+		//删除表和列
+		tableStore := store.Stores().TableStore
+		tables, _, _ := tableStore.List(&core.TableQuery{
+			DID: db.ID,
+			Pager: core.Pager{
+				Index: 0,
+				Size:  9999999,
+			},
+		})
+		for _, table := range tables {
+			tableStore.Delete(table.ID)
+			columnStore := store.Stores().ColumnStore
+			err = columnStore.DeleteByTID(table.ID)
+		}
+		dbStore.Delete(db.ID)
+	}
+
+	//删除连接信息
+	connStore := store.Stores().ConnectionStore
+	connStore.DeleteByPID(id)
+
 	return c.JSON(http.StatusOK, &StandardResult{
 		Message: "删除成功",
 	})

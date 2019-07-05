@@ -2,15 +2,18 @@
     <div style="height:100%;">
         <el-container style="height:100%;">
             <el-aside width="300px"  style="border-right:solid 1px #e6e6e6;">
-                <v-db-sidebar :pid="pid" ></v-db-sidebar>
+                <v-db-sidebar :pid="pid" :pname="projectInfo.name" ></v-db-sidebar>
             </el-aside>
-            <el-main>Main</el-main>
+            <el-main>
+                <v-table-list></v-table-list>
+            </el-main>
         </el-container> 
     </div>
 </template>
 
 <script>
     import vDbSidebar from './DBAside.vue';
+    import vTableList from './TableList.vue';
     import bus from '../../common/bus';
     export default {
         props: {
@@ -26,7 +29,7 @@
             }
         },
         components:{
-            vDbSidebar
+            vDbSidebar,vTableList
         },
         created() {
             this.loadProject();
