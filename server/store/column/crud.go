@@ -96,6 +96,8 @@ func (s *columnStore) List(q *core.ColumnQuery) ([]*core.Column, int, error) {
 		params := map[string]interface{}{
 			"column_name": "%" + q.Name + "%",
 			"column_tid":  q.TID,
+			"column_did":  q.DID,
+			"column_pid":  q.PID,
 		}
 		queryAll := getQueryListSQL(q, s.db.Driver())
 		query, args, err := binder.BindNamed(queryAll, params)

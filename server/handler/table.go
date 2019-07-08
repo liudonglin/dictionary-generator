@@ -41,15 +41,22 @@ func listTableDetail(c echo.Context) error {
 	}
 
 	columnStore := store.Stores().ColumnStore
+	columns, _, _ := columnStore.List(&core.ColumnQuery{
+		PID: q.PID,
+		DID: q.DID,
+		Pager: core.Pager{
+			Index: 0,
+			Size:  9999999,
+		},
+	})
+
 	for _, table := range tables {
-		columns, _, _ := columnStore.List(&core.ColumnQuery{
-			TID: table.ID,
-			Pager: core.Pager{
-				Index: 0,
-				Size:  9999999,
-			},
-		})
-		table.Columns = columns
+		table.Columns = make([]*core.Column, 0)
+		for _, column := range columns {
+			if column.TID == table.ID {
+				table.Columns = append(table.Columns, column)
+			}
+		}
 	}
 
 	return c.JSON(http.StatusOK, &StandardResult{

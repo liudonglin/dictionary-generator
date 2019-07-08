@@ -1,7 +1,7 @@
 <template>
 <div v-loading="dbLoading" style="height: 100%;">
 
-    <div class="mb60" style="border-bottom:solid 1px #e6e6e6;" v-if="dbid>0">
+    <div class="mb60" style="border-bottom:solid 1px #e6e6e6;background-color:#F4F4F5;padding-top:20px;padding-left:10px;" v-if="dbid>0">
         <el-form :inline="true" :model="tableForm" :rules="rules">
             <el-form-item label="表 名:" prop="name">
                 <el-input v-model="tableForm.name" style="width:280px;" maxlength="40" show-word-limit></el-input>
@@ -10,13 +10,13 @@
                 <el-input v-model="tableForm.description" style="width:280px;" maxlength="200" show-word-limit></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" icon="el-icon-check" @click="saveTable(tableForm)" circle title="保存表"></el-button>
+                <el-button type="primary" icon="el-icon-check" @click="saveTable(tableForm)" circle title="新增表"></el-button>
             </el-form-item>
         </el-form>
     </div>
 
     <div v-for="table in tables" :key="table.id" class="mb60">
-        <el-form :inline="true" :model="table" :rules="rules" ref="tableform">
+        <el-form style="background-color:#F4F4F5;padding-top:20px;padding-left:10px;" :inline="true" :model="table" :rules="rules" ref="tableform">
             <el-form-item label="表 名:" prop="name">
                 <el-input v-model="table.name" style="width:280px;" maxlength="40" show-word-limit></el-input>
             </el-form-item>
