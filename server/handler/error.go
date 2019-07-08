@@ -29,7 +29,7 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 		result.Message = err1.Message.(string)
 	} else {
 		result.Code = 500
-		result.Message = "服务端发生错误,请稍后再试!"
+		result.Message = err.Error()
 	}
 	c.JSON(http.StatusOK, result)
 }

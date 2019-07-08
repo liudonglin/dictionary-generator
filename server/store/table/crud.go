@@ -76,13 +76,9 @@ func (s *tableStore) List(q *core.TableQuery) ([]*core.Table, int, error) {
 		params := map[string]interface{}{
 			"table_name": "%" + q.Name + "%",
 			"table_did":  q.DID,
+			"table_pid":  q.PID,
 		}
-		queryAll := ""
-		if s.db.Driver() == db.Sqlite {
-			queryAll = getQueryListSqlite(q)
-		} else {
-			panic("mysql query not implement")
-		}
+		queryAll := getQueryListSQL(q, s.db.Driver())
 		query, args, err := binder.BindNamed(queryAll, params)
 		if err != nil {
 			return err
@@ -94,12 +90,7 @@ func (s *tableStore) List(q *core.TableQuery) ([]*core.Table, int, error) {
 		out, err = scanRows(rows)
 
 		//查询count
-		queryCount := ""
-		if s.db.Driver() == db.Sqlite {
-			queryCount = getQueryCountSqlite(q)
-		} else {
-			panic("mysql query not implement")
-		}
+		queryCount := getQueryCountSQL(q)
 		query, args, err = binder.BindNamed(queryCount, params)
 		if err != nil {
 			return err
@@ -112,7 +103,7 @@ func (s *tableStore) List(q *core.TableQuery) ([]*core.Table, int, error) {
 	return out, total, err
 }
 
-func getQueryCountSqlite(q *core.TableQuery) (querySQL string) {
+func getQueryCountSQL(q *core.TableQuery) (querySQL string) {
 	querySQL = " Select Count(1) FROM tables Where 1=1 "
 	if q.Name != "" {
 		querySQL += " And table_name like :table_name "
@@ -126,7 +117,7 @@ func getQueryCountSqlite(q *core.TableQuery) (querySQL string) {
 	return querySQL
 }
 
-func getQueryListSqlite(q *core.TableQuery) (querySQL string) {
+func getQueryListSQL(q *core.TableQuery, driver db.Driver) (querySQL string) {
 	querySQL = queryBase + " FROM tables Where 1=1 "
 	if q.Name != "" {
 		querySQL += " And table_name like :table_name "
@@ -143,7 +134,11 @@ func getQueryListSqlite(q *core.TableQuery) (querySQL string) {
 		querySQL += " ORDER BY table_created DESC "
 	}
 
-	querySQL += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
+	if driver == db.Sqlite {
+		querySQL += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
+	} else {
+		querySQL += fmt.Sprintf(" limit %d, %d", q.Index*q.Size, q.Size)
+	}
 	return querySQL
 }
 

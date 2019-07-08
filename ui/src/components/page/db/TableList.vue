@@ -169,7 +169,7 @@
         },
         data() {
             return {
-                listTableUrl:'/api/table/list',
+                listTableDetailUrl:'/api/table/listdetail',
                 saveTableUrl: '/api/table/save',
                 deleteTableUrl:'/api/table/delete',
                 saveColumnUrl: '/api/column/save',
@@ -225,17 +225,16 @@
 
             bus.$on('headerSearchWordChange', val => {
                 this.search_word = val;
-                if (this.dbid==0) {
-                    return;
-                }
                 this.search();
             })
+
+            this.search();
         },
         methods:{
             search() {
                 this.dbLoading = true;
-                let postData = { name:this.search_word, did:this.dbid, index:0, size:999999, order_by:"table_created DESC" };
-                this.$axios.post(this.listTableUrl,postData).then(result=>{
+                let postData = { name:this.search_word, pid:parseInt(this.pid), did:this.dbid, index:0, size:999999, order_by:"table_created DESC" };
+                this.$axios.post(this.listTableDetailUrl,postData).then(result=>{
                     if (result.success) {
                         this.tables = result.data.list.map(table => {
                             table.columns = table.columns.map(col => 

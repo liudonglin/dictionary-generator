@@ -97,12 +97,7 @@ func (s *dataBaseStore) List(q *core.DBQuery) ([]*core.DataBase, int, error) {
 			"database_name": "%" + q.Name + "%",
 			"database_pid":  q.PID,
 		}
-		queryAll := ""
-		if s.db.Driver() == db.Sqlite {
-			queryAll = getQueryListSqlite(q)
-		} else {
-			panic("mysql query not implement")
-		}
+		queryAll := getQueryListSQL(q, s.db.Driver())
 		query, args, err := binder.BindNamed(queryAll, params)
 		if err != nil {
 			return err
@@ -114,12 +109,7 @@ func (s *dataBaseStore) List(q *core.DBQuery) ([]*core.DataBase, int, error) {
 		out, err = scanRows(rows)
 
 		//查询count
-		queryCount := ""
-		if s.db.Driver() == db.Sqlite {
-			queryCount = getQueryCountSqlite(q)
-		} else {
-			panic("mysql query not implement")
-		}
+		queryCount := getQueryCountSQL(q)
 		query, args, err = binder.BindNamed(queryCount, params)
 		if err != nil {
 			return err
@@ -132,8 +122,8 @@ func (s *dataBaseStore) List(q *core.DBQuery) ([]*core.DataBase, int, error) {
 	return out, total, err
 }
 
-func getQueryCountSqlite(q *core.DBQuery) (queryAll string) {
-	queryAll = " Select Count(1) FROM database Where 1=1 "
+func getQueryCountSQL(q *core.DBQuery) (queryAll string) {
+	queryAll = " Select Count(1) FROM dbases Where 1=1 "
 	if q.Name != "" {
 		queryAll += " And database_name like :database_name "
 	}
@@ -143,22 +133,27 @@ func getQueryCountSqlite(q *core.DBQuery) (queryAll string) {
 	return queryAll
 }
 
-func getQueryListSqlite(q *core.DBQuery) (queryAll string) {
-	queryAll = queryBase + " FROM database Where 1=1 "
+func getQueryListSQL(q *core.DBQuery, driver db.Driver) (querySQL string) {
+	querySQL = queryBase + " FROM dbases Where 1=1 "
 	if q.Name != "" {
-		queryAll += " And database_name like :database_name "
+		querySQL += " And database_name like :database_name "
 	}
 	if q.PID > 0 {
-		queryAll += " And database_pid = :database_pid "
+		querySQL += " And database_pid = :database_pid "
 	}
 	if q.OrderBy != "" {
-		queryAll += fmt.Sprintf(" ORDER BY %s ", q.OrderBy)
+		querySQL += fmt.Sprintf(" ORDER BY %s ", q.OrderBy)
 	} else {
-		queryAll += " ORDER BY database_created DESC "
+		querySQL += " ORDER BY database_created DESC "
 	}
 
-	queryAll += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
-	return queryAll
+	if driver == db.Sqlite {
+		querySQL += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
+	} else {
+		querySQL += fmt.Sprintf(" limit %d, %d", q.Index*q.Size, q.Size)
+	}
+
+	return querySQL
 }
 
 func (s *dataBaseStore) Delete(id int64) error {
@@ -200,17 +195,17 @@ database_id
 `
 
 const queryNameAndPID = queryBase + `
-FROM database
+FROM dbases
 WHERE database_name = :database_name and database_pid = :database_pid 
 `
 
 const queryID = queryBase + `
-FROM database
+FROM dbases
 WHERE database_id = :database_id 
 `
 
 const stmtInsert = `
-INSERT INTO database (
+INSERT INTO dbases (
  database_name
 ,database_pid
 ,database_description
@@ -226,7 +221,7 @@ INSERT INTO database (
 `
 
 const stmtUpdate = `
-UPDATE database
+UPDATE dbases
 SET
 database_name         	= :database_name
 ,database_description   = :database_description
@@ -235,9 +230,9 @@ WHERE database_id = :database_id
 `
 
 const stmtDelete = `
-DELETE FROM database WHERE database_id = :database_id
+DELETE FROM dbases WHERE database_id = :database_id
 `
 
 const stmtDeleteByPID = `
-DELETE FROM database WHERE database_pid = :database_pid
+DELETE FROM dbases WHERE database_pid = :database_pid
 `

@@ -97,12 +97,7 @@ func (s *columnStore) List(q *core.ColumnQuery) ([]*core.Column, int, error) {
 			"column_name": "%" + q.Name + "%",
 			"column_tid":  q.TID,
 		}
-		queryAll := ""
-		if s.db.Driver() == db.Sqlite {
-			queryAll = getQueryListSqlite(q)
-		} else {
-			panic("mysql query not implement")
-		}
+		queryAll := getQueryListSQL(q, s.db.Driver())
 		query, args, err := binder.BindNamed(queryAll, params)
 		if err != nil {
 			return err
@@ -114,12 +109,7 @@ func (s *columnStore) List(q *core.ColumnQuery) ([]*core.Column, int, error) {
 		out, err = scanRows(rows)
 
 		//查询count
-		queryCount := ""
-		if s.db.Driver() == db.Sqlite {
-			queryCount = getQueryCountSqlite(q)
-		} else {
-			panic("mysql query not implement")
-		}
+		queryCount := getQueryCountSQL(q)
 		query, args, err = binder.BindNamed(queryCount, params)
 		if err != nil {
 			return err
@@ -132,7 +122,7 @@ func (s *columnStore) List(q *core.ColumnQuery) ([]*core.Column, int, error) {
 	return out, total, err
 }
 
-func getQueryCountSqlite(q *core.ColumnQuery) (querySQL string) {
+func getQueryCountSQL(q *core.ColumnQuery) (querySQL string) {
 	querySQL = " Select Count(1) FROM columns Where 1=1 "
 	if q.Name != "" {
 		querySQL += " And column_name like :column_name "
@@ -149,7 +139,7 @@ func getQueryCountSqlite(q *core.ColumnQuery) (querySQL string) {
 	return querySQL
 }
 
-func getQueryListSqlite(q *core.ColumnQuery) (querySQL string) {
+func getQueryListSQL(q *core.ColumnQuery, driver db.Driver) (querySQL string) {
 	querySQL = queryBase + " FROM columns Where 1=1 "
 	if q.Name != "" {
 		querySQL += " And column_name like :column_name "
@@ -169,7 +159,11 @@ func getQueryListSqlite(q *core.ColumnQuery) (querySQL string) {
 		querySQL += " ORDER BY column_id ASC "
 	}
 
-	querySQL += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
+	if driver == db.Sqlite {
+		querySQL += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
+	} else {
+		querySQL += fmt.Sprintf(" limit %d, %d", q.Index*q.Size, q.Size)
+	}
 	return querySQL
 }
 

@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS projects (
 `
 
 var createTableDatabBses = `
-CREATE TABLE IF NOT EXISTS database (
+CREATE TABLE IF NOT EXISTS dbases (
 	database_id            	INTEGER PRIMARY KEY AUTOINCREMENT
    ,database_name         	TEXT
    ,database_pid      		INTEGER

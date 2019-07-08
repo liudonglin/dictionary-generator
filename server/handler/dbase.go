@@ -83,50 +83,6 @@ func listDataBase(c echo.Context) error {
 	})
 }
 
-func loadDataBase(c echo.Context) error {
-	postEntity := &core.DataBase{}
-	body, _ := ioutil.ReadAll(c.Request().Body)
-	json.Unmarshal(body, postEntity)
-
-	dbStore := store.Stores().DataBaseStore
-	dbEntity, _ := dbStore.FindID(postEntity.ID)
-
-	if dbEntity.ID == 0 {
-		dbEntity.Tables = make([]*core.Table, 0, 0)
-		return c.JSON(http.StatusOK, &StandardResult{
-			Data: dbEntity,
-		})
-	}
-
-	tableStore := store.Stores().TableStore
-
-	tables, _, _ := tableStore.List(&core.TableQuery{
-		DID: dbEntity.ID,
-		Pager: core.Pager{
-			Index: 0,
-			Size:  9999999,
-		},
-	})
-
-	dbEntity.Tables = tables
-
-	columnStore := store.Stores().ColumnStore
-	for _, table := range tables {
-		columns, _, _ := columnStore.List(&core.ColumnQuery{
-			TID: table.ID,
-			Pager: core.Pager{
-				Index: 0,
-				Size:  9999999,
-			},
-		})
-		table.Columns = columns
-	}
-
-	return c.JSON(http.StatusOK, &StandardResult{
-		Data: dbEntity,
-	})
-}
-
 func deleteDataBase(c echo.Context) error {
 	body, _ := ioutil.ReadAll(c.Request().Body)
 	id, err := strconv.ParseInt(string(body), 10, 64)

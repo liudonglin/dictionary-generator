@@ -77,12 +77,7 @@ func (s *connectionStore) List(q *core.ConnectionQuery) ([]*core.Connection, int
 			"connection_name": "%" + q.Name + "%",
 			"connection_pid":  q.PID,
 		}
-		queryAll := ""
-		if s.db.Driver() == db.Sqlite {
-			queryAll = getQueryListSqlite(q)
-		} else {
-			panic("mysql query not implement")
-		}
+		queryAll := getQueryListSQL(q, s.db.Driver())
 		query, args, err := binder.BindNamed(queryAll, params)
 		if err != nil {
 			return err
@@ -94,12 +89,7 @@ func (s *connectionStore) List(q *core.ConnectionQuery) ([]*core.Connection, int
 		out, err = scanRows(rows)
 
 		//查询count
-		queryCount := ""
-		if s.db.Driver() == db.Sqlite {
-			queryCount = getQueryCountSqlite(q)
-		} else {
-			panic("mysql query not implement")
-		}
+		queryCount := getQueryCountSQL(q)
 		query, args, err = binder.BindNamed(queryCount, params)
 		if err != nil {
 			return err
@@ -112,7 +102,7 @@ func (s *connectionStore) List(q *core.ConnectionQuery) ([]*core.Connection, int
 	return out, total, err
 }
 
-func getQueryCountSqlite(q *core.ConnectionQuery) (querySQL string) {
+func getQueryCountSQL(q *core.ConnectionQuery) (querySQL string) {
 	querySQL = " Select Count(1) FROM connections Where 1=1 "
 	if q.Name != "" {
 		querySQL += " And connection_name like :connection_name "
@@ -123,7 +113,7 @@ func getQueryCountSqlite(q *core.ConnectionQuery) (querySQL string) {
 	return querySQL
 }
 
-func getQueryListSqlite(q *core.ConnectionQuery) (querySQL string) {
+func getQueryListSQL(q *core.ConnectionQuery, driver db.Driver) (querySQL string) {
 	querySQL = queryBase + " FROM connections Where 1=1 "
 	if q.Name != "" {
 		querySQL += " And connection_name like :connection_name "
@@ -137,7 +127,12 @@ func getQueryListSqlite(q *core.ConnectionQuery) (querySQL string) {
 		querySQL += " ORDER BY connection_id ASC "
 	}
 
-	querySQL += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
+	if driver == db.Sqlite {
+		querySQL += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
+	} else {
+		querySQL += fmt.Sprintf(" limit %d, %d", q.Index*q.Size, q.Size)
+	}
+
 	return querySQL
 }
 

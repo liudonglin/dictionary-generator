@@ -24,6 +24,22 @@ func listTable(c echo.Context) error {
 		return err
 	}
 
+	return c.JSON(http.StatusOK, &StandardResult{
+		Data: &PageResult{Total: total, List: tables},
+	})
+}
+
+func listTableDetail(c echo.Context) error {
+	q := &core.TableQuery{}
+	body, _ := ioutil.ReadAll(c.Request().Body)
+	json.Unmarshal(body, q)
+
+	tableStore := store.Stores().TableStore
+	tables, total, err := tableStore.List(q)
+	if err != nil {
+		return err
+	}
+
 	columnStore := store.Stores().ColumnStore
 	for _, table := range tables {
 		columns, _, _ := columnStore.List(&core.ColumnQuery{

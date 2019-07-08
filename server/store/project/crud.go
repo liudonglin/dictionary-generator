@@ -94,12 +94,8 @@ func (s *projectStore) List(q *core.ProjectQuery) ([]*core.Project, int, error) 
 		params := map[string]interface{}{
 			"project_name": "%" + q.Name + "%",
 		}
-		queryAll := ""
-		if s.db.Driver() == db.Sqlite {
-			queryAll = getQueryListSqlite(q)
-		} else {
-			panic("mysql query not implement")
-		}
+
+		queryAll := getQueryListSQL(q, s.db.Driver())
 		query, args, err := binder.BindNamed(queryAll, params)
 		if err != nil {
 			return err
@@ -111,12 +107,7 @@ func (s *projectStore) List(q *core.ProjectQuery) ([]*core.Project, int, error) 
 		out, err = scanRows(rows)
 
 		//查询count
-		queryCount := ""
-		if s.db.Driver() == db.Sqlite {
-			queryCount = getQueryCountSqlite(q)
-		} else {
-			panic("mysql query not implement")
-		}
+		queryCount := getQueryCountSQL(q)
 		query, args, err = binder.BindNamed(queryCount, params)
 		if err != nil {
 			return err
@@ -143,7 +134,7 @@ func (s *projectStore) Delete(id int64) error {
 	})
 }
 
-func getQueryCountSqlite(q *core.ProjectQuery) (queryAll string) {
+func getQueryCountSQL(q *core.ProjectQuery) (queryAll string) {
 	queryAll = " Select Count(1) FROM projects Where 1=1 "
 	if q.Name != "" {
 		queryAll += " And project_name like :project_name "
@@ -151,7 +142,7 @@ func getQueryCountSqlite(q *core.ProjectQuery) (queryAll string) {
 	return queryAll
 }
 
-func getQueryListSqlite(q *core.ProjectQuery) (queryAll string) {
+func getQueryListSQL(q *core.ProjectQuery, driver db.Driver) (queryAll string) {
 	queryAll = queryBase + " FROM projects Where 1=1 "
 	if q.Name != "" {
 		queryAll += " And project_name like :project_name "
@@ -162,7 +153,11 @@ func getQueryListSqlite(q *core.ProjectQuery) (queryAll string) {
 		queryAll += " ORDER BY project_created DESC "
 	}
 
-	queryAll += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
+	if driver == db.Sqlite {
+		queryAll += fmt.Sprintf(" limit %d offset %d", q.Size, q.Index*q.Size)
+	} else {
+		queryAll += fmt.Sprintf(" limit %d, %d", q.Index*q.Size, q.Size)
+	}
 	return queryAll
 }
 
