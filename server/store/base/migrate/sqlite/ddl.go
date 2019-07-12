@@ -32,6 +32,10 @@ var migrations = []struct {
 		name: "create-table-connections",
 		stmt: createTableConnections,
 	},
+	{
+		name: "create-table-templetes",
+		stmt: createTableTempletes,
+	},
 }
 
 // Migrate performs the database migration. If the migration fails
@@ -46,7 +50,6 @@ func Migrate(db *sql.DB) error {
 	}
 	for _, migration := range migrations {
 		if _, ok := completed[migration.name]; ok {
-
 			continue
 		}
 
@@ -56,8 +59,12 @@ func Migrate(db *sql.DB) error {
 		if err := insertMigration(db, migration.name); err != nil {
 			return err
 		}
-
 	}
+
+	if err := initTemplete(db); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -175,11 +182,13 @@ CREATE TABLE IF NOT EXISTS columns (
    ,column_tid      		INTEGER
    ,column_title			TEXT
    ,column_data_type		TEXT
+   ,column_column_type		TEXT
    ,column_pk				INTEGER
    ,column_ai				INTEGER
    ,column_null				INTEGER
    ,column_length			TEXT
    ,column_index			INTEGER
+   ,column_unique			INTEGER
    ,column_enum    			TEXT
    ,column_description    	TEXT
    ,column_created       	TEXT
@@ -202,5 +211,20 @@ CREATE TABLE IF NOT EXISTS connections (
    ,connection_created       	TEXT
    ,connection_updated       	TEXT
    ,UNIQUE(connection_pid, connection_name)
+);
+`
+
+var createTableTempletes = `
+CREATE TABLE IF NOT EXISTS templetes (
+	templete_id            	INTEGER PRIMARY KEY AUTOINCREMENT
+   ,templete_name         	TEXT
+   ,templete_content      	TEXT
+   ,templete_language      	TEXT
+   ,templete_data_base      TEXT
+   ,templete_orm         	TEXT
+   ,templete_type         	TEXT
+   ,templete_created       	TEXT
+   ,templete_updated       	TEXT
+   ,UNIQUE(templete_name)
 );
 `

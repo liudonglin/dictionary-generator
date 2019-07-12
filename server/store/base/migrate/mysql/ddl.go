@@ -175,11 +175,13 @@ CREATE TABLE IF NOT EXISTS columns (
    ,column_tid      		INTEGER
    ,column_title			VARCHAR(40)
    ,column_data_type		VARCHAR(10)
+   ,column_column_type		VARCHAR(10)
    ,column_pk				INTEGER
    ,column_ai				INTEGER
    ,column_null				INTEGER
    ,column_length			VARCHAR(10)
    ,column_index			INTEGER
+   ,column_unique			INTEGER
    ,column_enum    			VARCHAR(100)
    ,column_description    	VARCHAR(200)
    ,column_created       	VARCHAR(20)
@@ -202,5 +204,19 @@ CREATE TABLE IF NOT EXISTS connections (
    ,connection_created       	VARCHAR(20)
    ,connection_updated       	VARCHAR(20)
    ,UNIQUE(connection_pid, connection_name)
+);
+`
+var createTableTempletes = `
+CREATE TABLE IF NOT EXISTS templetes (
+	templete_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
+   ,templete_name         	VARCHAR(40)
+   ,templete_content      	TEXT
+   ,templete_language      	VARCHAR(10)
+   ,templete_data_base      VARCHAR(10)
+   ,templete_orm         	VARCHAR(10)
+   ,templete_type         	VARCHAR(10)
+   ,templete_created       	VARCHAR(20)
+   ,templete_updated       	VARCHAR(20)
+   ,UNIQUE(templete_name)
 );
 `

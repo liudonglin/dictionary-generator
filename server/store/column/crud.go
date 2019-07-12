@@ -234,11 +234,13 @@ column_id
 ,column_tid
 ,column_title
 ,column_data_type
+,column_column_type
 ,column_pk
 ,column_ai
 ,column_null
 ,column_length
 ,column_index
+,column_unique
 ,column_enum
 ,column_description
 ,column_created
@@ -263,11 +265,13 @@ INSERT INTO columns (
 ,column_tid
 ,column_title
 ,column_data_type
+,column_column_type
 ,column_pk
 ,column_ai
 ,column_null
 ,column_length
 ,column_index
+,column_unique
 ,column_enum
 ,column_description
 ,column_created
@@ -279,11 +283,13 @@ INSERT INTO columns (
 ,:column_tid
 ,:column_title
 ,:column_data_type
+,:column_column_type
 ,:column_pk
 ,:column_ai
 ,:column_null
 ,:column_length
 ,:column_index
+,:column_unique
 ,:column_enum
 ,:column_description
 ,:column_created
@@ -297,11 +303,13 @@ SET
 column_name         = :column_name
 ,column_title   	= :column_title
 ,column_data_type   = :column_data_type
+,column_column_type = :column_column_type
 ,column_pk   		= :column_pk
 ,column_ai   		= :column_ai
 ,column_null   		= :column_null
 ,column_length   	= :column_length
 ,column_index   	= :column_index
+,column_unique		= :column_unique
 ,column_enum   		= :column_enum
 ,column_description = :column_description
 ,column_updated     = :column_updated

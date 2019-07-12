@@ -89,14 +89,23 @@ func saveConnInfo(c echo.Context) error {
 				columnEntity, _ := columnStore.FindNameAndTID(tableID, columnPost.ColumnName)
 				if columnEntity.ID == 0 {
 
-					pk, index, ai, null, length := false, false, false, false, ""
+					pk, index, unique, ai, null, length := false, false, false, false, false, ""
 					if columnPost.ColumnKey == "PRI" {
+						//主键索引
 						pk = true
+						index = true
+						unique = true
 					}
 					if columnPost.ColumnKey == "UNI" {
+						//唯一索引
+						index = true
+						unique = true
+					}
+					if columnPost.ColumnKey == "MUL" {
+						//一般索引
 						index = true
 					}
-					// MUL 组合索引不支持
+
 					if columnPost.Extra == "auto_increment" {
 						ai = true
 					}
@@ -130,17 +139,19 @@ func saveConnInfo(c echo.Context) error {
 					}
 
 					columnInsert := &core.Column{
-						Name:     columnPost.ColumnName,
-						PID:      dbPost.PID,
-						DID:      dbID,
-						TID:      tableID,
-						Title:    columnPost.Comment,
-						DataType: columnPost.DataType,
-						PK:       pk,
-						AI:       ai,
-						Null:     null,
-						Index:    index,
-						Length:   length,
+						Name:       columnPost.ColumnName,
+						PID:        dbPost.PID,
+						DID:        dbID,
+						TID:        tableID,
+						Title:      columnPost.Comment,
+						DataType:   columnPost.DataType,
+						ColumnType: columnPost.ColumnType,
+						PK:         pk,
+						Unique:     unique,
+						AI:         ai,
+						Null:       null,
+						Index:      index,
+						Length:     length,
 					}
 					err := columnStore.Create(columnInsert)
 					if err != nil {

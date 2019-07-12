@@ -28,6 +28,8 @@ type TableStore interface {
 
 	FindNameAndDID(int64, string) (*Table, error)
 
+	FindID(int64) (*Table, error)
+
 	List(*TableQuery) ([]*Table, int, error)
 
 	Delete(int64) error

@@ -69,6 +69,26 @@ func (s *tableStore) FindNameAndDID(did int64, name string) (*core.Table, error)
 	return out, err
 }
 
+func (s *tableStore) FindID(id int64) (*core.Table, error) {
+	out := &core.Table{}
+	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"table_id": id,
+		}
+		query, args, err := binder.BindNamed(queryID, params)
+		if err != nil {
+			return err
+		}
+		row := queryer.QueryRow(query, args...)
+		err = scanRow(row, out)
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		return err
+	})
+	return out, err
+}
+
 func (s *tableStore) List(q *core.TableQuery) ([]*core.Table, int, error) {
 	var out []*core.Table
 	var total int
@@ -198,6 +218,11 @@ table_id
 const queryNameAndDID = queryBase + `
 FROM tables
 WHERE table_name = :table_name and table_did = :table_did 
+`
+
+const queryID = queryBase + `
+FROM tables
+WHERE table_id = :table_id
 `
 
 const stmtInsert = `

@@ -2,6 +2,8 @@
 github.com/360EntSecGroup-Skylar/excelize/v2
 # github.com/dgrijalva/jwt-go v3.2.0+incompatible
 github.com/dgrijalva/jwt-go
+# github.com/flosch/pongo2 v0.0.0-20190707114632-bbf5a6c351f4
+github.com/flosch/pongo2
 # github.com/go-playground/locales v0.12.1
 github.com/go-playground/locales/zh
 github.com/go-playground/locales
@@ -15,6 +17,8 @@ github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
 # github.com/joho/godotenv v1.3.0
 github.com/joho/godotenv
+# github.com/juju/errors v0.0.0-20181118221551-089d3ea4e4d5
+github.com/juju/errors
 # github.com/kelseyhightower/envconfig v1.4.0
 github.com/kelseyhightower/envconfig
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
@@ -43,12 +47,12 @@ github.com/sirupsen/logrus
 github.com/valyala/bytebufferpool
 # github.com/valyala/fasttemplate v1.0.1
 github.com/valyala/fasttemplate
-# golang.org/x/crypto v0.0.0-20190621222207-cc06ce4a13d4
+# golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/acme
-# golang.org/x/net v0.0.0-20190603091049-60506f45cf65
+# golang.org/x/net v0.0.0-20190628185345-da137c7871d7
 golang.org/x/net/idna
-# golang.org/x/sys v0.0.0-20190606165138-5da285871e9c
+# golang.org/x/sys v0.0.0-20190710143415-6ec70d6a5542
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.2
 golang.org/x/text/secure/bidirule

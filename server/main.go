@@ -9,6 +9,8 @@ import (
 	"dg-server/handler"
 	"dg-server/store"
 	"dg-server/store/base/db"
+	"dg-server/tpl"
+
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/sirupsen/logrus"
@@ -43,6 +45,8 @@ func main() {
 
 	port := 8080
 	e := handler.New()
+
+	tpl.TestGetTableScript(1)
 
 	fmt.Printf("Access address http://localhost:%d/ui/#/dashboard \n", port)
 	e.Start(fmt.Sprintf(":%d", port))

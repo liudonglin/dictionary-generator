@@ -9,11 +9,13 @@ type Column struct {
 	TID         int64  `json:"tid" validate:"gt=0"`
 	Title       string `json:"title" validate:"required,max=40"`
 	DataType    string `json:"data_type"`
+	ColumnType  string `json:"column_type"`
 	PK          bool   `json:"pk"`
 	AI          bool   `json:"ai"`
 	Null        bool   `json:"null"`
 	Length      string `json:"length"`
 	Index       bool   `json:"index"`
+	Unique      bool   `json:"unique"`
 	Enum        string `json:"enum"`
 	Description string `json:"description" validate:"max=200"`
 	Created     string `json:"created"`
