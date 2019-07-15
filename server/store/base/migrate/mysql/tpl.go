@@ -16,12 +16,26 @@ CREATE TABLE {{table.Name}} ( {% for column in columns %}
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='{{database.Description}}';
 `
 
+const golangEntity = `
+package entity
+
+type {{ toCamelString(table.Name) }} struct { {% for column in columns %}
+	{{ toCamelString(column.Name) }} string ` + "`" + `json:"{{ toSnakeString(column.Name) }}"` + "`" + `{% endfor %}
+}
+`
+
 var migrationTempletes = []core.Templete{
 	{
 		Name:     "mysql数据表创建脚本",
 		Content:  mysqlTableCreate,
 		DataBase: "mysql",
 		Type:     "table_create",
+	},
+	{
+		Name:     "Golang实体",
+		Content:  golangEntity,
+		Type:     "code_entity",
+		Language: "go",
 	},
 }
 

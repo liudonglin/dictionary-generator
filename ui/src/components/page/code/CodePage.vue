@@ -1,9 +1,9 @@
 <template>
 <div style="height: 100%;">
-    <el-tabs type="card" v-model="selectTempleteID">
+    <el-tabs type="card" v-model="selectTempleteID" @tab-click="handleTempleteChange">
         <el-tab-pane v-for="templete in codeTempletes" :key="templete.name" :label="templete.name" :name="templete.id+''"></el-tab-pane>
     </el-tabs>
-    <mavon-editor v-model="content" :editable="false" :toolbarsFlag="false" :subfield="false" defaultOpen="preview"/>
+    <mavon-editor v-model="content" :toolbarsFlag="false" :subfield="false" defaultOpen="edit" placeholder="请选择数据表以生成代码"/>
 </div>
 </template>
 
@@ -45,13 +45,19 @@ export default {
             })
         },
         getCodeContent() {
+            if (this.tableId==0){
+                return
+            }
             let templeteId = parseInt(this.selectTempleteID)
             this.$axios.post(this.loadTempleteUrl, { templete_id:templeteId,tid:this.tableId }).then(result=>{
                 if (result.success) {
                     this.content = result.data
                 }
             })
-        }
+        },
+        handleTempleteChange(tab) {
+            this.getCodeContent()
+        },
     }
 }
 </script>

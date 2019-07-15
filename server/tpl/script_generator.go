@@ -3,18 +3,17 @@ package tpl
 import (
 	"dg-server/core"
 	"dg-server/store"
+	"strings"
 
 	"github.com/flosch/pongo2"
 )
 
 var tableTemplete = `
-USE {{database.Name}} ;
-Drop Table If Exists {{table.Name}} ;
-CREATE TABLE {{table.Name}} ( {% for column in columns %}
-{{column.Name}} {{column.ColumnType}} {% if column.Null %}{% else %}NOT{% endif %} NULL {% if column.AI %}AUTO_INCREMENT{% endif %} COMMENT '{{column.Title}}' {% if !isLastColumn(column,columns) %},{% endif %}{% endfor %}{% if lenColumn(indexs)>0 %},{% endif %}
-{% for column in indexs %}
-{% if column.PK %}PRIMARY {% elif column.Unique %}UNIQUE {% endif %}KEY {% if !column.PK %}idx_{{table.Name}}_{{column.Name}}{% endif %} ({{column.Name}}) {% if !isLastColumn(column,indexs) %},{% endif %} {% endfor %}
-)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='{{database.Description}}';
+package entity
+
+type {{ toCamelString(table.Name) }} struct { {% for column in columns %}
+	{{ toCamelString(column.Name) }} string ` + "`" + `json:"{{ toSnakeString(column.Name) }}"` + "`" + `{% endfor %}
+}
 `
 
 // TestGetTableScript ...
@@ -50,12 +49,14 @@ func TestGetTableScript(tid int64) string {
 	}
 
 	out, err := tpl.Execute(pongo2.Context{
-		"database":     database,
-		"table":        table,
-		"columns":      columns,
-		"indexs":       indexs,
-		"lenColumn":    lenColumn,
-		"isLastColumn": isLastColumn,
+		"database":      database,
+		"table":         table,
+		"columns":       columns,
+		"indexs":        indexs,
+		"lenColumn":     lenColumn,
+		"isLastColumn":  isLastColumn,
+		"toCamelString": toCamelString,
+		"toSnakeString": toSnakeString,
 	})
 
 	if err != nil {
@@ -102,12 +103,14 @@ func GetTableScript(req *core.TempleteLoadReq) (string, error) {
 	}
 
 	out, err := tpl.Execute(pongo2.Context{
-		"database":     database,
-		"table":        table,
-		"columns":      columns,
-		"indexs":       indexs,
-		"lenColumn":    lenColumn,
-		"isLastColumn": isLastColumn,
+		"database":      database,
+		"table":         table,
+		"columns":       columns,
+		"indexs":        indexs,
+		"lenColumn":     lenColumn,
+		"isLastColumn":  isLastColumn,
+		"toCamelString": toCamelString,
+		"toSnakeString": toSnakeString,
 	})
 
 	if err != nil {
@@ -126,4 +129,47 @@ func isLastColumn(item *core.Column, list []*core.Column) bool {
 		return true
 	}
 	return false
+}
+
+// snake string, XxYy to xx_yy , XxYY to xx_yy
+func toSnakeString(s string) string {
+	data := make([]byte, 0, len(s)*2)
+	j := false
+	num := len(s)
+	for i := 0; i < num; i++ {
+		d := s[i]
+		if i > 0 && d >= 'A' && d <= 'Z' && j {
+			data = append(data, '_')
+		}
+		if d != '_' {
+			j = true
+		}
+		data = append(data, d)
+	}
+	return strings.ToLower(string(data[:]))
+}
+
+// camel string, xx_yy to XxYy
+func toCamelString(s string) string {
+	data := make([]byte, 0, len(s))
+	j := false
+	k := false
+	num := len(s) - 1
+	for i := 0; i <= num; i++ {
+		d := s[i]
+		if k == false && d >= 'A' && d <= 'Z' {
+			k = true
+		}
+		if d >= 'a' && d <= 'z' && (j || k == false) {
+			d = d - 32
+			j = false
+			k = true
+		}
+		if k && d == '_' && num > i && s[i+1] >= 'a' && s[i+1] <= 'z' {
+			j = true
+			continue
+		}
+		data = append(data, d)
+	}
+	return string(data[:])
 }
