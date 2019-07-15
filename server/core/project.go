@@ -2,15 +2,15 @@ package core
 
 // Project 项目
 type Project struct {
-	ID          int64  `json:"id"`
-	Name        string `json:"name" validate:"required,max=40"`
-	Description string `json:"description" validate:"max=200"`
-	Language    string `json:"language" validate:"oneof=java csharp"`
-	DataBase    string `json:"data_base" validate:"oneof=mysql mssql"`
-	Orm         string `json:"orm" validate:"oneof=mybatis smartSql"`
-	Created     string `json:"created"`
-	Updated     string `json:"updated"`
-	Connections      []*Connection `json:"connection_list"`
+	ID          int64         `json:"id"`
+	Name        string        `json:"name" validate:"required,max=40"`
+	Description string        `json:"description" validate:"max=200"`
+	Language    string        `json:"language" validate:"oneof=java csharp go"`
+	DataBase    string        `json:"data_base" validate:"oneof=mysql mssql"`
+	Orm         string        `json:"orm" validate:"oneof=mybatis smartSql"`
+	Created     string        `json:"created"`
+	Updated     string        `json:"updated"`
+	Connections []*Connection `json:"connection_list"`
 }
 
 // ProjectQuery 分页查询参数

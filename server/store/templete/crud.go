@@ -68,6 +68,26 @@ func (s *templeteStore) FindName(name string) (*core.Templete, error) {
 	return out, err
 }
 
+func (s *templeteStore) FindID(id int64) (*core.Templete, error) {
+	out := &core.Templete{}
+	err := s.db.View(func(queryer db.Queryer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"templete_id": id,
+		}
+		query, args, err := binder.BindNamed(queryID, params)
+		if err != nil {
+			return err
+		}
+		row := queryer.QueryRow(query, args...)
+		err = scanRow(row, out)
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		return err
+	})
+	return out, err
+}
+
 func (s *templeteStore) List(q *core.TempleteQuery) ([]*core.Templete, int, error) {
 	var out []*core.Templete
 	var total int
@@ -185,6 +205,11 @@ templete_id
 const queryName = queryBase + `
 FROM templetes
 WHERE templete_name = :templete_name
+`
+
+const queryID = queryBase + `
+FROM templetes
+WHERE templete_id = :templete_id
 `
 
 const stmtInsert = `

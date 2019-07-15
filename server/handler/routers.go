@@ -51,5 +51,8 @@ func New() *echo.Echo {
 	r.POST("/dbimport/loaddb", loadDBsByConnInfo)
 	r.POST("/dbimport/savedbs", saveConnInfo)
 
+	r.POST("/templete/load", loadTemplete)
+	r.POST("/templete/list", listTemplete)
+
 	return e
 }

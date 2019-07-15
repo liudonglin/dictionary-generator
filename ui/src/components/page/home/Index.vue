@@ -3,14 +3,14 @@
         <el-header style="border-bottom:solid 1px #e6e6e6;">
             <el-container style="display:block;">
                 <h1 style="line-height:60px;float:left;">LOGO</h1>
-                <el-menu :default-active="activeIndex" style="float:right;" mode="horizontal" @select="handleSelect">
+                <el-menu :default-active="onRoutes" style="float:right;" mode="horizontal" @select="handleSelect" unique-opened router>
                     <el-menu-item>
                         <el-input style="width:260px;" placeholder="输入后回车键查询" v-model="search_word" @keyup.enter.native="searchEnterFun"></el-input>
                     </el-menu-item>
-                    <el-menu-item index="1">项目管理</el-menu-item>
-                    <el-menu-item index="2">工作台</el-menu-item>
-                    <el-menu-item index="3">用户管理</el-menu-item>
-                    <el-submenu index="4">
+                    <el-menu-item index="/projects">项目管理</el-menu-item>
+                    <el-menu-item index="/code">代码生成</el-menu-item>
+                    <el-menu-item index="/usermgt">用户管理</el-menu-item>
+                    <el-submenu index="/account">
                         <template slot="title">我的账户</template>
                         <el-menu-item index="4-1">个人信息</el-menu-item>
                         <el-menu-item index="4-2">修改密码</el-menu-item>
@@ -52,8 +52,16 @@
     export default {
         data() {
             return {
-                activeIndex:'1',
                 search_word:''
+            }
+        },
+        computed:{
+            onRoutes() {
+                let path = this.$route.path
+                if (path.indexOf('/dbs/')==0) {
+                    path = "/projects"
+                }
+                return path
             }
         },
         methods:{
@@ -65,7 +73,7 @@
                 if(keyCode == 13) {
                      bus.$emit('headerSearchWordChange', val);
                  }
-            }
+            },
         }
     }
 </script>

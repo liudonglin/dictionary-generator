@@ -26,9 +26,9 @@ export default new Router({
                     props: true
                 },
                 {
-                    path: '/dashboard',
-                    component: resolve => require(['../components/page/Dashboard.vue'], resolve),
-                    meta: { title: '系统首页' }
+                    path: '/code',
+                    component: resolve => require(['../components/page/code/Index.vue'], resolve),
+                    meta: { title: '代码生成' }
                 },
                 {
                     path: '/404',

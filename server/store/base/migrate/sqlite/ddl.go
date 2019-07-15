@@ -36,6 +36,10 @@ var migrations = []struct {
 		name: "create-table-templetes",
 		stmt: createTableTempletes,
 	},
+	{
+		name: "create-table-project_templete_relations",
+		stmt: createTableProjectTempleteRelations,
+	},
 }
 
 // Migrate performs the database migration. If the migration fails
@@ -225,6 +229,13 @@ CREATE TABLE IF NOT EXISTS templetes (
    ,templete_type         	TEXT
    ,templete_created       	TEXT
    ,templete_updated       	TEXT
-   ,UNIQUE(templete_name)
+);
+`
+
+var createTableProjectTempleteRelations = `
+CREATE TABLE IF NOT EXISTS project_templete_relations (
+	 ptr_project_id         INTEGER
+	,ptr_templete_id		INTEGER
+	,UNIQUE(ptr_project_id, ptr_templete_id)
 );
 `

@@ -23,11 +23,19 @@ type TempleteQuery struct {
 	Type     string `json:"type"`
 }
 
+// TempleteLoadReq ...
+type TempleteLoadReq struct {
+	TempleteID int64 `json:"templete_id"`
+	TID        int64 `json:"tid"`
+}
+
 // TempleteStore ...
 type TempleteStore interface {
 	Create(*Templete) error
 
 	Update(*Templete) error
+
+	FindID(int64) (*Templete, error)
 
 	FindName(string) (*Templete, error)
 

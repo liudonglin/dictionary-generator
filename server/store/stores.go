@@ -10,6 +10,7 @@ import (
 	"dg-server/store/dbase"
 	"dg-server/store/project"
 	"dg-server/store/table"
+	"dg-server/store/templete"
 	"dg-server/store/user"
 )
 
@@ -21,6 +22,7 @@ type Singleton struct {
 	TableStore      core.TableStore
 	ColumnStore     core.ColumnStore
 	ConnectionStore core.ConnectionStore
+	TempleteStore   core.TempleteStore
 }
 
 var singleton *Singleton
@@ -44,6 +46,7 @@ func InitStores(db *db.DB) {
 			TableStore:      table.New(db),
 			ColumnStore:     column.New(db),
 			ConnectionStore: connection.New(db),
+			TempleteStore:   templete.New(db),
 		}
 	})
 }

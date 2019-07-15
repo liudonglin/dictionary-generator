@@ -34,10 +34,11 @@
                 <el-form-item label="编程语言:" prop="language">
                     <el-radio v-model="form.language" label="java" @change="handleLanguageChange">Java</el-radio>
                     <el-radio v-model="form.language" label="csharp" @change="handleLanguageChange">C#</el-radio>
+                    <el-radio v-model="form.language" label="go" @change="handleLanguageChange">Golang</el-radio>
                 </el-form-item>
                 <el-form-item label="数据库:" prop="data_base">
                     <el-radio v-model="form.data_base" label="mysql" :disabled="form.id>0">Mysql</el-radio>
-                    <el-radio v-model="form.data_base" label="mssql" :disabled="form.id>0">Sqlserver</el-radio>
+                    <!-- <el-radio v-model="form.data_base" label="mssql" :disabled="form.id>0">Sqlserver</el-radio> -->
                 </el-form-item>
                 <el-form-item label="ORM:" prop="orm">
                     <el-select v-model="form.orm" placeholder="请选择">

@@ -32,6 +32,14 @@ var migrations = []struct {
 		name: "create-table-connections",
 		stmt: createTableConnections,
 	},
+	{
+		name: "create-table-templetes",
+		stmt: createTableTempletes,
+	},
+	{
+		name: "create-table-project_templete_relations",
+		stmt: createTableProjectTempleteRelations,
+	},
 }
 
 // Migrate performs the database migration. If the migration fails
@@ -58,6 +66,11 @@ func Migrate(db *sql.DB) error {
 		}
 
 	}
+
+	if err := initTemplete(db); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -217,6 +230,13 @@ CREATE TABLE IF NOT EXISTS templetes (
    ,templete_type         	VARCHAR(10)
    ,templete_created       	VARCHAR(20)
    ,templete_updated       	VARCHAR(20)
-   ,UNIQUE(templete_name)
+);
+`
+
+var createTableProjectTempleteRelations = `
+CREATE TABLE IF NOT EXISTS project_templete_relations (
+	 ptr_project_id         INTEGER
+	,ptr_templete_id		INTEGER
+	,UNIQUE(ptr_project_id, ptr_templete_id)
 );
 `
