@@ -3,7 +3,7 @@
     <el-tabs type="card" v-model="selectTempleteID" @tab-click="handleTempleteChange">
         <el-tab-pane v-for="templete in codeTempletes" :key="templete.name" :label="templete.name" :name="templete.id+''"></el-tab-pane>
     </el-tabs>
-    <mavon-editor v-model="content" :toolbarsFlag="false" :subfield="false" defaultOpen="edit" placeholder="请选择数据表以生成代码"/>
+    <mavon-editor v-model="content" :toolbarsFlag="false" :shortCut="false" :subfield="false" defaultOpen="edit" placeholder="请选择数据表以生成代码"/>
 </div>
 </template>
 
