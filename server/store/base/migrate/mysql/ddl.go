@@ -222,7 +222,7 @@ CREATE TABLE IF NOT EXISTS connections (
 var createTableTempletes = `
 CREATE TABLE IF NOT EXISTS templetes (
 	templete_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
-   ,templete_name         	VARCHAR(40)
+   ,templete_name         	VARCHAR(20)
    ,templete_content      	TEXT
    ,templete_language      	VARCHAR(10)
    ,templete_data_base      VARCHAR(10)
@@ -230,6 +230,7 @@ CREATE TABLE IF NOT EXISTS templetes (
    ,templete_type         	VARCHAR(10)
    ,templete_created       	VARCHAR(20)
    ,templete_updated       	VARCHAR(20)
+   ,UNIQUE(templete_name)
 );
 `
 

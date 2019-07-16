@@ -12,7 +12,7 @@ var tableTemplete = `
 package entity
 
 type {{ toCamelString(table.Name) }} struct { {% for column in columns %}
-	{{ toCamelString(column.Name) }} string ` + "`" + `json:"{{ toSnakeString(column.Name) }}"` + "`" + `{% endfor %}
+	{{ toCamelString(column.Name) }} {{ sqlTypeConvertLanguageType(column,project.DataBase,project.Language) }} ` + "`" + `json:"{{ toSnakeString(column.Name) }}"` + "`" + `{% endfor %}
 }
 `
 
@@ -21,16 +21,13 @@ func TestGetTableScript(tid int64) string {
 	tpl, err := pongo2.FromString(tableTemplete)
 
 	tableStore := store.Stores().TableStore
-	table, err := tableStore.FindID(tid)
-	if err != nil {
-		return ""
-	}
+	table, _ := tableStore.FindID(tid)
 
 	dbStore := store.Stores().DataBaseStore
-	database, err := dbStore.FindID(table.DID)
-	if err != nil {
-		return ""
-	}
+	database, _ := dbStore.FindID(table.DID)
+
+	projectStore := store.Stores().ProjectStore
+	project, _ := projectStore.FindID(table.PID)
 
 	columnStore := store.Stores().ColumnStore
 	columns, _, _ := columnStore.List(&core.ColumnQuery{
@@ -49,14 +46,16 @@ func TestGetTableScript(tid int64) string {
 	}
 
 	out, err := tpl.Execute(pongo2.Context{
-		"database":      database,
-		"table":         table,
-		"columns":       columns,
-		"indexs":        indexs,
-		"lenColumn":     lenColumn,
-		"isLastColumn":  isLastColumn,
-		"toCamelString": toCamelString,
-		"toSnakeString": toSnakeString,
+		"project":                    project,
+		"database":                   database,
+		"table":                      table,
+		"columns":                    columns,
+		"indexs":                     indexs,
+		"lenColumn":                  lenColumn,
+		"isLastColumn":               isLastColumn,
+		"toCamelString":              toCamelString,
+		"toSnakeString":              toSnakeString,
+		"sqlTypeConvertLanguageType": sqlTypeConvertLanguageType,
 	})
 
 	if err != nil {
@@ -75,16 +74,13 @@ func GetTableScript(req *core.TempleteLoadReq) (string, error) {
 	tpl, err := pongo2.FromString(temp.Content)
 
 	tableStore := store.Stores().TableStore
-	table, err := tableStore.FindID(req.TID)
-	if err != nil {
-		return "", err
-	}
+	table, _ := tableStore.FindID(req.TID)
 
 	dbStore := store.Stores().DataBaseStore
-	database, err := dbStore.FindID(table.DID)
-	if err != nil {
-		return "", err
-	}
+	database, _ := dbStore.FindID(table.DID)
+
+	projectStore := store.Stores().ProjectStore
+	project, _ := projectStore.FindID(table.PID)
 
 	columnStore := store.Stores().ColumnStore
 	columns, _, _ := columnStore.List(&core.ColumnQuery{
@@ -103,14 +99,16 @@ func GetTableScript(req *core.TempleteLoadReq) (string, error) {
 	}
 
 	out, err := tpl.Execute(pongo2.Context{
-		"database":      database,
-		"table":         table,
-		"columns":       columns,
-		"indexs":        indexs,
-		"lenColumn":     lenColumn,
-		"isLastColumn":  isLastColumn,
-		"toCamelString": toCamelString,
-		"toSnakeString": toSnakeString,
+		"project":                    project,
+		"database":                   database,
+		"table":                      table,
+		"columns":                    columns,
+		"indexs":                     indexs,
+		"lenColumn":                  lenColumn,
+		"isLastColumn":               isLastColumn,
+		"toCamelString":              toCamelString,
+		"toSnakeString":              toSnakeString,
+		"sqlTypeConvertLanguageType": sqlTypeConvertLanguageType,
 	})
 
 	if err != nil {
@@ -172,4 +170,17 @@ func toCamelString(s string) string {
 		data = append(data, d)
 	}
 	return string(data[:])
+}
+
+func sqlTypeConvertLanguageType(col *core.Column, dataBase, language string) string {
+	result := ""
+
+	if dataBase == "mysql" && language == "java" {
+		result = mysqlConvertJava(col)
+	}
+	if dataBase == "mysql" && language == "go" {
+		result = mysqlConvertGo(col)
+	}
+
+	return result
 }

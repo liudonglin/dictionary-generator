@@ -229,6 +229,7 @@ CREATE TABLE IF NOT EXISTS templetes (
    ,templete_type         	TEXT
    ,templete_created       	TEXT
    ,templete_updated       	TEXT
+   ,UNIQUE(templete_name)
 );
 `
 

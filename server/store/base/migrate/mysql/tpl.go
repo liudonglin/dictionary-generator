@@ -20,7 +20,7 @@ const golangEntity = `
 package entity
 
 type {{ toCamelString(table.Name) }} struct { {% for column in columns %}
-	{{ toCamelString(column.Name) }} string ` + "`" + `json:"{{ toSnakeString(column.Name) }}"` + "`" + `{% endfor %}
+	{{ toCamelString(column.Name) }} {{ sqlTypeConvertLanguageType(column,project.DataBase,project.Language) }} ` + "`" + `json:"{{ toSnakeString(column.Name) }}"` + "`" + `{% endfor %}
 }
 `
 
