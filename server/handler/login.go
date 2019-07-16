@@ -1,9 +1,7 @@
 package handler
 
 import (
-	"crypto/md5"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -38,7 +36,7 @@ func login(c echo.Context) error {
 	dbInstance := store.Stores()
 	dbUser, _ := dbInstance.UserStore.FindLogin(uiUser.Login)
 
-	uiUser.Password = EncryptionPassword(uiUser.Password)
+	uiUser.Password = store.EncryptionPassword(uiUser.Password)
 	if uiUser.Login == dbUser.Login && uiUser.Password == dbUser.Password {
 
 		if dbUser.Active == false {
@@ -69,10 +67,4 @@ func login(c echo.Context) error {
 		return c.JSON(http.StatusOK, &result)
 	}
 	return &BusinessError{Message: "用户登录名或密码错误！"}
-}
-
-// EncryptionPassword md5加密用户密码
-func EncryptionPassword(password string) string {
-	hash := md5.Sum([]byte(password))
-	return fmt.Sprintf("%x", hash)
 }

@@ -148,6 +148,9 @@
                 if(this.form.language=='csharp') {
                     return [{label: "SmartSql",value: "smartSql"}]
                 }
+                if(this.form.language=='go') {
+                    return [{label: "Gorm",value: "gorm"}]
+                }
                 return []
             }
         },
@@ -241,6 +244,9 @@
                 }
                 if(lab=='csharp') {
                     this.form.orm = "smartSql"
+                }
+                if(lab=='go') {
+                    this.form.orm = "gorm"
                 }
             },
             handlePageChange(){
