@@ -61,6 +61,8 @@ export default {
                     this.dbs = result.data.list
                 }
             })
+            this.selectDBId = 0
+            this.selectTableId = 0
             bus.$emit('codePageSelectProjectChange', this.selectProjectId);
         },
         handleDBCollapseChange(activeName) {

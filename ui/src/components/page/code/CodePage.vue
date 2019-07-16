@@ -35,6 +35,8 @@ export default {
         bus.$on('codePageSelectProjectChange', val => {
             this.projectId = parseInt(val)
             this.getTempletes()
+            this.content = ""
+            this.tableId = 0
         })
     },
     methods: {
