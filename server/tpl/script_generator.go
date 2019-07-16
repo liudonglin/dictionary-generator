@@ -11,8 +11,12 @@ import (
 var tableTemplete = `
 package entity
 
-type {{ toCamelString(table.Name) }} struct { {% for column in columns %}
-	{{ toCamelString(column.Name) }} {{ sqlTypeConvertLanguageType(column,project.DataBase,project.Language) }} ` + "`" + `json:"{{ toSnakeString(column.Name) }}"` + "`" + `{% endfor %}
+import lombok.Data;
+
+@Data
+public class {{ toCamelString(table.Name) }} { {% for column in columns %}
+	private {{ sqlTypeConvertLanguageType(column,project.DataBase,project.Language) }} {{ toCamelString(column.Name) }};  
+{% endfor %}
 }
 `
 

@@ -24,18 +24,36 @@ type {{ toCamelString(table.Name) }} struct { {% for column in columns %}
 }
 `
 
+const javaEntity = `
+package entity
+
+import lombok.Data;
+
+@Data
+public class {{ toCamelString(table.Name) }} { {% for column in columns %}
+	private {{ sqlTypeConvertLanguageType(column,project.DataBase,project.Language) }} {{ toCamelString(column.Name) }};  
+{% endfor %}
+}
+`
+
 var migrationTempletes = []core.Templete{
 	{
 		Name:     "mysql数据表创建脚本",
 		Content:  mysqlTableCreate,
 		DataBase: "mysql",
-		Type:     "table_create",
+		Type:     "init",
 	},
 	{
 		Name:     "Golang实体",
 		Content:  golangEntity,
-		Type:     "code_entity",
+		Type:     "init",
 		Language: "go",
+	},
+	{
+		Name:     "Java实体",
+		Content:  javaEntity,
+		Type:     "init",
+		Language: "java",
 	},
 }
 
