@@ -175,16 +175,3 @@ func toCamelString(s string) string {
 	}
 	return string(data[:])
 }
-
-func sqlTypeConvertLanguageType(col *core.Column, dataBase, language string) string {
-	result := ""
-
-	if dataBase == "mysql" && language == "java" {
-		result = mysqlConvertJava(col)
-	}
-	if dataBase == "mysql" && language == "go" {
-		result = mysqlConvertGo(col)
-	}
-
-	return result
-}

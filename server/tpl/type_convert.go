@@ -5,6 +5,21 @@ import (
 	"strings"
 )
 
+func sqlTypeConvertLanguageType(col *core.Column, dataBase, language string) string {
+	result := ""
+
+	if dataBase == "mysql" && language == "java" {
+		result = mysqlConvertJava(col)
+	}
+	if dataBase == "mysql" && language == "go" {
+		result = mysqlConvertGo(col)
+	}
+	if dataBase == "mysql" && language == "csharp" {
+		result = mysqlConvertCsharp(col)
+	}
+	return result
+}
+
 func mysqlConvertJava(col *core.Column) string {
 	result := ""
 	upType := strings.ToUpper(col.DataType)
@@ -48,6 +63,30 @@ func mysqlConvertGo(col *core.Column) string {
 	case "DATE", "DATETIME", "TIMESTAMP":
 		result = "time.Time"
 	case "CHAR", "VARCHAR", "TINYTEXT", "TEXT", "MEDIUMTEXT", "LONGTEXT", "ENUM", "SET", "DECIMAL":
+		result = "string"
+	}
+	return result
+}
+
+func mysqlConvertCsharp(col *core.Column) string {
+	result := ""
+	upType := strings.ToUpper(col.DataType)
+	switch upType {
+	case "TINYINT":
+		result = "bool?"
+	case "INT", "INTEGER", "SMALLINT":
+		result = "int?"
+	case "BIGINT":
+		result = "long?"
+	case "FLOAT":
+		result = "float?"
+	case "DOUBLE":
+		result = "double?"
+	case "DECIMAL":
+		result = "decimal?"
+	case "DATE", "DATETIME", "TIMESTAMP":
+		result = "DateTime?"
+	case "CHAR", "VARCHAR", "TINYTEXT", "TEXT", "MEDIUMTEXT", "LONGTEXT", "ENUM", "SET":
 		result = "string"
 	}
 	return result
