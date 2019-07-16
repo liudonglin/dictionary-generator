@@ -66,10 +66,48 @@ func saveProject(c echo.Context) error {
 		}
 	}
 
+	//为项目匹配模版
+	tq := &core.TempleteQuery{
+		Pager: core.Pager{
+			Index: 0,
+			Size:  9999999,
+		},
+	}
+	tplStore := store.Stores().TempleteStore
+	tpls, _, err := tplStore.List(tq)
+	if err != nil {
+		return err
+	}
+	tplStore.DeleteProjectTempleteRelationByPID(project.ID)
+	for _, tpl := range tpls {
+		if matchTemplete(project, tpl) {
+			tplStore.CreateProjectTempleteRelation(project.ID, tpl.ID)
+		}
+	}
+
 	return c.JSON(http.StatusOK, &StandardResult{
 		Message: msg,
 		Data:    project.ID,
 	})
+}
+
+func matchTemplete(p *core.Project, t *core.Templete) bool {
+	matchDataBase, matchLanguage, matchOrm := false, false, false
+
+	if t.DataBase == "" || t.DataBase == p.DataBase {
+		matchDataBase = true
+	}
+	if t.Language == "" || t.Language == p.Language {
+		matchLanguage = true
+	}
+	if t.Orm == "" || t.Orm == p.Orm {
+		matchOrm = true
+	}
+
+	if matchDataBase && matchLanguage && matchOrm {
+		return true
+	}
+	return false
 }
 
 func loadProject(c echo.Context) error {

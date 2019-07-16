@@ -21,6 +21,7 @@ type TempleteQuery struct {
 	DataBase string `json:"data_base"`
 	Orm      string `json:"orm"`
 	Type     string `json:"type"`
+	PID      int64  `json:"pid"`
 }
 
 // TempleteLoadReq ...
@@ -42,4 +43,8 @@ type TempleteStore interface {
 	List(*TempleteQuery) ([]*Templete, int, error)
 
 	Delete(int64) error
+
+	CreateProjectTempleteRelation(pid, tid int64) error
+
+	DeleteProjectTempleteRelationByPID(pid int64) error
 }

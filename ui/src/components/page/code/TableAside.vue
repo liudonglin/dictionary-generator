@@ -61,6 +61,7 @@ export default {
                     this.dbs = result.data.list
                 }
             })
+            bus.$emit('codePageSelectProjectChange', this.selectProjectId);
         },
         handleDBCollapseChange(activeName) {
             let did = parseInt(activeName)

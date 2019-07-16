@@ -18,6 +18,7 @@ export default {
             listTempleteUrl:"/api/templete/list",
             codeTempletes:[],
             tableId:0,
+            projectId:0,
             selectTempleteID:"0",
             content:"",
         }
@@ -31,11 +32,14 @@ export default {
             this.getCodeContent()
         })
 
-        this.getTempletes()
+        bus.$on('codePageSelectProjectChange', val => {
+            this.projectId = parseInt(val)
+            this.getTempletes()
+        })
     },
     methods: {
         getTempletes() {
-            this.$axios.post(this.listTempleteUrl, {index:0, size:999999, order_by:"templete_created DESC" }).then(result=>{
+            this.$axios.post(this.listTempleteUrl, {pid:this.projectId, index:0, size:999999, order_by:"templete_created DESC" }).then(result=>{
                 if (result.success) {
                     this.codeTempletes = result.data.list
                     if(this.codeTempletes.length>0){

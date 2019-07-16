@@ -98,6 +98,7 @@ func (s *templeteStore) List(q *core.TempleteQuery) ([]*core.Templete, int, erro
 			"templete_data_base": q.DataBase,
 			"templete_orm":       q.Orm,
 			"templete_type":      q.Type,
+			"ptr_project_id":     q.PID,
 		}
 		queryAll := getQueryListSQL(q, s.db.Driver())
 		query, args, err := binder.BindNamed(queryAll, params)
@@ -125,7 +126,7 @@ func (s *templeteStore) List(q *core.TempleteQuery) ([]*core.Templete, int, erro
 }
 
 func getQueryCountSQL(q *core.TempleteQuery) (querySQL string) {
-	querySQL = " Select Count(1) FROM templetes Where 1=1 "
+	querySQL = " Select Count(1) FROM templetes LEFT JOIN project_templete_relations ON templete_id = ptr_templete_id Where 1=1 "
 	if q.Name != "" {
 		querySQL += " And templete_name like :templete_name "
 	}
@@ -140,12 +141,15 @@ func getQueryCountSQL(q *core.TempleteQuery) (querySQL string) {
 	}
 	if q.Type != "" {
 		querySQL += " And templete_type = :templete_type "
+	}
+	if q.PID > 0 {
+		querySQL += " And ptr_project_id = :ptr_project_id "
 	}
 	return querySQL
 }
 
 func getQueryListSQL(q *core.TempleteQuery, driver db.Driver) (querySQL string) {
-	querySQL = queryBase + " FROM templetes Where 1=1 "
+	querySQL = queryBase + " FROM templetes LEFT JOIN project_templete_relations ON templete_id = ptr_templete_id Where 1=1 "
 	if q.Name != "" {
 		querySQL += " And templete_name like :templete_name "
 	}
@@ -160,6 +164,9 @@ func getQueryListSQL(q *core.TempleteQuery, driver db.Driver) (querySQL string) 
 	}
 	if q.Type != "" {
 		querySQL += " And templete_type = :templete_type "
+	}
+	if q.PID > 0 {
+		querySQL += " And ptr_project_id = :ptr_project_id "
 	}
 	if q.OrderBy != "" {
 		querySQL += fmt.Sprintf(" ORDER BY %s ", q.OrderBy)
@@ -181,6 +188,38 @@ func (s *templeteStore) Delete(id int64) error {
 			"templete_id": id,
 		}
 		stmt, args, err := binder.BindNamed(stmtDelete, params)
+		if err != nil {
+			return err
+		}
+		_, err = execer.Exec(stmt, args...)
+		return err
+	})
+}
+
+func (s *templeteStore) CreateProjectTempleteRelation(pid, tid int64) error {
+	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"ptr_project_id":  pid,
+			"ptr_templete_id": tid,
+		}
+		stmt, args, err := binder.BindNamed(stmtInsertProjectTempleteRelations, params)
+		if err != nil {
+			return err
+		}
+		_, err = execer.Exec(stmt, args...)
+		if err != nil {
+			return err
+		}
+		return err
+	})
+}
+
+func (s *templeteStore) DeleteProjectTempleteRelationByPID(pid int64) error {
+	return s.db.Lock(func(execer db.Execer, binder db.Binder) error {
+		params := map[string]interface{}{
+			"ptr_project_id": pid,
+		}
+		stmt, args, err := binder.BindNamed(stmtDeleteProjectTempleteRelationByPID, params)
 		if err != nil {
 			return err
 		}
@@ -249,4 +288,18 @@ WHERE templete_id = :templete_id
 
 const stmtDelete = `
 DELETE FROM templetes WHERE templete_id = :templete_id
+`
+
+const stmtInsertProjectTempleteRelations = `
+INSERT INTO project_templete_relations (
+ptr_project_id
+,ptr_templete_id
+) VALUES (
+:ptr_project_id
+,:ptr_templete_id
+)
+`
+
+const stmtDeleteProjectTempleteRelationByPID = `
+DELETE FROM project_templete_relations WHERE ptr_project_id = :ptr_project_id
 `
