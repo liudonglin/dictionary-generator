@@ -9,14 +9,16 @@ import (
 )
 
 var tableTemplete = `
-package entity
+using System;
 
-import lombok.Data;
-
-@Data
-public class {{ toCamelString(table.Name) }} { {% for column in columns %}
-	private {{ sqlTypeConvertLanguageType(column,project.DataBase,project.Language) }} {{ toCamelString(column.Name) }};  
-{% endfor %}
+namespace entity
+{
+	public class {{ fn.ToCamelString(table.Name) }} 
+	{
+		{% for column in columns %}
+		public {{ fn.SqlTypeConvertLanguageType(column,project.DataBase,project.Language) }} {{ fn.ToCamelString(column.Name) }} { get; set; }
+		{% endfor %}
+	}
 }
 `
 
@@ -50,16 +52,12 @@ func TestGetTableScript(tid int64) string {
 	}
 
 	out, err := tpl.Execute(pongo2.Context{
-		"project":                    project,
-		"database":                   database,
-		"table":                      table,
-		"columns":                    columns,
-		"indexs":                     indexs,
-		"lenColumn":                  lenColumn,
-		"isLastColumn":               isLastColumn,
-		"toCamelString":              toCamelString,
-		"toSnakeString":              toSnakeString,
-		"sqlTypeConvertLanguageType": sqlTypeConvertLanguageType,
+		"project":  project,
+		"database": database,
+		"table":    table,
+		"columns":  columns,
+		"indexs":   indexs,
+		"fn":       fn,
 	})
 
 	if err != nil {
@@ -103,38 +101,40 @@ func GetTableScript(req *core.TempleteLoadReq) (string, error) {
 	}
 
 	out, err := tpl.Execute(pongo2.Context{
-		"project":                    project,
-		"database":                   database,
-		"table":                      table,
-		"columns":                    columns,
-		"indexs":                     indexs,
-		"lenColumn":                  lenColumn,
-		"isLastColumn":               isLastColumn,
-		"toCamelString":              toCamelString,
-		"toSnakeString":              toSnakeString,
-		"sqlTypeConvertLanguageType": sqlTypeConvertLanguageType,
+		"project":  project,
+		"database": database,
+		"table":    table,
+		"columns":  columns,
+		"indexs":   indexs,
+		"fn":       fn,
 	})
 
 	if err != nil {
 		return "", err
 	}
-
 	return out, nil
 }
 
-func lenColumn(arr []*core.Column) int {
+// FnWrap ...
+type FnWrap struct{}
+
+var fn = &FnWrap{}
+
+// LenColumn 获取列长度
+func (*FnWrap) LenColumn(arr []*core.Column) int {
 	return len(arr)
 }
 
-func isLastColumn(item *core.Column, list []*core.Column) bool {
+// IsLastColumn 判断是否是最后一列
+func (*FnWrap) IsLastColumn(item *core.Column, list []*core.Column) bool {
 	if item.ID == list[len(list)-1].ID {
 		return true
 	}
 	return false
 }
 
-// snake string, XxYy to xx_yy , XxYY to xx_yy
-func toSnakeString(s string) string {
+// ToSnakeString snake string, XxYy to xx_yy , XxYY to xx_yy
+func (*FnWrap) ToSnakeString(s string) string {
 	data := make([]byte, 0, len(s)*2)
 	j := false
 	num := len(s)
@@ -151,8 +151,8 @@ func toSnakeString(s string) string {
 	return strings.ToLower(string(data[:]))
 }
 
-// camel string, xx_yy to XxYy
-func toCamelString(s string) string {
+// ToCamelString camel string, xx_yy to XxYy
+func (*FnWrap) ToCamelString(s string) string {
 	data := make([]byte, 0, len(s))
 	j := false
 	k := false

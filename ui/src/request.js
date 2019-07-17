@@ -2,46 +2,19 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import router from '@/router'
 
-//请求队列，防止重复发送
-let xhrQueue = []
-const delXhrQueue = (url) => {
-  const idx = xhrQueue.findIndex((i) => {
-    return url.search(i) > -1
-  })
-  xhrQueue.splice(idx, 1)
-}
 
 axios.interceptors.request.use((req) => {
-  if (!req.ignoreQueen) {
-    if (xhrQueue.includes(req.url)) {
-      return null
-    }
-    xhrQueue.push(req.url)
-  }
-
   let token = localStorage.getItem('login_token');
   if ( token!=null && token!='' ) {
     req.headers.Authorization = `Bearer ${token}`
   }
 
   return req
+}, (err) => {
+  return Promise.reject(err)
 })
 
 axios.interceptors.response.use((response) => {
-  const {
-    // ContentType,
-    url,
-    ignoreMsg = false, // true 拒绝公共显示信息
-    ignoreSuccessMsg = false, // true 拒绝成功提示信息
-    allResponseData
-  } = response.config
-  // 去除拦截
-  delXhrQueue(url)
-  if (allResponseData) {
-    return {
-      ...response
-    }
-  }
   switch (response.data.code) {
     case 0:
     case 200:

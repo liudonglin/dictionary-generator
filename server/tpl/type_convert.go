@@ -5,7 +5,8 @@ import (
 	"strings"
 )
 
-func sqlTypeConvertLanguageType(col *core.Column, dataBase, language string) string {
+// SqlTypeConvertLanguageType 数据库类型转编程语言类型
+func (*FnWrap) SqlTypeConvertLanguageType(col *core.Column, dataBase, language string) string {
 	result := ""
 
 	if dataBase == "mysql" && language == "java" {
