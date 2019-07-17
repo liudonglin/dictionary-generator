@@ -17,6 +17,7 @@ func toParams(u *core.Project) map[string]interface{} {
 		"project_data_base":   u.DataBase,
 		"project_orm":         u.Orm,
 		"project_description": u.Description,
+		"project_name_space":  u.NameSpace,
 		"project_created":     u.Created,
 		"project_updated":     u.Updated,
 	}
@@ -32,6 +33,7 @@ func scanRow(scanner db.Scanner, dest *core.Project) error {
 		&dest.DataBase,
 		&dest.Orm,
 		&dest.Description,
+		&dest.NameSpace,
 		&dest.Created,
 		&dest.Updated,
 	)

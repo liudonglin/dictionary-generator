@@ -8,6 +8,7 @@ type Project struct {
 	Language    string        `json:"language" validate:"oneof=java csharp go"`
 	DataBase    string        `json:"data_base" validate:"oneof=mysql mssql"`
 	Orm         string        `json:"orm" validate:"oneof=mybatis smartSql gorm"`
+	NameSpace   string        `json:"name_space" validate:"max=200"`
 	Created     string        `json:"created"`
 	Updated     string        `json:"updated"`
 	Connections []*Connection `json:"connection_list"`

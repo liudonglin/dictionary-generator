@@ -146,6 +146,7 @@ CREATE TABLE IF NOT EXISTS projects (
    ,project_data_base       TEXT
    ,project_orm         	TEXT
    ,project_description     TEXT
+   ,project_name_space      TEXT
    ,project_created       	TEXT
    ,project_updated       	TEXT
    ,UNIQUE(project_name)

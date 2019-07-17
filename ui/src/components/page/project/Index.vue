@@ -47,6 +47,9 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="基础包名:" prop="name_space">
+                    <el-input v-model="form.name_space" maxlength="100" show-word-limit></el-input>
+                </el-form-item>
                 <el-form-item label="描述信息:">
                     <el-input type="textarea" placeholder="请输入内容" v-model="form.description"
                         maxlength="200" show-word-limit :autosize="{ minRows: 4, maxRows: 8}">
@@ -122,6 +125,7 @@
                     description: '',
                     data_base: '',
                     orm:'',
+                    name_space:'',
                     connection_list:[]
                 },
                 rules: {
@@ -186,6 +190,7 @@
                     description: '',
                     data_base: '',
                     orm:'',
+                    name_space:'',
                     connection_list:[]
                 }
                 this.search()
@@ -198,6 +203,7 @@
                     description: item.description,
                     data_base: item.data_base,
                     orm:item.orm,
+                    name_space: item.name_space,
                     connection_list:[]
                 }
 

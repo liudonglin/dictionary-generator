@@ -4,21 +4,33 @@ import (
 	"dg-server/core"
 	"dg-server/store"
 	"strings"
+	"time"
 
 	"github.com/flosch/pongo2"
 )
 
 var tableTemplete = `
-using System;
+package {{ project.NameSpace }}.entity
 
-namespace entity
-{
-	public class {{ fn.ToCamelString(table.Name) }} 
-	{
-		{% for column in columns %}
-		public {{ fn.SqlTypeConvertLanguageType(column,project.DataBase,project.Language) }} {{ fn.ToCamelString(column.Name) }} { get; set; }
-		{% endfor %}
-	}
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.NotNull;
+
+/**
+ * {{ table.Description }}
+ * @author {{ user }}
+ * @date {{ fn.GetNowDate() }}
+ * */
+
+@Data
+public class {{ fn.ToCamelString(table.Name) }} { {% for column in columns %}
+	
+	@ApiModelProperty("{{ column.Title }}")	{% if !column.Null %}
+	@NotNull(message = "{{ column.Title }}不能为空") {% endif %} {% if column.DataType=="varchar" %}
+	@Length(max = {{column.Length}},message = "{{ column.Title }}长度不能超过{{column.Length}}") {% endif %} 
+	private {{ fn.SqlTypeConvertLanguageType(column,project.DataBase,project.Language) }} {{ fn.FirstToLower(fn.ToCamelString(column.Name)) }};  
+{% endfor %}
 }
 `
 
@@ -57,6 +69,7 @@ func TestGetTableScript(tid int64) string {
 		"table":    table,
 		"columns":  columns,
 		"indexs":   indexs,
+		"user":     "liudonglin",
 		"fn":       fn,
 	})
 
@@ -70,7 +83,7 @@ func TestGetTableScript(tid int64) string {
 }
 
 // GetTableScript ...
-func GetTableScript(req *core.TempleteLoadReq) (string, error) {
+func GetTableScript(req *core.TempleteLoadReq, userName string) (string, error) {
 	tplStore := store.Stores().TempleteStore
 	temp, _ := tplStore.FindID(req.TempleteID)
 	tpl, err := pongo2.FromString(temp.Content)
@@ -106,6 +119,7 @@ func GetTableScript(req *core.TempleteLoadReq) (string, error) {
 		"table":    table,
 		"columns":  columns,
 		"indexs":   indexs,
+		"user":     userName,
 		"fn":       fn,
 	})
 
@@ -174,4 +188,33 @@ func (*FnWrap) ToCamelString(s string) string {
 		data = append(data, d)
 	}
 	return string(data[:])
+}
+
+// FirstToLower 首字母转小写
+func (*FnWrap) FirstToLower(s string) string {
+	if len(s) < 1 {
+		return ""
+	}
+	strArry := []rune(s)
+	if strArry[0] >= 65 && strArry[0] <= 90 {
+		strArry[0] += 32
+	}
+	return string(strArry)
+}
+
+// FirstToUpper 首字母转大写
+func (*FnWrap) FirstToUpper(s string) string {
+	if len(s) < 1 {
+		return ""
+	}
+	strArry := []rune(s)
+	if strArry[0] >= 97 && strArry[0] <= 122 {
+		strArry[0] -= 32
+	}
+	return string(strArry)
+}
+
+// GetNowDate 获取当前日期
+func (*FnWrap) GetNowDate() string {
+	return time.Now().Format("2006-01-02")
 }

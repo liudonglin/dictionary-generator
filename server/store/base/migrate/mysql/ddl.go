@@ -148,6 +148,7 @@ CREATE TABLE IF NOT EXISTS projects (
    ,project_data_base       VARCHAR(10)
    ,project_orm         	VARCHAR(10)
    ,project_description     VARCHAR(200)
+   ,project_name_space      VARCHAR(100)
    ,project_created       	VARCHAR(20)
    ,project_updated       	VARCHAR(20)
    ,UNIQUE(project_name)

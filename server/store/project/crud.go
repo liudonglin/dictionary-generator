@@ -169,6 +169,7 @@ project_id
 ,project_data_base
 ,project_orm
 ,project_description
+,project_name_space
 ,project_created
 ,project_updated
 `
@@ -190,6 +191,7 @@ INSERT INTO projects (
 ,project_data_base
 ,project_orm
 ,project_description
+,project_name_space
 ,project_created
 ,project_updated
 ) VALUES (
@@ -198,6 +200,7 @@ INSERT INTO projects (
 ,:project_data_base
 ,:project_orm
 ,:project_description
+,:project_name_space
 ,:project_created
 ,:project_updated
 )
@@ -211,6 +214,7 @@ project_name         	= :project_name
 ,project_data_base      = :project_data_base
 ,project_orm        	= :project_orm
 ,project_description    = :project_description
+,project_name_space     = :project_name_space
 ,project_updated        = :project_updated
 WHERE project_id = :project_id
 `

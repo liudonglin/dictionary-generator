@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
 
@@ -27,11 +28,15 @@ func listTemplete(c echo.Context) error {
 }
 
 func loadTemplete(c echo.Context) error {
+
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*jwtUserClaims)
+
 	q := &core.TempleteLoadReq{}
 	body, _ := ioutil.ReadAll(c.Request().Body)
 	json.Unmarshal(body, q)
 
-	content, _ := tpl.GetTableScript(q)
+	content, _ := tpl.GetTableScript(q, claims.Name)
 	return c.JSON(http.StatusOK, &StandardResult{
 		Data: content,
 	})
