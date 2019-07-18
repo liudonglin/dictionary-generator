@@ -16,6 +16,7 @@ RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 RUN rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY --from=builder-server /go/src/github.com/dictionary-generator/server /app/server
+COPY --from=builder-server /go/src/github.com/dictionary-generator/templetes /app/templetes
 COPY --from=build-ui /go/src/github.com/dictionary-generator/server/ui-dist /app/ui-dist
 
 EXPOSE 8080
