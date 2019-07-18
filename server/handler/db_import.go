@@ -113,7 +113,11 @@ func saveConnInfo(c echo.Context) error {
 						null = true
 					}
 
-					if strings.Contains(columnPost.DataType, "int") ||
+					if columnPost.DataType == "int" ||
+						columnPost.DataType == "tinyint" ||
+						columnPost.DataType == "smallint" ||
+						columnPost.DataType == "integer" ||
+						columnPost.DataType == "bigint" ||
 						columnPost.DataType == "bit" {
 						if columnPost.NumericPrecision.Valid {
 							length = columnPost.NumericPrecision.String
@@ -131,8 +135,7 @@ func saveConnInfo(c echo.Context) error {
 							length += "0"
 						}
 					}
-					if strings.Contains(columnPost.DataType, "char") ||
-						columnPost.DataType == "bit" {
+					if strings.Contains(columnPost.DataType, "char") {
 						if columnPost.CharacterMaximumLength.Valid {
 							length = columnPost.CharacterMaximumLength.String
 						}

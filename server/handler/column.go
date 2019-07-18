@@ -46,6 +46,38 @@ func saveColumn(c echo.Context) error {
 		}
 	}
 
+	//检查长度
+	if postEntity.Length == "" {
+		if postEntity.DataType == "char" || postEntity.DataType == "varchar" {
+			return &BusinessError{Message: "字符类型长度必填"}
+		}
+		if postEntity.DataType == "tinyint" {
+			postEntity.Length = "3"
+		}
+		if postEntity.DataType == "smallint" {
+			postEntity.Length = "5"
+		}
+		if postEntity.DataType == "mediumint" {
+			postEntity.Length = "8"
+		}
+		if postEntity.DataType == "int" {
+			postEntity.Length = "10"
+		}
+		if postEntity.DataType == "bigint" {
+			postEntity.Length = "20"
+		}
+		if postEntity.DataType == "float" || postEntity.DataType == "double" || postEntity.DataType == "decimal" {
+			postEntity.Length = "10,2"
+		}
+	}
+
+	switch postEntity.DataType {
+	case "char", "varchar", "tinyint", "smallint", "mediumint", "int", "bigint", "float", "double", "decimal":
+		postEntity.ColumnType = postEntity.DataType + "(" + postEntity.Length + ")"
+	default:
+		postEntity.ColumnType = postEntity.DataType
+	}
+
 	//add
 	if postEntity.ID == 0 {
 		err := cStore.Create(postEntity)

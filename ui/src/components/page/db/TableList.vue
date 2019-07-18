@@ -26,7 +26,7 @@
             <el-form-item>
                 <el-button type="primary" icon="el-icon-check" @click="saveTable(table)" circle title="保存表"></el-button>
                 <el-button type="danger" icon="el-icon-delete" @click="deleteTable(table)" circle title="删除表"></el-button>
-                <el-button type="primary" icon="el-icon-plus" @click="openColumnForm({ id:0, tid:table.id })" circle title="添加列"></el-button>
+                <el-button type="primary" icon="el-icon-plus" @click="openColumnForm({ id:0,did:table.did, tid:table.id })" circle title="添加列"></el-button>
             </el-form-item>
         </el-form>
 
@@ -115,7 +115,7 @@
             <el-form-item label="标题:" prop="title">
                 <el-input v-model="columnForm.title" maxlength="40" show-word-limit></el-input>
             </el-form-item>
-            <el-form-item label="枚举:" v-if="columnForm.data_type=='int'||columnForm.data_type=='bit'||columnForm.data_type=='tinyint'">
+            <el-form-item label="枚举:" v-if="columnForm.data_type=='int'||columnForm.data_type=='tinyint'">
                 <el-table :data="columnForm.enum_list">
                     <el-table-column property="key" label="字段">
                         <template slot-scope="scope">
@@ -213,7 +213,7 @@
                     ],
                     title:[
                         { required: true, message: '请填写描述信息', trigger: 'blur' }
-                    ]
+                    ],
                 }
             }
         },
@@ -310,7 +310,6 @@
                     col.title = ''
                     col.description = ''
                 }
-
                 this.columnForm = JSON.parse(JSON.stringify(col))
                 this.editColumnVisible = true
             },
@@ -322,6 +321,7 @@
                 this.$refs[formName].resetFields();
             },
             saveColumnForm(formName) {
+                console.log(this.columnForm)
                 this.$refs[formName].validate((valid) => {
                     if (!valid) {
                         return
@@ -339,7 +339,6 @@
                         enumStr += `${item.key}:${item.value}:${item.des};`
                     })
                     this.columnForm.enum = enumStr
-                    this.columnForm.did = this.dbid;
                     this.columnForm.pid = parseInt(this.pid);
                     let columnForm = this.columnForm
                     this.$axios.post(this.saveColumnUrl, this.columnForm).then(result=>{

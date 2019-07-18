@@ -60,7 +60,7 @@ func loadMysqlColumnInfos(conn *sqlx.DB, dbName, tableName string) ([]*ColumnInf
 	CHARACTER_MAXIMUM_LENGTH as char_length,
 	NUMERIC_PRECISION as num_precision,
 	NUMERIC_SCALE as num_scale
-	FROM information_schema.COLUMNS WHERE table_schema='%s' And TABLE_NAME='%s'`, dbName, tableName)
+	FROM information_schema.COLUMNS WHERE table_schema='%s' And TABLE_NAME='%s' ORDER BY ORDINAL_POSITION ASC`, dbName, tableName)
 
 	rows, err := conn.Query(columnSelectSQL)
 	if err != nil {
