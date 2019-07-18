@@ -158,7 +158,7 @@ CREATE TABLE IF NOT EXISTS projects (
 var createTableDatabBses = `
 CREATE TABLE IF NOT EXISTS dbases (
 	database_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
-   ,database_name         	VARCHAR(40)
+   ,database_name         	VARCHAR(100)
    ,database_pid      		INTEGER
    ,database_description    VARCHAR(200)
    ,database_created       	VARCHAR(20)
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS dbases (
 var createTableTables = `
 CREATE TABLE IF NOT EXISTS tables (
 	table_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
-   ,table_name         		VARCHAR(40)
+   ,table_name         		VARCHAR(100)
    ,table_pid      			INTEGER
    ,table_did      			INTEGER
    ,table_description    	VARCHAR(200)
@@ -183,11 +183,11 @@ CREATE TABLE IF NOT EXISTS tables (
 var createTableColumns = `
 CREATE TABLE IF NOT EXISTS columns (
 	column_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
-   ,column_name         	VARCHAR(40)
+   ,column_name         	VARCHAR(100)
    ,column_pid      		INTEGER
    ,column_did      		INTEGER
    ,column_tid      		INTEGER
-   ,column_title			VARCHAR(40)
+   ,column_title			VARCHAR(200)
    ,column_data_type		VARCHAR(10)
    ,column_column_type		VARCHAR(10)
    ,column_pk				INTEGER
@@ -223,7 +223,7 @@ CREATE TABLE IF NOT EXISTS connections (
 var createTableTempletes = `
 CREATE TABLE IF NOT EXISTS templetes (
 	templete_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
-   ,templete_name         	VARCHAR(20)
+   ,templete_name         	VARCHAR(100)
    ,templete_content      	TEXT
    ,templete_language      	VARCHAR(10)
    ,templete_data_base      VARCHAR(10)

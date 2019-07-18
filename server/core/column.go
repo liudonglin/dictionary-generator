@@ -7,7 +7,7 @@ type Column struct {
 	PID         int64  `json:"pid" validate:"gt=0"`
 	DID         int64  `json:"did" validate:"gt=0"`
 	TID         int64  `json:"tid" validate:"gt=0"`
-	Title       string `json:"title" validate:"required,max=40"`
+	Title       string `json:"title" validate:"required,max=100"`
 	DataType    string `json:"data_type"`
 	ColumnType  string `json:"column_type"`
 	PK          bool   `json:"pk"`
