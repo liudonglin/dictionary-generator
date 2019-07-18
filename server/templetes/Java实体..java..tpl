@@ -6,10 +6,10 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 
 /**
- * {{ table.Description }}
- * @author {{ user }}
- * @date {{ fn.GetNowDate() }}
- * */
+ * @author: {{ user.Login }}
+ * @date: {{ fn.GetNowDate() }}
+ * @description: {{ table.Description }}
+ */
 
 @Data
 public class {{ fn.ToCamelString(table.Name) }} { {% for column in columns %}

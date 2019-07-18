@@ -10,28 +10,18 @@ import (
 )
 
 var tableTemplete = `
-package {{ project.NameSpace }}.entity
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="{{ project.NameSpace }}.dao.{{ fn.ToCamelString(table.Name) }}">
+    
+    <select id="load" resultType="{{ project.NameSpace }}.entity.{{ fn.ToCamelString(table.Name) }}">
+        SELECT {% for column in columns %}
+        {{column.Name}}{% if !fn.IsLastColumn(column,columns) %},{% endif %}{% endfor %}
+        FROM {{ table.Name }}
+        WHERE {{ fn.GetPK(indexs) }} = #{id}
+    </select>
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotNull;
-
-/**
- * {{ table.Description }}
- * @author {{ user }}
- * @date {{ fn.GetNowDate() }}
- * */
-
-@Data
-public class {{ fn.ToCamelString(table.Name) }} { {% for column in columns %}
-	
-	@ApiModelProperty("{{ column.Title }}")	{% if !column.Null %}
-	@NotNull(message = "{{ column.Title }}不能为空") {% endif %} {% if column.DataType=="varchar" %}
-	@Length(max = {{column.Length}},message = "{{ column.Title }}长度不能超过{{column.Length}}") {% endif %} 
-	private {{ fn.SqlTypeConvertLanguageType(column,project.DataBase,project.Language) }} {{ fn.FirstToLower(fn.ToCamelString(column.Name)) }};  
-{% endfor %}
-}
+</mapper>
 `
 
 // TestGetTableScript ...
@@ -62,6 +52,9 @@ func TestGetTableScript(tid int64) string {
 			indexs = append(indexs, column)
 		}
 	}
+	user := &core.User{
+		Login: "liudonglin",
+	}
 
 	out, err := tpl.Execute(pongo2.Context{
 		"project":  project,
@@ -69,7 +62,7 @@ func TestGetTableScript(tid int64) string {
 		"table":    table,
 		"columns":  columns,
 		"indexs":   indexs,
-		"user":     "liudonglin",
+		"user":     user,
 		"fn":       fn,
 	})
 
@@ -113,14 +106,19 @@ func GetTableScript(req *core.TempleteLoadReq, userName string) (string, error) 
 		}
 	}
 
+	user := &core.User{
+		Login: userName,
+	}
+
 	out, err := tpl.Execute(pongo2.Context{
 		"project":  project,
 		"database": database,
 		"table":    table,
 		"columns":  columns,
 		"indexs":   indexs,
-		"user":     userName,
-		"fn":       fn,
+		"user":     user,
+
+		"fn": fn,
 	})
 
 	if err != nil {
@@ -217,4 +215,14 @@ func (*FnWrap) FirstToUpper(s string) string {
 // GetNowDate 获取当前日期
 func (*FnWrap) GetNowDate() string {
 	return time.Now().Format("2006-01-02")
+}
+
+// GetPK 获取主键
+func (*FnWrap) GetPK(cols []*core.Column) *core.Column {
+	for _, col := range cols {
+		if col.PK {
+			return col
+		}
+	}
+	return nil
 }
