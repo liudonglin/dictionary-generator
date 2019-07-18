@@ -188,12 +188,12 @@ CREATE TABLE IF NOT EXISTS columns (
    ,column_did      		INTEGER
    ,column_tid      		INTEGER
    ,column_title			VARCHAR(200)
-   ,column_data_type		VARCHAR(10)
-   ,column_column_type		VARCHAR(10)
+   ,column_data_type		VARCHAR(40)
+   ,column_column_type		VARCHAR(40)
    ,column_pk				INTEGER
    ,column_ai				INTEGER
    ,column_null				INTEGER
-   ,column_length			VARCHAR(10)
+   ,column_length			VARCHAR(20)
    ,column_index			INTEGER
    ,column_unique			INTEGER
    ,column_enum    			VARCHAR(100)
