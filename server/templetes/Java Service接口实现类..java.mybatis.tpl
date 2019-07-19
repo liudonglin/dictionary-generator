@@ -46,7 +46,7 @@ public class {{ fn.ToCamelString(table.Name) }}ServiceImpl implements {{ fn.ToCa
     }
 
     @Override
-    public PageResult<{{ fn.ToCamelString(table.Name) }}> selectByPage({{ fn.ToCamelString(table.Name) }}Filter filter) {
+    public PageResult<{{ fn.ToCamelString(table.Name) }}> queryByPage({{ fn.ToCamelString(table.Name) }}Filter filter) {
         Page page = PageHelper.startPage(filter.getPageIndex(), filter.getPageSize(), filter.getOrderBy());
         List<{{ fn.ToCamelString(table.Name) }}> result= {{ fn.FirstToLower(fn.ToCamelString(table.Name)) }}Mapper.query(filter);
         return new PageResult<>(result,page.getTotal(),filter.getPageIndex(),filter.getPageSize());

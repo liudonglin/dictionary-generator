@@ -48,6 +48,6 @@ public interface {{ fn.ToCamelString(table.Name) }}Service {
      * @param {{ fn.ToCamelString(table.Name) }}Filter
      * @return
      */
-    PageResult<{{ fn.ToCamelString(table.Name) }}> selectByPage({{ fn.ToCamelString(table.Name) }}Filter filter);
+    PageResult<{{ fn.ToCamelString(table.Name) }}> queryByPage({{ fn.ToCamelString(table.Name) }}Filter filter);
 
 }
