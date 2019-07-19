@@ -20,6 +20,7 @@ type Column struct {
 	Description string `json:"description" validate:"max=200"`
 	Created     string `json:"created"`
 	Updated     string `json:"updated"`
+	IsEnum      bool
 }
 
 // ColumnQuery 分页查询参数

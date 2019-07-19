@@ -5,6 +5,7 @@ type DataBase struct {
 	ID          int64    `json:"id"`
 	PID         int64    `json:"pid" validate:"gt=0"`
 	Name        string   `json:"name" validate:"required,max=40"`
+	Title       string   `json:"title" validate:"required,max=100"`
 	Description string   `json:"description"  validate:"max=200"`
 	Created     string   `json:"created"`
 	Updated     string   `json:"updated"`

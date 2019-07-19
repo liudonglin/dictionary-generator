@@ -35,6 +35,9 @@
                 <el-form-item label="数据库名称:" prop="name">
                     <el-input v-model="form.name" maxlength="40" show-word-limit></el-input>
                 </el-form-item>
+                <el-form-item label="标 题:">
+                   <el-input v-model="form.title" maxlength="40" show-word-limit></el-input>
+                </el-form-item>
                 <el-form-item label="描述信息:">
                     <el-input type="textarea" placeholder="请输入内容" v-model="form.description"
                         maxlength="200" show-word-limit :autosize="{ minRows: 4, maxRows: 8}">
@@ -124,6 +127,7 @@
                     id: 0,
                     pid: parseInt(this.pid),
                     name: '',
+                    title: '',
                     description: ''
                 },
                 rules: {
@@ -271,6 +275,7 @@
                 this.editDBVisible = false;
                 this.form.id=0;
                 this.form.name="";
+                this.form.title="";
                 this.form.description="";
                 this.$refs[formName].resetFields();
             },
@@ -290,6 +295,7 @@
             editDBForm(db){
                 this.form.id=db.id;
                 this.form.name=db.name;
+                this.form.title=db.title;
                 this.form.description=db.description;
                 this.editDBVisible = true;
             },

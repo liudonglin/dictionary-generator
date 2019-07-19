@@ -1,9 +1,9 @@
 package dbase
 
 import (
+	"database/sql"
 	"dg-server/core"
 	"dg-server/store/base/db"
-	"database/sql"
 )
 
 // helper function converts the User structure to a set
@@ -13,6 +13,7 @@ func toParams(u *core.DataBase) map[string]interface{} {
 		"database_id":          u.ID,
 		"database_name":        u.Name,
 		"database_pid":         u.PID,
+		"database_title":       u.Title,
 		"database_description": u.Description,
 		"database_created":     u.Created,
 		"database_updated":     u.Updated,
@@ -26,6 +27,7 @@ func scanRow(scanner db.Scanner, dest *core.DataBase) error {
 		&dest.ID,
 		&dest.Name,
 		&dest.PID,
+		&dest.Title,
 		&dest.Description,
 		&dest.Created,
 		&dest.Updated,

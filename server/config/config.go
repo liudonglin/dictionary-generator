@@ -39,8 +39,8 @@ type Config struct {
 
 	// Database provides the database configuration.
 	Database struct {
-		Driver     string `envconfig:"CODEBUILDER_DATABASE_DRIVER"     default:"sqlite3"`
-		Datasource string `envconfig:"CODEBUILDER_DATABASE_DATASOURCE" default:"codebuild.db"`
+		Driver     string `envconfig:"CODEBUILDER_DATABASE_DRIVER"     default:"mysql"`
+		Datasource string `envconfig:"CODEBUILDER_DATABASE_DATASOURCE" default:"root:scf@123456@tcp(10.0.60.26:3306)/codebuild"`
 	}
 
 	Admin AdminCreate `envconfig:"CODEBUILDER_USER_CREATE" default:"admin:123456"`

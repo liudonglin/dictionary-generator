@@ -6,6 +6,7 @@ type Table struct {
 	Name        string    `json:"name" validate:"required,max=40"`
 	PID         int64     `json:"pid" validate:"gt=0"`
 	DID         int64     `json:"did" validate:"gt=0"`
+	Title       string    `json:"title" validate:"required,max=100"`
 	Description string    `json:"description" validate:"max=200"`
 	Created     string    `json:"created"`
 	Updated     string    `json:"updated"`

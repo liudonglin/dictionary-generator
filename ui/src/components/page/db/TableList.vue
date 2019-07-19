@@ -6,8 +6,8 @@
             <el-form-item label="表 名:" prop="name">
                 <el-input v-model="tableForm.name" style="width:280px;" maxlength="40" show-word-limit></el-input>
             </el-form-item>
-            <el-form-item label="描 述:">
-                <el-input v-model="tableForm.description" style="width:280px;" maxlength="200" show-word-limit></el-input>
+            <el-form-item label="标 题:">
+                <el-input v-model="tableForm.title" style="width:280px;" maxlength="200" show-word-limit></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" icon="el-icon-check" @click="saveTable(tableForm)" circle title="新增表"></el-button>
@@ -20,8 +20,8 @@
             <el-form-item label="表 名:" prop="name">
                 <el-input v-model="table.name" style="width:280px;" maxlength="40" show-word-limit></el-input>
             </el-form-item>
-            <el-form-item label="描 述:">
-                <el-input v-model="table.description" style="width:280px;" maxlength="200" show-word-limit></el-input>
+            <el-form-item label="标 题:">
+                <el-input v-model="table.title" style="width:280px;" maxlength="200" show-word-limit></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" icon="el-icon-check" @click="saveTable(table)" circle title="保存表"></el-button>
@@ -105,8 +105,12 @@
                 <el-switch v-model="columnForm.null" active-text="YES" inactive-text="NO" :disabled="columnForm.pk">
                 </el-switch>
             </el-form-item>
+            <el-form-item label="唯一列:">
+                <el-switch v-model="columnForm.unique" @change="handleUniqueChange" active-text="YES" inactive-text="NO" :disabled="columnForm.pk">
+                </el-switch>
+            </el-form-item>
             <el-form-item label="索引列:">
-                <el-switch v-model="columnForm.index" active-text="YES" inactive-text="NO">
+                <el-switch v-model="columnForm.index" active-text="YES" inactive-text="NO" :disabled="columnForm.pk||columnForm.unique">
                 </el-switch>
             </el-form-item>
             <el-form-item label="长度:">
@@ -181,7 +185,7 @@
                 search_word:'',
                 tableForm:{
                     name:'',
-                    description:'',
+                    title:'',
                     id:0,
                 },
                 columnForm:{
@@ -263,13 +267,15 @@
                 if (table.name==null||table.name==''){
                     return
                 }
-                table.did = this.dbid;
-                table.pid = parseInt(this.pid);
+                if (table.id ==0) {
+                    table.did = this.dbid;
+                    table.pid = parseInt(this.pid);
+                }
                 this.$axios.post(this.saveTableUrl, table).then(result=>{
                     if (result.success) {
                         this.tableForm = {
                             name:'',
-                            description:'',
+                            title:'',
                             id:0,
                         }
                         this.search()
@@ -302,6 +308,7 @@
                     col.data_type = ''
                     col.pk = false
                     col.index = false
+                    col.unique = false
                     col.ai = false
                     col.length = ''
                     col.null = false
@@ -355,6 +362,7 @@
                                                 column.index = columnForm.index
                                                 column.ai = columnForm.ai
                                                 column.length = columnForm.length
+                                                column.unique = columnForm.unique
                                                 column.null = columnForm.null
                                                 column.enum = columnForm.enum
                                                 column.enum_list = columnForm.enum_list
@@ -425,8 +433,15 @@
             },
             handlePKChange(val){
                 this.columnForm.ai=val
+                this.columnForm.index=val
                 if (val){
                     this.columnForm.null=false
+                    this.columnForm.unique=true
+                }
+            },
+            handleUniqueChange(val){
+                if (val) {
+                    this.columnForm.index=true
                 }
             },
         }

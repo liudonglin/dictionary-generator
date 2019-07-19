@@ -56,6 +56,9 @@ func TestGetTableScript(tid int64) string {
 		Login: "liudonglin",
 	}
 
+	//解析枚举
+	enums := getEnums(columns)
+
 	out, err := tpl.Execute(pongo2.Context{
 		"project":  project,
 		"database": database,
@@ -63,6 +66,7 @@ func TestGetTableScript(tid int64) string {
 		"columns":  columns,
 		"indexs":   indexs,
 		"user":     user,
+		"enums":    enums,
 		"fn":       fn,
 	})
 
@@ -110,6 +114,9 @@ func GetTableScript(req *core.TempleteLoadReq, userName string) (string, error) 
 		Login: userName,
 	}
 
+	//解析枚举
+	enums := getEnums(columns)
+
 	out, err := tpl.Execute(pongo2.Context{
 		"project":  project,
 		"database": database,
@@ -117,8 +124,8 @@ func GetTableScript(req *core.TempleteLoadReq, userName string) (string, error) 
 		"columns":  columns,
 		"indexs":   indexs,
 		"user":     user,
-
-		"fn": fn,
+		"enums":    enums,
+		"fn":       fn,
 	})
 
 	if err != nil {
@@ -140,6 +147,14 @@ func (*FnWrap) LenColumn(arr []*core.Column) int {
 // IsLastColumn 判断是否是最后一列
 func (*FnWrap) IsLastColumn(item *core.Column, list []*core.Column) bool {
 	if item.ID == list[len(list)-1].ID {
+		return true
+	}
+	return false
+}
+
+// IsLastKvd ...
+func (*FnWrap) IsLastKvd(item *KVD, list []*KVD) bool {
+	if item.Key == list[len(list)-1].Key {
 		return true
 	}
 	return false
@@ -225,4 +240,14 @@ func (*FnWrap) GetPK(cols []*core.Column) *core.Column {
 		}
 	}
 	return nil
+}
+
+// ToUpper 转大写
+func (*FnWrap) ToUpper(s string) string {
+	return strings.ToUpper(s)
+}
+
+// ToLower 转小写
+func (*FnWrap) ToLower(s string) string {
+	return strings.ToLower(s)
 }

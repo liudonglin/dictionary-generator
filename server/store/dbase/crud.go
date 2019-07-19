@@ -189,6 +189,7 @@ SELECT
 database_id
 ,database_name
 ,database_pid
+,database_title
 ,database_description
 ,database_created
 ,database_updated
@@ -208,12 +209,14 @@ const stmtInsert = `
 INSERT INTO dbases (
  database_name
 ,database_pid
+,database_title
 ,database_description
 ,database_created
 ,database_updated
 ) VALUES (
  :database_name
 ,:database_pid
+,:database_title
 ,:database_description
 ,:database_created
 ,:database_updated
@@ -224,6 +227,7 @@ const stmtUpdate = `
 UPDATE dbases
 SET
 database_name         	= :database_name
+,database_title			= :database_title
 ,database_description   = :database_description
 ,database_updated       = :database_updated
 WHERE database_id = :database_id

@@ -210,6 +210,7 @@ table_id
 ,table_name
 ,table_pid
 ,table_did
+,table_title
 ,table_description
 ,table_created
 ,table_updated
@@ -230,6 +231,7 @@ INSERT INTO tables (
  table_name
 ,table_pid
 ,table_did
+,table_title
 ,table_description
 ,table_created
 ,table_updated
@@ -237,6 +239,7 @@ INSERT INTO tables (
  :table_name
 ,:table_pid
 ,:table_did
+,:table_title
 ,:table_description
 ,:table_created
 ,:table_updated
@@ -246,9 +249,10 @@ INSERT INTO tables (
 const stmtUpdate = `
 UPDATE tables
 SET
-table_name         	= :table_name
-,table_description   = :table_description
-,table_updated       = :table_updated
+table_name         		= :table_name
+,table_title   			= :table_title
+,table_description   	= :table_description
+,table_updated       	= :table_updated
 WHERE table_id = :table_id
 `
 

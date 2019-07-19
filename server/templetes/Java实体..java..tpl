@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 /**
  * @author: {{ user.Login }}
  * @date: {{ fn.GetNowDate() }}
- * @description: {{ table.Description }}
+ * @description: {{ table.Title }}
  */
 
 @Data
@@ -17,6 +17,6 @@ public class {{ fn.ToCamelString(table.Name) }} { {% for column in columns %}
 	@ApiModelProperty("{{ column.Title }}")	{% if !column.Null %}
 	@NotNull(message = "{{ column.Title }}不能为空") {% endif %} {% if column.DataType=="varchar" %}
 	@Length(max = {{column.Length}},message = "{{ column.Title }}长度不能超过{{column.Length}}") {% endif %} 
-	private {{ fn.SqlTypeConvertLanguageType(column,project.DataBase,project.Language) }} {{ fn.FirstToLower(fn.ToCamelString(column.Name)) }};  
+	private {% if column.IsEnum %}{{ fn.ToCamelString(column.Name) }}{% else %}{{ fn.SqlTypeConvertLanguageType(column,project.DataBase,project.Language) }}{% endif %} {{ fn.FirstToLower(fn.ToCamelString(column.Name)) }};  
 {% endfor %}
 }

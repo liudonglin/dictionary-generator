@@ -158,6 +158,7 @@ CREATE TABLE IF NOT EXISTS dbases (
 	database_id            	INTEGER PRIMARY KEY AUTOINCREMENT
    ,database_name         	TEXT
    ,database_pid      		INTEGER
+   ,database_title			TEXT
    ,database_description    TEXT
    ,database_created       	TEXT
    ,database_updated       	TEXT
@@ -171,6 +172,7 @@ CREATE TABLE IF NOT EXISTS tables (
    ,table_name         		TEXT
    ,table_pid      			INTEGER
    ,table_did      			INTEGER
+   ,table_title				TEXT
    ,table_description    	TEXT
    ,table_created       	TEXT
    ,table_updated       	TEXT

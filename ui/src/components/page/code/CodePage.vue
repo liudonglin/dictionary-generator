@@ -1,5 +1,5 @@
 <template>
-<div style="height: 100%;">
+<div style="height: 100%;" v-loading="codeLoading">
     <el-tabs type="card" v-model="selectTempleteID" @tab-click="handleTempleteChange">
         <el-tab-pane v-for="templete in codeTempletes" :key="templete.name" :label="templete.name" :name="templete.id+''"></el-tab-pane>
     </el-tabs>
@@ -16,6 +16,7 @@ export default {
         return {
             loadTempleteUrl:"/api/templete/load",
             listTempleteUrl:"/api/templete/list",
+            codeLoading:false,
             codeTempletes:[],
             tableId:0,
             projectId:0,
@@ -41,6 +42,7 @@ export default {
     },
     methods: {
         getTempletes() {
+            this.codeLoading = true
             this.$axios.post(this.listTempleteUrl, {pid:this.projectId, index:0, size:999999, order_by:"templete_created DESC" }).then(result=>{
                 if (result.success) {
                     this.codeTempletes = result.data.list
@@ -48,17 +50,20 @@ export default {
                         this.selectTempleteID = this.codeTempletes[0].id+""
                     }
                 }
+                this.codeLoading = false
             })
         },
         getCodeContent() {
             if (this.tableId==0){
                 return
             }
+            this.codeLoading = true
             let templeteId = parseInt(this.selectTempleteID)
             this.$axios.post(this.loadTempleteUrl, { templete_id:templeteId,tid:this.tableId }).then(result=>{
                 if (result.success) {
                     this.content = result.data
                 }
+                this.codeLoading = false
             })
         },
         handleTempleteChange(tab) {

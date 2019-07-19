@@ -160,6 +160,7 @@ CREATE TABLE IF NOT EXISTS dbases (
 	database_id            	INTEGER PRIMARY KEY AUTO_INCREMENT
    ,database_name         	VARCHAR(100)
    ,database_pid      		INTEGER
+   ,database_title			VARCHAR(200)
    ,database_description    VARCHAR(200)
    ,database_created       	VARCHAR(20)
    ,database_updated       	VARCHAR(20)
@@ -173,6 +174,7 @@ CREATE TABLE IF NOT EXISTS tables (
    ,table_name         		VARCHAR(100)
    ,table_pid      			INTEGER
    ,table_did      			INTEGER
+   ,table_title			    VARCHAR(200)
    ,table_description    	VARCHAR(200)
    ,table_created       	VARCHAR(20)
    ,table_updated       	VARCHAR(20)
