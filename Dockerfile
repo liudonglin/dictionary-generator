@@ -3,7 +3,7 @@ WORKDIR /go/src/github.com/dictionary-generator/ui
 COPY ./ui .
 RUN npm config set registry https://registry.npm.taobao.org && npm install && npm run build
 
-FROM golang:latest as builder-server
+FROM golang:1.12.6 as builder-server
 ENV GO15VENDOREXPERIMENT=1
 ENV GO111MODULE=on
 WORKDIR /go/src/github.com/dictionary-generator
