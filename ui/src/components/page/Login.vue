@@ -29,8 +29,8 @@
             return {
                 loginUrl: "/api/login",
                 ruleForm: {
-                    username: 'admin',
-                    password: '123456'
+                    username: '',
+                    password: ''
                 },
                 rules: {
                     username: [
