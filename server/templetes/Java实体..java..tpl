@@ -1,4 +1,4 @@
-package {{ project.NameSpace }}.entity
+package {{ project.NameSpace }}.entity;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

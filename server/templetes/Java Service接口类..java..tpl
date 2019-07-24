@@ -1,11 +1,9 @@
 package {{ project.NameSpace }}.service;
 
-import {{ project.NameSpace }}.util.PageResult;
-import {{ project.NameSpace }}.util.BusinessException;
+import com.dk.foundation.engine.baseentity.PageResult;
+import com.dk.foundation.engine.exception.BusinessException;
+import {{ project.NameSpace }}.entity.{{ fn.ToCamelString(table.Name) }};
 import {{ project.NameSpace }}.req.{{ fn.ToCamelString(table.Name) }}Filter;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author: {{ user.Login }}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="{{ project.NameSpace }}.dao.{{ fn.ToCamelString(table.Name) }}">
+<mapper namespace="{{ project.NameSpace }}.dao.{{ fn.ToCamelString(table.Name) }}Mapper">
     
     <select id="load" resultType="{{ project.NameSpace }}.entity.{{ fn.ToCamelString(table.Name) }}">
         SELECT {% for column in columns %}

@@ -39,10 +39,8 @@ func mysqlConvertJava(col *core.Column) string {
 		result = "Double"
 	case "DECIMAL":
 		result = "BigDecimal"
-	case "DATE":
+	case "DATE", "DATETIME", "TIMESTAMP":
 		result = "Date"
-	case "DATETIME", "TIMESTAMP":
-		result = "Timestamp"
 	case "CHAR", "VARCHAR", "TINYTEXT", "TEXT", "MEDIUMTEXT", "LONGTEXT", "ENUM", "SET":
 		result = "String"
 	}

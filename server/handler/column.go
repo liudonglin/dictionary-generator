@@ -51,24 +51,25 @@ func saveColumn(c echo.Context) error {
 		if postEntity.DataType == "char" || postEntity.DataType == "varchar" {
 			return &BusinessError{Message: "字符类型长度必填"}
 		}
-		if postEntity.DataType == "tinyint" {
-			postEntity.Length = "3"
-		}
-		if postEntity.DataType == "smallint" {
-			postEntity.Length = "5"
-		}
-		if postEntity.DataType == "mediumint" {
-			postEntity.Length = "8"
-		}
-		if postEntity.DataType == "int" {
-			postEntity.Length = "10"
-		}
-		if postEntity.DataType == "bigint" {
-			postEntity.Length = "20"
-		}
 		if postEntity.DataType == "float" || postEntity.DataType == "double" || postEntity.DataType == "decimal" {
 			postEntity.Length = "10,2"
 		}
+	}
+
+	if postEntity.DataType == "tinyint" {
+		postEntity.Length = "3"
+	}
+	if postEntity.DataType == "smallint" {
+		postEntity.Length = "5"
+	}
+	if postEntity.DataType == "mediumint" {
+		postEntity.Length = "8"
+	}
+	if postEntity.DataType == "int" {
+		postEntity.Length = "10"
+	}
+	if postEntity.DataType == "bigint" {
+		postEntity.Length = "20"
 	}
 
 	switch postEntity.DataType {

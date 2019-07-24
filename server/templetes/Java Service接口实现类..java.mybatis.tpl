@@ -1,15 +1,17 @@
 package {{ project.NameSpace }}.service;
 
-import {{ project.NameSpace }}.util.PageResult;
-import {{ project.NameSpace }}.util.BusinessException;
+import com.dk.foundation.engine.baseentity.PageResult;
+import com.dk.foundation.engine.exception.BusinessException;
+import {{ project.NameSpace }}.req.{{ fn.ToCamelString(table.Name) }}Mapper;
+import {{ project.NameSpace }}.req.{{ fn.ToCamelString(table.Name) }};
 import {{ project.NameSpace }}.req.{{ fn.ToCamelString(table.Name) }}Filter;
 
-import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+
+import java.util.List;
 
 @Service
 public class {{ fn.ToCamelString(table.Name) }}ServiceImpl implements {{ fn.ToCamelString(table.Name) }}Service {
@@ -23,7 +25,7 @@ public class {{ fn.ToCamelString(table.Name) }}ServiceImpl implements {{ fn.ToCa
             throw new BusinessException("参数不能为空");
         }
         {{ fn.FirstToLower(fn.ToCamelString(table.Name)) }}Mapper.insert(entity);
-        return entity.get{{ fn.ToCamelString(fn.GetPK(indexs).Name) }};
+        return entity.get{{ fn.ToCamelString(fn.GetPK(indexs).Name) }}();
     }
 
     @Override
