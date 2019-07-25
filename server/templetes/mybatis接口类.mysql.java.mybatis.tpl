@@ -1,5 +1,6 @@
 package {{ project.NameSpace }}.dao;
 
+import {{ project.NameSpace }}.entity.Flow;
 import {{ project.NameSpace }}.req.{{ fn.ToCamelString(table.Name) }}Filter;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

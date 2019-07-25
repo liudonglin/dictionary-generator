@@ -29,7 +29,7 @@ public interface {{ fn.ToCamelString(table.Name) }}Service {
 
     /**
      * 删除{{ table.Title }}
-     * @param entity
+     * @param {{ fn.FirstToLower(fn.ToCamelString(fn.GetPK(indexs).Name)) }}
      * @return
      */
     void delete({{ fn.SqlTypeConvertLanguageType(fn.GetPK(indexs),project.DataBase,project.Language) }} {{ fn.FirstToLower(fn.ToCamelString(fn.GetPK(indexs).Name)) }});
@@ -43,7 +43,7 @@ public interface {{ fn.ToCamelString(table.Name) }}Service {
 
     /**
      * 分页查询{{ table.Title }}
-     * @param {{ fn.ToCamelString(table.Name) }}Filter
+     * @param filter
      * @return
      */
     PageResult<{{ fn.ToCamelString(table.Name) }}> queryByPage({{ fn.ToCamelString(table.Name) }}Filter filter);

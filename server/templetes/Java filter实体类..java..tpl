@@ -2,15 +2,17 @@ package {{ project.NameSpace }}.req;
 
 import com.dk.foundation.engine.baseentity.Pager;
 import lombok.Data;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
+import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class {{ fn.ToCamelString(table.Name) }}Filter extends Pager implements Serializable {
-
-{ {% for column in columns %}
+{% for column in columns %}
     @ApiModelProperty("{{ column.Title }}")	{% if !column.Null %}
     @NotNull(message = "{{ column.Title }}不能为空") {% endif %} {% if column.DataType=="varchar" %}
     @Length(max = {{column.Length}},message = "{{ column.Title }}长度不能超过{{column.Length}}") {% endif %} 

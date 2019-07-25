@@ -2,8 +2,8 @@ package {{ project.NameSpace }}.service;
 
 import com.dk.foundation.engine.baseentity.PageResult;
 import com.dk.foundation.engine.exception.BusinessException;
-import {{ project.NameSpace }}.req.{{ fn.ToCamelString(table.Name) }}Mapper;
-import {{ project.NameSpace }}.req.{{ fn.ToCamelString(table.Name) }};
+import {{ project.NameSpace }}.dao.{{ fn.ToCamelString(table.Name) }}Mapper;
+import {{ project.NameSpace }}.entity.{{ fn.ToCamelString(table.Name) }};
 import {{ project.NameSpace }}.req.{{ fn.ToCamelString(table.Name) }}Filter;
 
 import org.springframework.beans.factory.annotation.Autowired;

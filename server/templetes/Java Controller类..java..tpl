@@ -3,16 +3,16 @@ package {{ project.NameSpace }}.controller;
 import com.dk.foundation.engine.baseentity.PageResult;
 import com.dk.foundation.engine.baseentity.StandResponse;
 import com.dk.foundation.engine.exception.BusinessException;
-import {{ project.NameSpace }}.entity.FlowType;
-import {{ project.NameSpace }}.req.FlowTypeFilter;
-import {{ project.NameSpace }}.service.FlowTypeService;
-import {{ project.NameSpace }}.util.BaseController;
+import {{ project.NameSpace }}.entity.{{ fn.ToCamelString(table.Name) }};
+import {{ project.NameSpace }}.req.{{ fn.ToCamelString(table.Name) }}Filter;
+import {{ project.NameSpace }}.service.{{ fn.ToCamelString(table.Name) }}Service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import com.oursoft.scf.startup.worker.util.BaseController;
 
 import javax.annotation.Resource;
 
@@ -54,7 +54,7 @@ public class {{ fn.ToCamelString(table.Name) }}Controller extends BaseController
         if (id==null) {
             throw new BusinessException("参数不能为空");
         }
-        flowTypeService.delete(id);
+        {{ fn.FirstToLower(fn.ToCamelString(table.Name)) }}Service.delete(id);
         return success();
     }
 
