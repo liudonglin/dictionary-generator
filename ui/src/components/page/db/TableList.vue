@@ -311,7 +311,7 @@
                     col.unique = false
                     col.ai = false
                     col.length = ''
-                    col.null = false
+                    col.null = true
                     col.enum = ''
                     col.enum_list = []
                     col.title = ''
@@ -408,21 +408,21 @@
             },
             nullFormatter(row, column) {
                 if (row.null==true){
-                    return "YES"
+                    return "可空"
                 }
-                return "NO"
+                return ""
             },
             aiFormatter(row, column) {
                 if (row.ai==true){
-                    return "YES"
+                    return "自增"
                 }
-                return "NO"
+                return ""
             },
             indexFormatter(row, column) {
                 if (row.index==true){
-                    return "YES"
+                    return "索引列"
                 }
-                return "NO"
+                return ""
             },
             handleEnumVisibleChange(row) {
                 if (row.enum_visible){
