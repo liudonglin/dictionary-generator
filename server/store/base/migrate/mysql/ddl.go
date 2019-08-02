@@ -198,7 +198,7 @@ CREATE TABLE IF NOT EXISTS columns (
    ,column_length			VARCHAR(20)
    ,column_index			INTEGER
    ,column_unique			INTEGER
-   ,column_enum    			VARCHAR(100)
+   ,column_enum    			VARCHAR(500)
    ,column_description    	VARCHAR(200)
    ,column_created       	VARCHAR(20)
    ,column_updated       	VARCHAR(20)
