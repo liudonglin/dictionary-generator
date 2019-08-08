@@ -6,7 +6,7 @@
             <div class="db-box">
                 <el-button type="primary" icon="el-icon-plus" circle class="db-btn" @click="editDBVisible=true" title="新增"></el-button>
                 <el-button type="primary" icon="el-icon-connection" circle class="db-btn" @click="openConnForm" title="数据库倒入"></el-button>
-                <el-button type="primary" icon="el-icon-upload" circle class="db-btn"  title="excel导入"></el-button>
+                <el-button type="primary" icon="el-icon-download" circle class="db-btn" @click="downloadProject" title="excel导出"></el-button>
             </div>
         </li>
 
@@ -89,6 +89,7 @@
 
 <script>
     import bus from '../../common/bus';
+    import { Base64 } from 'js-base64';
     const default_conn = "default_project_conn_"
     export default {
         props: {
@@ -109,6 +110,7 @@
                 listDBUrl:'/api/database/list',
                 saveDBUrl: '/api/database/save',
                 deleteDBUrl:'/api/database/delete',
+                downloadProjectUrl:'/api/export/project',
                 search_word:'',
                 dbDatas:[],
                 selectDBId:0,
@@ -323,6 +325,40 @@
             handleDBSelectChange(dbid) {
                 this.selectDBId = dbid;
                 bus.$emit('dbMgtSelectDBChange', this.selectDBId);
+            },
+            downloadProject(){
+                let pid = parseInt(this.pid)
+                this.$axios.post(this.downloadProjectUrl,pid,{responseType: 'blob'}).then(result=>{
+                    if (!result.data) {
+                        return
+                    }
+
+                    let filename = result.headers['content-disposition'].split(";")[1].split("filename=")[1];
+                    if (!filename) {
+                        filename = "excel.xlsx";
+                    }
+                    filename = Base64.decode(filename)
+
+                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                        // IE workaround for "HTML7007: One or more blob URLs were 
+                        // revoked by closing the blob for which they were created. 
+                        // These URLs will no longer resolve as the data backing 
+                        // the URL has been freed."
+                        window.navigator.msSaveBlob(blob, filename);
+                        return
+                    }
+
+                    let url = window.URL.createObjectURL(result.data)
+                    let link = document.createElement('a')
+                    link.style.display = 'none'
+                    link.href = url
+                    link.setAttribute('download', filename)
+
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                })
             }
         }
     }

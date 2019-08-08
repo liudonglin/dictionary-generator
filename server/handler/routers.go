@@ -54,5 +54,7 @@ func New() *echo.Echo {
 	r.POST("/templete/load", loadTemplete)
 	r.POST("/templete/list", listTemplete)
 
+	r.POST("/export/project", exportProject)
+
 	return e
 }

@@ -41,10 +41,9 @@ axios.interceptors.response.use((response) => {
       Message({type:'error',message:response.data.message || '服务器端异常'})
       break
     default:
-      !ignoreMsg && Message({type:'error',message:'未定义的异常'})
       break
   }
-  return response.data
+  return response
 }, (error) => {
   return Promise.reject(error)
 })
