@@ -9,7 +9,6 @@ import (
 
 func init() {
 	// envFile := "./.env"
-
 	// driver := flag.String("driver", "sqlite3", "db driver, mysql or sqlite3")
 	// dbsource := flag.String("data source", "codebuild.db", "data source")
 	// admin := flag.String("admin", "admin:123456", "init admin user")
