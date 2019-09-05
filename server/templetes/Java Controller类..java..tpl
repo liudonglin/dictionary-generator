@@ -60,7 +60,7 @@ public class {{ fn.ToCamelString(table.Name) }}Controller extends BaseController
 
     @ApiOperation(value = "根据主键获取{{ table.Title }}", notes = "")
     @ApiImplicitParam(name = "Authorization", value = "获取token后，直接传入", paramType = "header")
-    @RequestMapping(value = "/load", method = RequestMethod.POST)
+    @RequestMapping(value = "/load", method = RequestMethod.GET)
     public @ResponseBody StandResponse<{{ fn.ToCamelString(table.Name) }}> load{{ fn.ToCamelString(table.Name) }}(@RequestParam {{ fn.SqlTypeConvertLanguageType(fn.GetPK(indexs),project.DataBase,project.Language) }} id) throws BusinessException {
         if (id==null) {
             throw new BusinessException("参数不能为空");
