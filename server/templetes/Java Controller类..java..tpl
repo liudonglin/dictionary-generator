@@ -50,7 +50,7 @@ public class {{ fn.ToCamelString(table.Name) }}Controller extends BaseController
     @ApiOperation(value = "删除{{ table.Title }}", notes = "")
     @ApiImplicitParam(name = "Authorization", value = "获取token后，直接传入", paramType = "header")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public @ResponseBody StandResponse delete{{ fn.ToCamelString(table.Name) }}(@RequestParam {{ fn.SqlTypeConvertLanguageType(fn.GetPK(indexs),project.DataBase,project.Language) }} id) throws BusinessException {
+    public @ResponseBody StandResponse delete{{ fn.ToCamelString(table.Name) }}({{ fn.SqlTypeConvertLanguageType(fn.GetPK(indexs),project.DataBase,project.Language) }} id) throws BusinessException {
         if (id==null) {
             throw new BusinessException("参数不能为空");
         }
