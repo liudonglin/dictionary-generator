@@ -4,7 +4,7 @@
 
         <li style="list-style:none;">
             <div class="db-box">
-                <el-select v-model="selectProjectId" placeholder="请选择" @change="handleProjectChange">
+                <el-select v-model="selectProjectId" value-key="value" placeholder="请选择" @change="handleProjectChange">
                     <el-option v-for="item in projects" :key="item.id" :label="item.name" :value="item.id">
                     </el-option>
                 </el-select>

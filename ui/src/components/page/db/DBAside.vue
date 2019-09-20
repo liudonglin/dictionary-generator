@@ -4,6 +4,12 @@
 
         <li style="list-style:none;">
             <div class="db-box">
+                <el-select v-model="selectProjectId" placeholder="请选择" @change="handleProjectChange">
+                    <el-option v-for="item in projects" :key="item.id" :label="item.name" :value="item.id">
+                    </el-option>
+                </el-select>
+            </div>
+            <div class="db-box">
                 <el-button type="primary" icon="el-icon-plus" circle class="db-btn" @click="editDBVisible=true" title="新增"></el-button>
                 <el-button type="primary" icon="el-icon-connection" circle class="db-btn" @click="openConnForm" title="数据库倒入"></el-button>
                 <el-button type="primary" icon="el-icon-download" circle class="db-btn" @click="downloadProject" title="excel导出"></el-button>
@@ -104,6 +110,7 @@
         },
         data() {
             return {
+                listProjectUrl: '/api/project/list',
                 listConnsUrl:'/api/conn/loadpid',
                 loadConnUrl:'/api/dbimport/loaddb',
                 saveConnUrl:'/api/dbimport/savedbs',
@@ -119,6 +126,9 @@
                 editDBVisible: false,
                 treeLoading: false,
                 dbInfos:[], 
+
+                selectProjectId:0,
+                projects:[],
 
                 dbTreeSelectInfo:new Map(),
                 dbTreeProps:{
@@ -147,8 +157,17 @@
         },
         created() {
             this.search();
+            this.searchProjects();
         },
         methods: {
+            searchProjects() {
+                this.$axios.post(this.listProjectUrl, { index:0, size:999999, order_by:"project_created DESC" }).then(result=>{
+                    if (result.success) {
+                        this.projects = result.data.list
+                        this.selectProjectId = this.form.pid;
+                    }
+                })
+            },
             search() {
                 let pid = parseInt(this.pid)
                 this.$axios.post(this.listDBUrl, { name:this.search_word, pid:pid, index:0, size:999999, order_by:"database_created DESC" }).then(result=>{
@@ -165,6 +184,12 @@
                         }
 
                         let def = localStorage.getItem(default_conn + this.pid);
+
+                        if(def==null) {
+                            def = result.data[0].id
+                            localStorage.setItem(default_conn + this.pid,def)
+                        }
+
                         result.data.forEach((item, index) => {
                             if (def==item.id) {
                                 item.is_default = true
@@ -321,6 +346,9 @@
                         }
                     })
                 })
+            },
+            handleProjectChange() {
+                this.$router.push('/dbs/'+this.selectProjectId);
             },
             handleDBSelectChange(dbid) {
                 this.selectDBId = dbid;

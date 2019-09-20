@@ -1,6 +1,18 @@
 <template>
 <div v-loading="dbLoading" style="height: 100%;">
 
+    <div class="page-action-bar">
+        <el-pagination
+        @size-change="handlePageSizeChange"
+        @current-change="handlePageIndexChange"
+        :current-page="pageInfo.index"
+        :page-sizes="[5, 10, 20, 40]"
+        :page-size="pageInfo.size"
+        layout="sizes, prev, pager, next"
+        :total="pageInfo.total">
+        </el-pagination>
+    </div>
+
     <div class="mb60" style="border-bottom:solid 1px #e6e6e6;background-color:#F4F4F5;padding-top:20px;padding-left:10px;" v-if="dbid>0">
         <el-form :inline="true" :model="tableForm" :rules="rules">
             <el-form-item label="表 名:" prop="name">
@@ -27,10 +39,11 @@
                 <el-button type="primary" icon="el-icon-check" @click="saveTable(table)" circle title="保存表"></el-button>
                 <el-button type="danger" icon="el-icon-delete" @click="deleteTable(table)" circle title="删除表"></el-button>
                 <el-button type="primary" icon="el-icon-plus" @click="openColumnForm({ id:0,did:table.did, tid:table.id })" circle title="添加列"></el-button>
+                <el-button :icon="table.open?'el-icon-arrow-up':'el-icon-arrow-down'" @click="closeTable(table)" circle :title="table.open?'收起':'展开'"></el-button>
             </el-form-item>
         </el-form>
 
-        <el-table :data="table.columns" border>
+        <el-table :data="table.columns" border v-show="table.open">
             <el-table-column prop="pk" label="主键" width="80">
                 <template slot-scope="scope">
                     <i class="el-icon-success" v-if="scope.row.pk"></i>
@@ -183,6 +196,11 @@
                 editColumnVisible:false,
                 tables:[],
                 search_word:'',
+                pageInfo:{
+                    size:5,
+                    index:1,
+                    total:0,
+                },
                 tableForm:{
                     name:'',
                     title:'',
@@ -237,7 +255,14 @@
         methods:{
             search() {
                 this.dbLoading = true;
-                let postData = { name:this.search_word, pid:parseInt(this.pid), did:this.dbid, index:0, size:999999, order_by:"table_created DESC" };
+                let postData = { 
+                    name:this.search_word, 
+                    pid:parseInt(this.pid), 
+                    did:this.dbid, 
+                    index:this.pageInfo.index-1, 
+                    size:this.pageInfo.size, 
+                    order_by:"table_created DESC" 
+                };
                 this.$axios.post(this.listTableDetailUrl,postData).then(result=>{
                     if (result.success) {
                         this.tables = result.data.list.map(table => {
@@ -257,8 +282,11 @@
                                 }
                                 return col
                             })
+                            table.open = true
                             return table
                         })
+
+                        this.pageInfo.total = result.data.total
                     }
                     this.dbLoading = false
                 })
@@ -301,6 +329,9 @@
                         }
                     })
                 })
+            },
+            closeTable(table) {
+                table.open = !table.open
             },
             openColumnForm(col) {
                 if (col.id==0){
@@ -444,6 +475,15 @@
                     this.columnForm.index=true
                 }
             },
+            handlePageIndexChange(val) {
+                this.pageInfo.index = val
+                this.search()
+            },
+            handlePageSizeChange(val) {
+                this.pageInfo.size = val
+                this.pageInfo.index = 1
+                this.search()
+            },
         }
     }
 </script>
@@ -454,8 +494,16 @@
         margin-bottom: 60px;
     }
 
+    .mb20{
+        margin-bottom: 20px;
+    }
+
     .red{
         color: #F56C6C;
+    }
+
+    .page-action-bar {
+        margin-bottom: 20px;
     }
 
 </style>

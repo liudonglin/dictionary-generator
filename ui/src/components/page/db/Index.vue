@@ -44,6 +44,11 @@
                 })
             },
         },
+        watch: {    
+            '$route' (to, from) {   
+                this.$router.go(0);
+            }
+        }
     }
 </script>
 
