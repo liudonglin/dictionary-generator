@@ -42,52 +42,56 @@
                 <el-button :icon="table.open?'el-icon-arrow-up':'el-icon-arrow-down'" @click="closeTable(table)" circle :title="table.open?'收起':'展开'"></el-button>
             </el-form-item>
         </el-form>
-
-        <el-table :data="table.columns" border v-show="table.open">
-            <el-table-column prop="pk" label="主键" width="80">
-                <template slot-scope="scope">
-                    <i class="el-icon-success" v-if="scope.row.pk"></i>
-                </template>
-            </el-table-column>
-            <el-table-column prop="ai" label="自增" width="80" :formatter="aiFormatter">
-            </el-table-column>
-            <el-table-column prop="name" label="列名" width="160">
-            </el-table-column>
-            <el-table-column prop="data_type" label="数据类型" width="100" >
-            </el-table-column>
-            <el-table-column prop="length" label="数据长度" width="100" >
-            </el-table-column>
-            <el-table-column prop="null" label="可空" width="80" :formatter="nullFormatter">
-            </el-table-column>
-            <el-table-column prop="index" label="索引列" width="80" :formatter="indexFormatter">
-            </el-table-column>
-            <el-table-column label="枚举" width="120">
-                <template slot-scope="scope">
-                    <div>
-                        <el-popover placement="top-start" width="360"
-                        trigger="manual" v-if="scope.row.enum_list!=null&&scope.row.enum_list.length>0"
-                        v-model="scope.row.enum_visible">
-                        <p>{{scope.row.title}}</p>
-                        <el-table :data="scope.row.enum_list">
-                            <el-table-column property="key" label="字段"></el-table-column>
-                            <el-table-column width="80" property="value" label="值"></el-table-column>
-                            <el-table-column property="des" label="描述"></el-table-column>
-                        </el-table>
-                        <el-button type="text" icon="el-icon-message"
-                            slot="reference" @click="handleEnumVisibleChange(scope.row)">展示</el-button>
-                        </el-popover>
-                    </div>
-                </template>
-            </el-table-column>
-            <el-table-column prop="title" label="标题" >
-            </el-table-column>
-            <el-table-column label="操作" width="160" align="center">
-                <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-edit" @click="openColumnForm(scope.row)">编辑</el-button>
-                    <el-button type="text" icon="el-icon-delete" @click="deleteColumn(scope.row)" class="red" >删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+        <el-collapse-transition>
+            <div v-show="table.open">
+                <el-table :data="table.columns" border>
+                    <el-table-column prop="pk" label="主键" width="80">
+                        <template slot-scope="scope">
+                            <i class="el-icon-success" v-if="scope.row.pk"></i>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="ai" label="自增" width="80" :formatter="aiFormatter">
+                    </el-table-column>
+                    <el-table-column prop="name" label="列名" width="160">
+                    </el-table-column>
+                    <el-table-column prop="data_type" label="数据类型" width="100" >
+                    </el-table-column>
+                    <el-table-column prop="length" label="数据长度" width="100" >
+                    </el-table-column>
+                    <el-table-column prop="null" label="可空" width="80" :formatter="nullFormatter">
+                    </el-table-column>
+                    <el-table-column prop="index" label="索引列" width="80" :formatter="indexFormatter">
+                    </el-table-column>
+                    <el-table-column label="枚举" width="120">
+                        <template slot-scope="scope">
+                            <div>
+                                <el-popover placement="top-start" width="360"
+                                trigger="manual" v-if="scope.row.enum_list!=null&&scope.row.enum_list.length>0"
+                                v-model="scope.row.enum_visible">
+                                <p>{{scope.row.title}}</p>
+                                <el-table :data="scope.row.enum_list">
+                                    <el-table-column property="key" label="字段"></el-table-column>
+                                    <el-table-column width="80" property="value" label="值"></el-table-column>
+                                    <el-table-column property="des" label="描述"></el-table-column>
+                                </el-table>
+                                <el-button type="text" icon="el-icon-message"
+                                    slot="reference" @click="handleEnumVisibleChange(scope.row)">展示</el-button>
+                                </el-popover>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="title" label="标题" >
+                    </el-table-column>
+                    <el-table-column label="操作" width="160" align="center">
+                        <template slot-scope="scope">
+                            <el-button type="text" icon="el-icon-edit" @click="openColumnForm(scope.row)">编辑</el-button>
+                            <el-button type="text" icon="el-icon-delete" @click="deleteColumn(scope.row)" class="red" >删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            
+        </el-collapse-transition>
     </div>
 
     <!-- 编辑Column弹出框 -->
@@ -484,7 +488,13 @@
                 this.pageInfo.index = 1
                 this.search()
             },
+        },
+        watch: {    
+            '$route' (to, from) {   
+                this.search();
+            }
         }
+
     }
 </script>
 

@@ -2,7 +2,7 @@
     <div style="height:100%;">
         <el-container style="height:100%;">
             <el-aside width="300px"  style="border-right:solid 1px #e6e6e6;">
-                <v-db-sidebar :pid="pid" :pname="projectInfo.name" ></v-db-sidebar>
+                <v-db-sidebar :pid="pid"></v-db-sidebar>
             </el-aside>
             <el-main>
                 <v-table-list :pid="pid"></v-table-list>
@@ -23,30 +23,17 @@
             }
         },
         data(){
-            return {
-                loadProjectUrl: '/api/project/load',
-                projectInfo:{},
-            }
+            return {}
         },
         components:{
             vDbSidebar,vTableList
         },
         created() {
-            this.loadProject();
         },
         methods: {
-            loadProject() {
-                let pid = parseInt(this.pid)
-                this.$axios.post(this.loadProjectUrl, { id:pid }).then(result=>{
-                    if (result.success) {
-                        this.projectInfo = result.data
-                    }
-                })
-            },
         },
         watch: {    
-            '$route' (to, from) {   
-                this.$router.go(0);
+            '$route' (to, from) {
             }
         }
     }

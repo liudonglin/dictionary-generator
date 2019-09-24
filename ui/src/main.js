@@ -12,6 +12,13 @@ import './assets/css/icon.css';
 import './components/common/directives';
 import "babel-polyfill";
 
+// fade/zoom 等
+import 'element-ui/lib/theme-chalk/base.css';
+// collapse 展开折叠
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
+ 
+Vue.component(CollapseTransition.name, CollapseTransition)
+
 Vue.config.productionTip = false
 Vue.use(VueI18n);
 Vue.use(ElementUI, {

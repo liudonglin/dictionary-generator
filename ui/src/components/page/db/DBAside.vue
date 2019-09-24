@@ -36,7 +36,7 @@
         <el-dialog title="编辑" :visible.sync="editDBVisible" width="40%" @close="closeDBForm('form')">
             <el-form ref="form" :model="form" :rules="rules" label-width="100px">
                 <el-form-item label="项目名称:">
-                    <el-input v-model="pname" maxlength="40" show-word-limit :disabled="true"></el-input>
+                    <el-input v-model="selectProjectName" maxlength="40" show-word-limit :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="数据库名称:" prop="name">
                     <el-input v-model="form.name" maxlength="40" show-word-limit></el-input>
@@ -102,10 +102,6 @@
             pid: {
                 type: String,
                 default: '0'
-            },
-            pname: {
-                type: String,
-                default: '0'
             }
         },
         data() {
@@ -128,6 +124,7 @@
                 dbInfos:[], 
 
                 selectProjectId:0,
+                selectProjectName:"",
                 projects:[],
 
                 dbTreeSelectInfo:new Map(),
@@ -156,7 +153,7 @@
             }
         },
         created() {
-            this.search();
+            this.searchDBs();
             this.searchProjects();
         },
         methods: {
@@ -165,10 +162,14 @@
                     if (result.success) {
                         this.projects = result.data.list
                         this.selectProjectId = this.form.pid;
+                        let selectProjectId = this.selectProjectId
+                        this.selectProjectName = this.projects.find(function(item){
+                            return item.id == selectProjectId;
+                        }).name
                     }
                 })
             },
-            search() {
+            searchDBs() {
                 let pid = parseInt(this.pid)
                 this.$axios.post(this.listDBUrl, { name:this.search_word, pid:pid, index:0, size:999999, order_by:"database_created DESC" }).then(result=>{
                     if (result.success) {
@@ -265,7 +266,7 @@
 
                 this.$axios.post(this.saveConnUrl, postDB).then(result=>{
                     if (result.success) {
-                        this.search()
+                        this.searchDBs()
                         this.closeConnForm()
                     }
                     this.treeLoading = false
@@ -312,7 +313,7 @@
                         this.$axios.post(this.saveDBUrl, this.form).then(result=>{
                             if (result.success) {
                                 this.form.id=result.data
-                                this.search()
+                                this.searchDBs()
                                 this.closeDBForm(formName)
                             }
                         })
@@ -348,7 +349,11 @@
                 })
             },
             handleProjectChange() {
-                this.$router.push('/dbs/'+this.selectProjectId);
+                let selectProjectId = this.selectProjectId
+                this.selectProjectName = this.projects.find(function(item){
+                    return item.id == selectProjectId;
+                }).name
+                this.$router.push('/dbs/'+selectProjectId);
             },
             handleDBSelectChange(dbid) {
                 this.selectDBId = dbid;
@@ -387,6 +392,11 @@
                     document.body.removeChild(link);
                     window.URL.revokeObjectURL(url);
                 })
+            }
+        },
+        watch: {    
+            '$route' (to, from) {   
+                this.searchDBs()
             }
         }
     }
