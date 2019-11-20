@@ -37,7 +37,7 @@
         {{column.Name}}{% if !fn.IsLastColumn(column,columns) %},{% endif %}{% endfor %}
         FROM {{database.Name}}.{{ table.Name }}
         <where> {% for column in columns %}
-            <if test="{{fn.FirstToLower(fn.ToCamelString(column.Name))}} != null">
+            <if test="{{fn.FirstToLower(fn.ToCamelString(column.Name))}} != null {% if fn.SqlTypeConvertLanguageType(column,project.DataBase,project.Language)=="String" %} and {{fn.FirstToLower(fn.ToCamelString(column.Name))}} != ''{% endif %}">
                 and {{column.Name}} {% if fn.SqlTypeConvertLanguageType(column,project.DataBase,project.Language)=="String" %} like CONCAT ('%', #{ {{fn.FirstToLower(fn.ToCamelString(column.Name))}} },'%') {% else %}= #{ {{fn.FirstToLower(fn.ToCamelString(column.Name))}} }{% endif %}
             </if>{% endfor %}
         </where>
