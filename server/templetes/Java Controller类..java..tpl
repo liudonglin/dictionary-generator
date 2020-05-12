@@ -1,8 +1,8 @@
 package {{ project.NameSpace }}.controller;
 
-import com.dk.foundation.engine.baseentity.PageResult;
-import com.dk.foundation.engine.baseentity.StandResponse;
-import com.dk.foundation.engine.exception.BusinessException;
+import com.oursoft.scf.base.PageResult;
+import com.oursoft.scf.base.StandResponse;
+import com.oursoft.scf.base.BusinessException;
 import {{ project.NameSpace }}.entity.{{ fn.ToCamelString(table.Name) }};
 import {{ project.NameSpace }}.req.{{ fn.ToCamelString(table.Name) }}Filter;
 import {{ project.NameSpace }}.service.{{ fn.ToCamelString(table.Name) }}Service;
