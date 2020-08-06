@@ -31,6 +31,16 @@ export default new Router({
                     meta: { title: '代码生成' }
                 },
                 {
+                    path: '/tplmgt',
+                    component: resolve => require(['../components/page/tpl/Index.vue'], resolve),
+                    meta: { title: '模版管理' }
+                },
+                {
+                    path: '/tplmgt/:templeteId',
+                    component: resolve => require(['../components/page/tpl/Detail.vue'], resolve),
+                    meta: { title: '模版详情' }
+                },
+                {
                     path: '/404',
                     component: resolve => require(['../components/page/404.vue'], resolve),
                     meta: { title: '404' }

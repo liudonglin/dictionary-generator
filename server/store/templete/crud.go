@@ -5,6 +5,7 @@ import (
 	"dg-server/core"
 	"dg-server/store/base/db"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -126,7 +127,15 @@ func (s *templeteStore) List(q *core.TempleteQuery) ([]*core.Templete, int, erro
 }
 
 func getQueryCountSQL(q *core.TempleteQuery) (querySQL string) {
-	querySQL = " Select Count(1) FROM templetes LEFT JOIN project_templete_relations ON templete_id = ptr_templete_id Where 1=1 "
+	querySQL = " Select Count(1) FROM templetes #Join# Where 1=1 "
+	// 有pid才做联合查询
+	if q.PID > 0 {
+		querySQL = strings.Replace(querySQL,"#Join#","LEFT JOIN project_templete_relations ON templete_id = ptr_templete_id",-1)
+		querySQL += " And ptr_project_id = :ptr_project_id "
+	} else {
+		querySQL = strings.Replace(querySQL,"#Join#","",-1)
+	}
+
 	if q.Name != "" {
 		querySQL += " And templete_name like :templete_name "
 	}
@@ -141,15 +150,20 @@ func getQueryCountSQL(q *core.TempleteQuery) (querySQL string) {
 	}
 	if q.Type != "" {
 		querySQL += " And templete_type = :templete_type "
-	}
-	if q.PID > 0 {
-		querySQL += " And ptr_project_id = :ptr_project_id "
 	}
 	return querySQL
 }
 
 func getQueryListSQL(q *core.TempleteQuery, driver db.Driver) (querySQL string) {
-	querySQL = queryBase + " FROM templetes LEFT JOIN project_templete_relations ON templete_id = ptr_templete_id Where 1=1 "
+	querySQL = queryBase + " FROM templetes #Join# Where 1=1 "
+
+	if q.PID > 0 {
+		querySQL = strings.Replace(querySQL,"#Join#","LEFT JOIN project_templete_relations ON templete_id = ptr_templete_id",-1)
+		querySQL += " And ptr_project_id = :ptr_project_id "
+	} else {
+		querySQL = strings.Replace(querySQL,"#Join#","",-1)
+	}
+
 	if q.Name != "" {
 		querySQL += " And templete_name like :templete_name "
 	}
@@ -164,9 +178,6 @@ func getQueryListSQL(q *core.TempleteQuery, driver db.Driver) (querySQL string) 
 	}
 	if q.Type != "" {
 		querySQL += " And templete_type = :templete_type "
-	}
-	if q.PID > 0 {
-		querySQL += " And ptr_project_id = :ptr_project_id "
 	}
 	if q.OrderBy != "" {
 		querySQL += fmt.Sprintf(" ORDER BY %s ", q.OrderBy)

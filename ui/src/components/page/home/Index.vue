@@ -9,7 +9,7 @@
                     </el-menu-item>
                     <el-menu-item index="/projects">项目管理</el-menu-item>
                     <el-menu-item index="/code">代码生成</el-menu-item>
-                    <el-menu-item index="/usermgt">用户管理</el-menu-item>
+                    <el-menu-item index="/tplmgt">模版管理</el-menu-item>
                     <el-submenu index="/account">
                         <template slot="title">我的账户</template>
                         <el-menu-item index="4-1">个人信息</el-menu-item>

@@ -19,6 +19,10 @@ func listTemplete(c echo.Context) error {
 
 	tplStore := store.Stores().TempleteStore
 	list, total, err := tplStore.List(q)
+	for _,item :=range list{
+		item.Content="" //查询列表隐藏Content属性
+	}
+
 	if err != nil {
 		return err
 	}
@@ -37,6 +41,21 @@ func loadTemplete(c echo.Context) error {
 	json.Unmarshal(body, q)
 
 	content, _ := tpl.GetTableScript(q, claims.Name)
+	return c.JSON(http.StatusOK, &StandardResult{
+		Data: content,
+	})
+}
+
+func loadTempleteById(c echo.Context) error {
+	q := &core.TempleteLoadReq{}
+	body, _ := ioutil.ReadAll(c.Request().Body)
+	json.Unmarshal(body, q)
+
+	tplStore := store.Stores().TempleteStore
+	content,err := tplStore.FindID(q.TempleteID)
+	if err != nil {
+		return err
+	}
 	return c.JSON(http.StatusOK, &StandardResult{
 		Data: content,
 	})

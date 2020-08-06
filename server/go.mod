@@ -1,5 +1,7 @@
 module dg-server
 
+go 1.14
+
 require (
 	github.com/360EntSecGroup-Skylar/excelize/v2 v2.0.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
